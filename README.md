@@ -5,6 +5,7 @@ NajaScript é uma linguagem de programação interpretada baseada em Python e Ja
 ## ✨ Características da Linguagem
 
 ### ⚡ Tipos de Dados
+
 - `int` - Números inteiros
 - `float` - Números de ponto flutuante
 - `string` - Cadeias de caracteres
@@ -18,23 +19,27 @@ NajaScript é uma linguagem de programação interpretada baseada em Python e Ja
 - `any` - Tipo dinâmico que pode representar qualquer valor
 
 ### 🔧 Operadores
+
 - **Aritméticos:** `+`, `-`, `*`, `/`, `%`, `**` (potência)
 - **Comparativos:** `==`, `!=`, `<`, `>`, `<=`, `>=`
 - **Lógicos:** `&&`, `||`, `!`
 - **Ternário:** `cond ? valor_se_verdadeiro : valor_se_falso`
 
 ### 🌐 Estruturas de Controle
+
 - Condicionais: `if`, `elif`, `else`, `switch`, `case`, `default`
 - Laços: `while`, `do-while`, `for`, `forin`
 - Controle de fluxo: `break`, `continue`
 
 ### 🌐 Funções
+
 - Definição com `fun`
 - Funções com tipo de retorno
 - Funções recursivas
 - Funções de ordem superior
 
 ### 📝 Funções Nativas
+
 - `print()`, `println()`
 - `input()`
 - `type()`
@@ -48,27 +53,33 @@ NajaScript é uma linguagem de programação interpretada baseada em Python e Ja
 ## 💪 Recursos Especiais
 
 ### Flux: Variáveis Reativas
+
 As variáveis `flux` armazenam expressões, não valores, e são reavaliadas automaticamente sempre que as variáveis das quais dependem são alteradas.
-```najascript
+
+```javascript
 int a = 10;
 int b = 5;
 flux x = a + b;
 
-println(x);  # 15
+println(x);  // 15
 
-# Quando 'a' muda, 'x' é automaticamente recalculado
+// Quando 'a' muda, 'x' é automaticamente recalculado
 a = 20;
-println(x);  # 25
+println(x);  // 25
 ```
 
 ### ⚡ Sistema de Eventos `onChange`
+
 Permite monitorar mudanças em variáveis através de callbacks:
-```najascript
+
+```javascript
 onChange("contador", printChange);
-contador = 5;  # "Variável 'contador' mudou: 0 -> 5"
+contador = 5;  // "Variável 'contador' mudou: 0 -> 5"
 ```
+
 Callbacks personalizados:
-```najascript
+
+```javascript
 fun apenasAumentos(string nome_var, any valor_antigo, any valor_novo) {
     if (valor_novo > valor_antigo) {
         println("AUMENTO em " + nome_var + ": " + valor_antigo + " -> " + valor_novo);
@@ -81,10 +92,13 @@ onChange("temperatura", apenasAumentos);
 ## 🔧 Como Usar
 
 ### ⚡ Requisitos
+
 - Python 3.6 ou superior
 
 ### 📂 Execução
+
 Para executar um programa NajaScript:
+
 ```bash
 python najascript.py arquivo.naja
 ```
@@ -92,7 +106,8 @@ python najascript.py arquivo.naja
 ## 📚 Exemplos
 
 ### Exemplo Básico
-```najascript
+
+```javascript
 int x = 10;
 int y = 5;
 println("Soma: " + (x + y));
@@ -119,7 +134,8 @@ println(saudacao("Mundo"));
 ```
 
 ### Exemplo com Flux e `onChange`
-```najascript
+
+```javascript
 int contador = 0;
 string mensagem = "Inicial";
 flux resultado = "Contador: " + contador + ", Mensagem: " + mensagem;
@@ -134,6 +150,7 @@ println("Final: " + resultado);
 ## 🤖 Implementação
 
 O interpretador consiste em:
+
 - **Lexer**: Converte o código-fonte em tokens
 - **Parser**: Analisa os tokens e gera uma AST (Abstract Syntax Tree)
 - **Interpreter**: Percorre a AST e executa o código
@@ -147,5 +164,9 @@ O interpretador consiste em:
 
 ## 💚 Licença
 
-Este projeto é de código aberto. Contribuições são bem-vindas!
+Este projeto é de código aberto. Modificações e distribuições são permitidas, desde que o nome do autor original seja mantido.
+
+## ✍️ Autor
+
+Este projeto foi desenvolvido por Alexandre Landa.
 
