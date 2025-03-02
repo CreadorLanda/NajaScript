@@ -1,0 +1,42 @@
+# Exemplo de uso de eventos onChange em NajaScript
+
+# Variáveis normais
+int contador = 0;
+string mensagem = "Inicial";
+
+# Variável flux
+flux resultado = "Contador: " + contador + ", Mensagem: " + mensagem;
+
+# Exibir valores iniciais
+println("--- Valores iniciais ---");
+println("contador = " + contador);
+println("mensagem = " + mensagem);
+println("resultado = " + resultado);
+
+# Registrando eventos onChange
+println("\n--- Registrando eventos onChange ---");
+onChange("contador", printChange);
+onChange("mensagem", printChange);
+onChange("resultado", printChange);
+
+# Alterando valores para acionar os eventos
+println("\n--- Alterando valores ---");
+contador = 1;  # Isso deve acionar o evento onChange
+mensagem = "Atualizado";  # Isso deve acionar o evento onChange
+
+# Valores após alterações
+println("\n--- Valores após alterações ---");
+println("contador = " + contador);
+println("mensagem = " + mensagem); 
+println("resultado = " + resultado);  # O flux deve ter sido atualizado
+
+# Alterações múltiplas
+println("\n--- Alterações múltiplas ---");
+contador = 5;
+mensagem = "Valor final";
+
+# Valores finais
+println("\n--- Valores finais ---");
+println("contador = " + contador);
+println("mensagem = " + mensagem);
+println("resultado = " + resultado); 

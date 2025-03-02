@@ -1,0 +1,71 @@
+# Exemplo avançado de callbacks personalizados para onChange
+
+# Função personalizada que será usada como callback
+fun meuCallback(string nome_var, any valor_antigo, any valor_novo) {
+    println("ALTERAÇÃO DETECTADA:");
+    println("  Variável: " + nome_var);
+    println("  Valor anterior: " + valor_antigo);
+    println("  Novo valor: " + valor_novo);
+    println("  Alteração em: " + (valor_novo - valor_antigo) + " unidades");
+}
+
+# Função para monitorar apenas aumentos
+fun apenasAumentos(string nome_var, any valor_antigo, any valor_novo) {
+    if (valor_novo > valor_antigo) {
+        println("AUMENTO em " + nome_var + ": " + valor_antigo + " -> " + valor_novo);
+    }
+}
+
+# Função para monitorar apenas diminuições
+fun apenasReducoes(string nome_var, any valor_antigo, any valor_novo) {
+    if (valor_novo < valor_antigo) {
+        println("REDUÇÃO em " + nome_var + ": " + valor_antigo + " -> " + valor_novo);
+    }
+}
+
+# Variáveis para testar
+int temperatura = 25;
+int umidade = 60;
+
+# Variável flux que depende das outras
+flux status = "Temperatura: " + temperatura + "°C, Umidade: " + umidade + "%";
+
+# Registrar callbacks personalizados
+println("Registrando callbacks...");
+onChange("temperatura", meuCallback);
+onChange("umidade", apenasAumentos);
+onChange("status", printChange);
+
+# Exibir valores iniciais
+println("\n--- Valores iniciais ---");
+println(status);
+
+# Alterando temperatura (aumento)
+println("\n--- Aumentando temperatura ---");
+temperatura = 30;
+println(status);
+
+# Alterando temperatura (redução)
+println("\n--- Reduzindo temperatura ---");
+temperatura = 20;
+println(status);
+
+# Alterando umidade (aumento)
+println("\n--- Aumentando umidade ---");
+umidade = 75;
+println(status);
+
+# Alterando umidade (redução)
+println("\n--- Reduzindo umidade ---");
+umidade = 45;
+println(status);
+
+# Registrando o callback de redução para temperatura
+println("\n--- Registrando callback de redução para temperatura ---");
+onChange("temperatura", apenasReducoes);
+
+# Teste final com múltiplas mudanças
+println("\n--- Teste final com múltiplas mudanças ---");
+temperatura = 15;
+umidade = 80;
+println(status); 

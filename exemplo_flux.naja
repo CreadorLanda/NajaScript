@@ -1,0 +1,13 @@
+# Variáveis normais
+int a = 10;
+int b = 5;
+
+# Declaração de um flux
+flux x = a + b;
+
+# x será avaliado dinamicamente:
+println(x);  # Resultado: 15
+
+# Se mudarmos qualquer variável usada na expressão:
+a = 20;
+println(x);  # Agora x é recalculado: 20 + 5 = 25
