@@ -1,0 +1,8 @@
+// Exemplo de benchmark para testar o JIT e AOT compiler
+
+// Função simples
+fun teste(int n) {
+    return n * 2;
+}
+
+println(teste(10));

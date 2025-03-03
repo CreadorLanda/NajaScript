@@ -177,23 +177,53 @@ class Function:
     def __init__(self, declaration, environment):
         self.declaration = declaration
         self.environment = environment
+        self.compiled_version = None  # Versão compilada JIT
     
     def __call__(self, interpreter, arguments):
-        env = Environment(self.environment)
+        """Chama a função com os argumentos fornecidos"""
+        # Adiciona informações de depuração
+        print(f"DEBUG: Chamando função: {self.declaration.name}")
+        print(f"DEBUG: Parâmetros da declaração: {self.declaration.parameters}")
+        print(f"DEBUG: Argumentos fornecidos: {arguments}")
         
-        for i, (param_type, param_name) in enumerate(self.declaration.parameters):
+        # Verifica se podemos usar a versão compilada JIT
+        if self.compiled_version:
+            try:
+                # Executa a versão compilada diretamente
+                return self.compiled_version(*arguments)
+            except Exception as e:
+                # Se falhar, volta para a versão interpretada
+                print(f"JIT: Erro ao executar versão compilada, usando interpretador: {e}")
+        
+        # Versão interpretada original
+        # Cria um novo ambiente com o ambiente de definição como pai
+        environment = Environment(self.environment)
+        
+        # Define os parâmetros no novo ambiente
+        for i, param in enumerate(self.declaration.parameters):
             if i < len(arguments):
-                value = arguments[i]
-                # Em uma implementação mais completa, verificaríamos o tipo do parâmetro aqui
-                env.define(param_name, value)
+                # Aqui está o problema - param pode ser uma tupla (tipo, nome)
+                param_name = param.name if hasattr(param, 'name') else param[1]
+                environment.define(param_name, arguments[i])
             else:
-                env.define(param_name, None)
+                # Parâmetro não fornecido, define como null
+                param_name = param.name if hasattr(param, 'name') else param[1]
+                environment.define(param_name, None)
+        
+        # Executa o corpo da função no novo ambiente
+        previous_env = interpreter.environment
+        interpreter.environment = environment
         
         try:
-            interpreter.execute_block(self.declaration.body, env)
+            # Executa o corpo da função
+            for statement in self.declaration.body:
+                interpreter.execute(statement)
             return None
-        except ReturnException as ret:
-            return ret.value
+        except ReturnException as return_value:
+            return return_value.value
+        finally:
+            # Restaura o ambiente original
+            interpreter.environment = previous_env
             
     # Adicionando suporte para callbacks onChange
     def as_callback(self):
@@ -334,9 +364,15 @@ class Environment:
 class Interpreter:
     """Interpretador para NajaScript"""
     def __init__(self):
-        self.global_env = Environment()
-        self.environment = self.global_env
+        self.environment = Environment()
+        self.jit_compiler = None
+        self._function_stats = {}  # Estatísticas de chamadas de funções
+        self._jit_threshold = 10   # Limiar para compilação JIT
         self._setup_builtins()
+    
+    def set_jit_compiler(self, jit_compiler):
+        """Define o compilador JIT a ser utilizado"""
+        self.jit_compiler = jit_compiler
     
     def _setup_builtins(self):
         """Configura as funções nativas da linguagem"""
@@ -344,18 +380,18 @@ class Interpreter:
         def print_func(*args):
             print(*args, end="")
             return None
-        self.global_env.define("print", print_func)
+        self.environment.define("print", print_func)
         
         # println
         def println_func(*args):
             print(*args)
             return None
-        self.global_env.define("println", println_func)
+        self.environment.define("println", println_func)
         
         # input
         def input_func(prompt=""):
             return input(prompt)
-        self.global_env.define("input", input_func)
+        self.environment.define("input", input_func)
         
         # type
         def type_func(value):
@@ -379,25 +415,25 @@ class Interpreter:
                 return "null"
             # Qualquer outro tipo é considerado "any"
             return "any"
-        self.global_env.define("type", type_func)
+        self.environment.define("type", type_func)
         
         # min, max
-        self.global_env.define("min", min)
-        self.global_env.define("max", max)
+        self.environment.define("min", min)
+        self.environment.define("max", max)
         
         # vecto e list construtores
         def vecto_func(*args):
             return NajaVector(args)
-        self.global_env.define("vecto", vecto_func)
+        self.environment.define("vecto", vecto_func)
         
         def list_func(*args):
             return NajaList(args)
-        self.global_env.define("list", list_func)
+        self.environment.define("list", list_func)
         
         # dict construtor
         def dict_func(*args):
             return NajaDict(args)
-        self.global_env.define("dict", dict_func)
+        self.environment.define("dict", dict_func)
         
         # Função para adicionar um listener onChange
         def on_change_func(var_name, callback):
@@ -412,13 +448,13 @@ class Interpreter:
             
             self.environment.add_change_listener(var_name, callback)
             return None
-        self.global_env.define("onChange", on_change_func)
+        self.environment.define("onChange", on_change_func)
         
         # Função para imprimir variáveis que mudaram
         def print_change_func(var_name, old_value, new_value):
             print(f"Variável '{var_name}' mudou: {old_value} -> {new_value}")
             return None
-        self.global_env.define("printChange", print_change_func)
+        self.environment.define("printChange", print_change_func)
     
     def interpret(self, program):
         """Interpreta um programa NajaScript"""
@@ -544,9 +580,28 @@ class Interpreter:
     
     def execute_functiondeclaration(self, stmt):
         """Executa uma declaração de função"""
+        print(f"DEBUG: Declaração de função: {stmt.name}")
+        print(f"DEBUG: Parâmetros: {stmt.parameters}")
+        
         function = Function(stmt, self.environment)
         self.environment.define(stmt.name, function)
-        return None
+        
+        # Inicializa estatísticas para esta função
+        self._function_stats[stmt.name] = {
+            'call_count': 0,
+            'compiled': False
+        }
+        
+        # Verifica se podemos pré-compilar com JIT
+        if self.jit_compiler and self.jit_compiler.is_optimizable(stmt):
+            # Pré-compilar funções otimizáveis
+            try:
+                compiled_func = self.jit_compiler.compile_function(stmt, self.environment)
+                function.compiled_version = compiled_func
+                self._function_stats[stmt.name]['compiled'] = True
+                print(f"JIT: Função '{stmt.name}' pré-compilada para execução otimizada")
+            except Exception as e:
+                print(f"JIT: Erro ao pré-compilar função '{stmt.name}': {e}")
     
     def execute_returnstatement(self, stmt):
         """Executa uma instrução return"""
@@ -599,11 +654,21 @@ class Interpreter:
             self.environment = previous
     
     def evaluate(self, expr):
-        """Avalia uma expressão"""
-        expr_type = type(expr).__name__
-        method_name = f"evaluate_{expr_type.lower()}"
-        method = getattr(self, method_name, self.evaluate_default)
-        return method(expr)
+        """Avalia uma expressão e retorna seu valor"""
+        # Primeiro, verifica se é a própria expressão ou um tipo específico
+        if expr is None:
+            return None
+        
+        try:
+            method_name = f"evaluate_{expr.__class__.__name__.lower()}"
+            method = getattr(self, method_name, self.evaluate_default)
+            return method(expr)
+        except Exception as e:
+            # Adicionar informações detalhadas de depuração
+            print(f"DEBUG: Erro ao avaliar expressão do tipo {expr.__class__.__name__}")
+            print(f"DEBUG: Método procurado: {method_name}")
+            print(f"DEBUG: Expressão: {expr}")
+            raise e
     
     def evaluate_default(self, expr):
         """Método padrão para avaliar expressões não tratadas especificamente"""
@@ -678,24 +743,62 @@ class Interpreter:
     
     def evaluate_functioncall(self, expr):
         """Avalia uma chamada de função"""
-        try:
-            callee = self.environment.get(expr.name)
-        except Exception:
-            # Se não encontrar no ambiente, verificar se são funções internas
-            if expr.name == "list":
-                arguments = [self.evaluate(arg) for arg in expr.arguments]
-                return NajaList(arguments)
-            elif expr.name == "vecto":
-                arguments = [self.evaluate(arg) for arg in expr.arguments]
-                return NajaVector(arguments)
-            else:
-                raise Exception(f"Função não definida: {expr.name}")
+        # Adiciona informações de depuração
+        print(f"DEBUG: FunctionCall: {expr}")
+        print(f"DEBUG: expr.name type: {type(expr.name)}")
+        print(f"DEBUG: expr.name: {expr.name}")
+        print(f"DEBUG: expr.arguments: {expr.arguments}")
         
-        if not callable(callee):
-            raise Exception(f"Só pode chamar funções e métodos: {expr.name}")
+        # Verifica se o nome da função é uma string ou uma expressão
+        if isinstance(expr.name, str):
+            # Se for uma string, tenta obter a função diretamente do ambiente
+            try:
+                callee = self.environment.get(expr.name)
+            except Exception:
+                raise RuntimeError(f"Função não definida: {expr.name}")
+        else:
+            # Se for uma expressão, avalia a expressão
+            callee = self.evaluate(expr.name)
         
-        arguments = [self.evaluate(arg) for arg in expr.arguments]
+        # Verifica se é uma função válida
+        if not isinstance(callee, Function) and not callable(callee):
+            raise RuntimeError(f"Não é possível chamar {expr.name}, pois não é uma função.")
         
+        # Compila a função com JIT se for chamada muitas vezes
+        func_name = expr.name if isinstance(expr.name, str) else (
+            expr.name.name if hasattr(expr.name, 'name') else "anônima"
+        )
+        
+        if isinstance(func_name, str) and func_name in self._function_stats:
+            self._function_stats[func_name]['call_count'] += 1
+            
+            # Verifica se deve usar JIT
+            should_jit = (
+                self.jit_compiler and 
+                not self._function_stats[func_name]['compiled'] and
+                self._function_stats[func_name]['call_count'] >= self._jit_threshold
+            )
+            
+            if should_jit and isinstance(callee, Function):
+                try:
+                    # Compila a função usando JIT
+                    compiled_func = self.jit_compiler.compile_function(
+                        callee.declaration, 
+                        callee.environment
+                    )
+                    callee.compiled_version = compiled_func
+                    self._function_stats[func_name]['compiled'] = True
+                    print(f"JIT: Função '{func_name}' compilada após {self._function_stats[func_name]['call_count']} chamadas")
+                except Exception as e:
+                    print(f"JIT: Erro ao compilar função '{func_name}': {e}")
+        
+        # Avalia os argumentos
+        arguments = []
+        if expr.arguments:
+            for arg in expr.arguments:
+                arguments.append(self.evaluate(arg))
+        
+        # Chama a função
         if isinstance(callee, Function):
             return callee(self, arguments)
         else:
@@ -765,7 +868,7 @@ class Interpreter:
         return expr.value
     
     def evaluate_stringliteral(self, expr):
-        """Avalia um literal string"""
+        """Avalia uma expressão de literal de string"""
         return expr.value
     
     def evaluate_booleanliteral(self, expr):

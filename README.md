@@ -94,14 +94,57 @@ onChange("temperatura", apenasAumentos);
 ### ⚡ Requisitos
 
 - Python 3.6 ou superior
+- Para JIT: Numba, llvmlite, numpy
+- Para AOT: llvmlite
+
+Instale as dependências:
+
+```bash
+pip install -r requirements.txt
+```
 
 ### 📂 Execução
 
-Para executar um programa NajaScript:
+#### Modo Interpretado
+
+Para executar um programa NajaScript no modo interpretado padrão:
 
 ```bash
 python najascript.py arquivo.naja
 ```
+
+#### Modo JIT
+
+Para executar com otimização JIT (Just-In-Time):
+
+```bash
+python najascript.py arquivo.naja --jit
+```
+
+O compilador JIT otimiza funções que são chamadas frequentemente, melhorando o desempenho de loops e cálculos numéricos.
+
+#### Modo Compilado (AOT)
+
+Para compilar para um executável nativo:
+
+```bash
+python najascript.py arquivo.naja --compile --output programa
+```
+
+Opções adicionais:
+
+- `--optimize` ou `-O`: Ativa otimizações LLVM nível 3
+- `--target`: Especifica o target triple (ex: x86_64-pc-linux-gnu)
+
+### ✨ Arquitetura
+
+O sistema funciona em camadas:
+
+1. **Lexer**: Tokeniza o código fonte
+2. **Parser**: Constrói a AST (Abstract Syntax Tree)
+3. **Interpreter**: Interpreta a AST ou aciona compiladores
+   - **JIT Compiler**: Compila funções críticas usando Numba
+   - **AOT Compiler**: Gera código nativo via LLVM
 
 ## 📚 Exemplos
 
@@ -160,7 +203,8 @@ O interpretador consiste em:
 - Sem suporte para classes e objetos
 - Funções de ordem superior limitadas
 - Mensagens de erro podem ser aprimoradas
-- Não otimizado para alto desempenho
+- JIT funciona melhor para código numérico
+- AOT ainda não suporta todos os recursos da linguagem
 
 ## 💚 Licença
 

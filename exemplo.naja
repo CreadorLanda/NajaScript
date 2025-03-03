@@ -1,31 +1,31 @@
-# Exemplo de programa NajaScript
-# Este programa demonstra várias características da linguagem
+// Exemplo de programa NajaScript
+// Este programa demonstra várias características da linguagem
 
-# Declaração de variáveis
+// Declaração de variáveis
 int idade = 25;
 float altura = 1.75;
 string nome = "João";
 bool ativo = true;
 
-# Saída de dados
+// Saída de dados
 println("Informações pessoais:");
 println("Nome: " + nome);
 println("Idade: " + idade);
 println("Altura: " + altura + "m");
 println("Ativo: " + ativo);
 
-# Estruturas condicionais
+// Estruturas condicionais
 if (idade > 18) {
     println("Maior de idade");
 } else {
     println("Menor de idade");
 }
 
-# Operador ternário
+// Operador ternário
 string status = idade > 30 ? "Experiente" : "Novato";
 println("Status: " + status);
 
-# Loops
+// Loops
 println("\nContagem regressiva:");
 int contador = 5;
 while (contador > 0) {
@@ -38,56 +38,60 @@ for (int i = 1; i <= 5; i = i + 1) {
     println("2 x " + i + " = " + (2 * i));
 }
 
-# Função
+// Função
 fun soma(int a, int b) {
     return a + b;
 }
 
-# Chamada de função
+// Chamada de função
 int resultado = soma(5, 3);
 println("\nResultado da soma: " + resultado);
 
-# Listas
-int lista = list(1, 2, 3, 4, 5);
+// Listas
+list lista = list(1, 2, 3, 4, 5);
 println("\nLista original: " + lista);
 lista.add(6);
 println("Lista após adicionar: " + lista);
 lista.remove(0);
 println("Lista após remover o primeiro item: " + lista);
 
-# Vetores (imutáveis)
-int vetor = vecto(10, 20, 30, 40, 50);
+// Vetores (imutáveis)
+vecto vetor = vecto(10, 20, 30, 40, 50);
 println("\nVetor: " + vetor);
 println("Primeiro elemento do vetor: " + vetor.get(0));
 
-# Dicionário
-dict pessoa = {nome, idade, altura, ativo};
+// Dicionário
+dict pessoa = dict();
+pessoa.add("nome", nome);
+pessoa.add("idade", idade);
+pessoa.add("altura", altura);
+pessoa.add("ativo", ativo);
 println("\nDicionário: " + pessoa);
 
-# Switch
+// Switch
 println("\nVerificando números:");
 int numero = 3;
 switch (numero) {
     case 1:
         println("Número é 1");
-        break
+        break;
     case 2:
         println("Número é 2");
-        break
+        break;
     case 3:
         println("Número é 3");
-        break
+        break;
     default:
         println("Outro número");
 }
 
-# For-in loop
+// For-in loop
 println("\nPercorrendo lista com for-in:");
-forin(item in lista) {
+forin (item in lista) {
     println("Item: " + item);
 }
 
-# Função recursiva
+// Função recursiva
 fun fatorial(int n) {
     if (n <= 1) {
         return 1;
@@ -97,9 +101,5 @@ fun fatorial(int n) {
 
 println("\nFatorial de 5: " + fatorial(5));
 
-# Entrada do usuário
-string entrada = input("\nDigite seu nome: ");
-println("Olá, " + entrada + "!");
-
-# Função de ordem superior com arrow function
+// Programa concluído
 println("\nPrograma concluído."); 

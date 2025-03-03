@@ -88,7 +88,13 @@ class Token:
 
 class Lexer:
     def __init__(self, source):
-        self.source = source
+        # Remover BOM UTF-8 se presente
+        if source and len(source) >= 1 and source[0] == '\ufeff':
+            self.source = source[1:]
+            print("BOM UTF-8 detectado e removido")
+        else:
+            self.source = source
+            
         self.position = 0
         self.line = 1
         self.column = 1
