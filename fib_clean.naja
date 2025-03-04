@@ -2,7 +2,20 @@ fun fibonacci(int n) {
     if (n <= 1) {
         return n;
     }
-    return fibonacci(n - 1) + fibonacci(n - 2);
+    
+    int a = 0;
+    int b = 1;
+    int i = 2;
+    int c = 0;
+    
+    while (i <= n) {
+        c = a + b;
+        a = b;
+        b = c;
+        i = i + 1;
+    }
+    
+    return b;
 }
 
 println("Calculando Fibonacci(20)...");

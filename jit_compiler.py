@@ -22,42 +22,87 @@ class JITCompiler:
         # Obtém o nome da função
         function_name = ast_function.name
         
+        print(f"JIT: Tentando compilar função: {function_name}")
+        
         # Verifica se já está no cache
         if function_name in self.compiled_functions:
+            print(f"JIT: Função {function_name} já está compilada, usando versão em cache")
             return self.compiled_functions[function_name]
         
         # Converte a AST do NajaScript para código Python
         py_code = self._convert_to_python(ast_function)
         
-        # Compila o código Python
-        compiled_func = self._compile_with_numba(py_code, function_name)
-        
-        # Armazena no cache
-        self.compiled_functions[function_name] = compiled_func
-        
-        return compiled_func
+        try:
+            # Compila o código Python
+            print(f"JIT: Compilando função {function_name} com Numba")
+            compiled_func = self._compile_with_numba(py_code, function_name)
+            
+            # Armazena no cache
+            self.compiled_functions[function_name] = compiled_func
+            print(f"JIT: Função {function_name} compilada com sucesso")
+            
+            return compiled_func
+        except Exception as e:
+            print(f"JIT: Erro ao compilar função {function_name}: {str(e)}")
+            return None
     
     def _convert_to_python(self, ast_function):
         """
         Converte uma função AST NajaScript para código Python
         """
         # Extrai parâmetros
-        params = [param.name for param in ast_function.parameters]
+        params = []
+        
+        for param in ast_function.parameters:
+            if isinstance(param, tuple) and len(param) == 2:
+                # Formato (tipo, nome)
+                param_name = param[1]
+                params.append(param_name)
+            elif hasattr(param, 'name'):
+                # Objeto com atributo name
+                param_name = param.name
+                params.append(param_name)
+            else:
+                raise ValueError(f"Formato de parâmetro não suportado: {param}")
         
         # Inicializa o gerador de código Python
         code_generator = PythonCodeGenerator()
         
         # Gera o código da função
-        function_body = code_generator.generate(ast_function.body)
+        if isinstance(ast_function.body, list):
+            # Se o corpo da função for uma lista de declarações, use _generate_block
+            function_body = code_generator._generate_block(ast_function.body)
+        else:
+            # Caso contrário, use o método generate padrão
+            function_body = code_generator.generate(ast_function.body)
         
-        # Cria o código da função Python
-        py_code = f"""
-def {ast_function.name}({', '.join(params)}):
-    {function_body}
-        """
+        # Se o corpo da função estiver vazio, adicione um pass
+        if not function_body.strip():
+            function_body = "    pass"
+        
+        # Certifique-se de que o corpo da função está indentado corretamente
+        # Divida o corpo em linhas e adicione a indentação adequada
+        indented_body = []
+        for line in function_body.split('\n'):
+            if line.strip():  # Se a linha não está vazia
+                # Certifique-se de que a linha começa com pelo menos 4 espaços
+                if not line.startswith('    '):
+                    line = '    ' + line
+                indented_body.append(line)
+            else:
+                indented_body.append(line)  # Mantém linhas vazias
+        
+        # Juntar as linhas novamente
+        processed_body = '\n'.join(indented_body)
+        
+        # Cria o código da função Python com indentação correta
+        py_code = f"""def {ast_function.name}({', '.join(params)}):
+{processed_body}
+"""
         
         # Armazena o código fonte para uso posterior
         self.cached_code[ast_function.name] = py_code
+        print(f"Código Python gerado:\n{py_code}")  # Debugging
         
         return py_code
     
@@ -66,8 +111,17 @@ def {ast_function.name}({', '.join(params)}):
         Compila o código Python usando Numba JIT
         """
         # Compila o código
+        global_vars = globals()
         local_vars = {}
-        exec(py_code, globals(), local_vars)
+        
+        # Primeiro, execute o código para definir a função no escopo
+        exec(py_code, global_vars, local_vars)
+        
+        # Adicione a função ao escopo global para permitir recursão
+        global_vars[function_name] = local_vars[function_name]
+        
+        # Reexecute para garantir que a função recursiva possa se encontrar
+        exec(py_code, global_vars, local_vars)
         
         # Obtém a função compilada
         func = local_vars[function_name]
@@ -230,4 +284,26 @@ class PythonCodeGenerator:
         return str(expr.value)
     
     def _generate_variable(self, expr):
-        return expr.name 
+        return expr.name
+    
+    def _generate_ifstatement(self, stmt):
+        condition = self.generate(stmt.condition)
+        then_branch = self._generate_block(stmt.then_branch)
+        
+        code = f"if {condition}:\n{then_branch}"
+        
+        if stmt.else_branch:
+            else_branch = self._generate_block(stmt.else_branch)
+            code += f"\nelse:\n{else_branch}"
+        
+        return code
+    
+    def _generate_functioncall(self, expr):
+        func_name = expr.name if isinstance(expr.name, str) else self.generate(expr.name)
+        args = []
+        
+        if expr.arguments:
+            for arg in expr.arguments:
+                args.append(self.generate(arg))
+        
+        return f"{func_name}({', '.join(args)})" 

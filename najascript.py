@@ -2,94 +2,108 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import os
 import argparse
 from lexer import Lexer
 from parser_naja import Parser
 from interpreter import Interpreter
-from jit_compiler import JITCompiler
-from aot_compiler import AOTCompiler
+from naja_bytecode import NajaBytecodeCompiler, BytecodeInterpreter
+from naja_llvm import NajaLLVMGenerator
+from llvmlite import binding as llvm
+
+def initialize_llvm():
+    """Inicializa o LLVM"""
+    llvm.initialize()
+    llvm.initialize_native_target()
+    llvm.initialize_native_asmprinter()
+    
+    # Cria o engine de execução
+    target = llvm.get_native_target()
+    target_machine = target.create_target_machine()
+    
+    return target_machine
 
 def main():
-    # Configura o parser de argumentos
-    parser = argparse.ArgumentParser(description='NajaScript - Interpretador/Compilador')
-    parser.add_argument('arquivo', help='Arquivo fonte NajaScript (.naja)')
-    parser.add_argument('--jit', action='store_true', help='Ativa o compilador JIT')
-    parser.add_argument('--compile', action='store_true', help='Compila para um executável nativo')
-    parser.add_argument('--output', '-o', help='Nome do arquivo de saída')
-    parser.add_argument('--optimize', '-O', action='store_true', help='Ativa otimizações')
-    parser.add_argument('--target', help='Target triple para compilação (ex: x86_64-pc-linux-gnu)')
-
+    parser = argparse.ArgumentParser(description='Interpretador NajaScript')
+    parser.add_argument('arquivo', help='Arquivo fonte NajaScript')
+    parser.add_argument('--interpret', action='store_true', help='Usar interpretador')
+    parser.add_argument('--bytecode', action='store_true', help='Usar bytecode')
+    parser.add_argument('--llvm', action='store_true', help='Usar LLVM')
     args = parser.parse_args()
-
-    # Verifica se o arquivo existe
-    if not os.path.exists(args.arquivo):
-        print(f"Erro: Arquivo '{args.arquivo}' não encontrado.")
-        return 1
-
-    # Tenta ler o arquivo com diferentes codificações
-    source = None
-    encodings = ['utf-8', 'latin-1', 'cp1252', 'iso-8859-1']
     
-    for encoding in encodings:
-        try:
-            with open(args.arquivo, 'r', encoding=encoding) as file:
-                source = file.read()
-                print(f"Arquivo lido com sucesso usando codificação: {encoding}")
-                break
-        except UnicodeDecodeError:
-            continue
-    
-    if source is None:
-        print(f"Erro: Não foi possível ler o arquivo '{args.arquivo}' com nenhuma das codificações tentadas.")
-        return 1
-
+    # Lê o arquivo fonte
     try:
-        # Inicializa o lexer e parser
-        lexer = Lexer(source)
-        parser = Parser(lexer)
-        
-        # Analisa o código fonte e cria a AST
-        ast = parser.parse()
-        
-        # Determina o modo de execução
-        if args.compile:
-            # Modo de compilação AOT
-            output_file = args.output or os.path.splitext(args.arquivo)[0]
-            
-            # Inicializa o compilador AOT
-            compiler = AOTCompiler(target_triple=args.target)
-            
-            # Compila o programa
-            print(f"Compilando '{args.arquivo}' para executável nativo...")
-            result = compiler.compile(ast, output_file=output_file, optimize=args.optimize)
-            
-            print(f"Compilação concluída! Executável gerado: {result}")
-            
-        else:
-            # Modo de interpretação (com ou sem JIT)
-            interpreter = Interpreter()
-            
-            if args.jit:
-                # Ativa o JIT compiler
-                jit_compiler = JITCompiler()
-                interpreter.set_jit_compiler(jit_compiler)
-                print("Interpretador JIT ativado")
-            
-            # Interpreta a AST
-            result = interpreter.interpret(ast)
-            
-            if result:
-                print("Programa executado com sucesso!")
-    
+        with open(args.arquivo, 'r', encoding='utf-8') as f:
+            source = f.read()
+    except FileNotFoundError:
+        print(f"Erro: Arquivo '{args.arquivo}' não encontrado")
+        sys.exit(1)
     except Exception as e:
-        print(f"Erro: {e}")
-        # Adiciona traceback para depuração
-        import traceback
-        traceback.print_exc()
-        return 1
+        print(f"Erro ao ler arquivo: {e}")
+        sys.exit(1)
         
-    return 0
+    # Análise léxica e sintática
+    lexer = Lexer(source)
+    parser = Parser(lexer)
+    ast = parser.parse()
+    
+    if args.interpret:
+        # Modo interpretador
+        interpreter = Interpreter()
+        interpreter.interpret(ast)
+        
+    elif args.bytecode:
+        # Modo bytecode
+        compiler = NajaBytecodeCompiler()
+        bytecode = compiler.compile(ast)
+        interpreter = BytecodeInterpreter()
+        # Configura o interpretador
+        compiler.set_interpreter(interpreter)
+        interpreter.execute(bytecode)
+        
+    elif args.llvm:
+        # Modo LLVM
+        # Primeiro compila para bytecode
+        compiler = NajaBytecodeCompiler()
+        bytecode = compiler.compile(ast)
+        
+        # Depois gera LLVM IR
+        llvm_gen = NajaLLVMGenerator()
+        module = llvm_gen.generate(bytecode)
+        
+        # Inicializa LLVM
+        target_machine = initialize_llvm()
+        
+        # Compila e executa
+        llvm_ir = str(module)
+        mod = llvm.parse_assembly(llvm_ir)
+        mod.verify()
+        
+        # Aplica otimizações
+        pmb = llvm.create_pass_manager_builder()
+        pmb.opt_level = 2
+        pm = llvm.create_module_pass_manager()
+        pmb.populate(pm)
+        pm.run(mod)
+        
+        # Executa o código
+        engine = llvm.create_mcjit_compiler(mod, target_machine)
+        engine.finalize_object()
+        
+        # Obtém e executa a função main
+        func_ptr = engine.get_function_address("main")
+        
+        # Cria um wrapper Python para a função
+        from ctypes import CFUNCTYPE, c_int
+        cfunc = CFUNCTYPE(c_int)(func_ptr)
+        
+        # Executa
+        result = cfunc()
+        print(f"Resultado: {result}")
+        
+    else:
+        # Modo padrão (interpretador)
+        interpreter = Interpreter()
+        interpreter.interpret(ast)
 
-if __name__ == "__main__":
-    sys.exit(main()) 
+if __name__ == '__main__':
+    main() 
