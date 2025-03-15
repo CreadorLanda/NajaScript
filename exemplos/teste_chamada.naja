@@ -1,0 +1,31 @@
+// Teste simples de chamadas de função
+importar "NajaPt";
+
+funcao somar(a, b) {
+    retornar a + b;
+}
+
+funcao multiplicar(a, b) {
+    retornar a * b;
+}
+
+funcao calcular(a, b, operacao) {
+    se (operacao == "soma") {
+        retornar somar(a, b);
+    } elif (operacao == "multiplicacao") {
+        retornar multiplicar(a, b);
+    } senao {
+        retornar 0;
+    }
+}
+
+funcao principal() {
+    print("Testando chamadas de função\n");
+    print("5 + 3 = " + somar(5, 3) + "\n");
+    print("5 * 3 = " + multiplicar(5, 3) + "\n");
+    print("Calculando soma: " + calcular(10, 20, "soma") + "\n");
+    print("Calculando multiplicação: " + calcular(10, 20, "multiplicacao") + "\n");
+    print("Teste concluído\n");
+}
+
+principal(); 

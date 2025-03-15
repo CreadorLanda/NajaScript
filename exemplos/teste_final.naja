@@ -1,0 +1,67 @@
+// Teste final para verificar as funcionalidades do interpretador
+importar "NajaPt";
+
+// Funções recursivas
+funcao fatorial(n) {
+    se (n <= 1) {
+        retornar 1;
+    }
+    retornar n * fatorial(n - 1);
+}
+
+// Função com múltiplos retornos
+funcao avaliarNota(nota) {
+    se (nota >= 90) {
+        retornar "A";
+    } elif (nota >= 80) {
+        retornar "B";
+    } elif (nota >= 70) {
+        retornar "C";
+    } elif (nota >= 60) {
+        retornar "D";
+    } senao {
+        retornar "F";
+    }
+}
+
+// Função com valor padrão de retorno
+funcao testarRetorno() {
+    // não tem retorno explícito
+}
+
+// Função principal
+funcao principal() {
+    escreverln("=== Teste Final NajaScript (PT) ===");
+    
+    // Variáveis e tipos
+    inteiro i = 10;
+    decimal f = 3.14;
+    string s = "Olá, NajaScript!";
+    booleano b = verdadeiro;
+    
+    escreverln("\nVariáveis e Tipos:");
+    escreverln("i = " + i);
+    escreverln("f = " + f);
+    escreverln("s = " + s);
+    escreverln("b = " + b);
+    
+    // Operações aritméticas
+    escreverln("\nOperações Aritméticas:");
+    escreverln("i + 5 = " + (i + 5));
+    escreverln("i - 3 = " + (i - 3));
+    escreverln("i * 2 = " + (i * 2));
+    escreverln("i / 3 = " + (i / 3));
+    
+    // Chamadas de funções
+    escreverln("\nChamadas de Funções:");
+    escreverln("fatorial(5) = " + fatorial(5));
+    escreverln("Nota 85 = " + avaliarNota(85));
+    
+    // Teste de retorno implícito
+    escreverln("Retorno implícito = " + testarRetorno());
+    
+    // Teste concluído
+    escreverln("\n=== Teste Concluído com Sucesso! ===");
+}
+
+principal(); 

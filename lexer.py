@@ -32,6 +32,7 @@ class TokenType(Enum):
     TYPE = auto()
     FLUX = auto()
     ANY = auto()  # Novo token para o tipo any
+    IMPORT = auto()  # Novo token para importação de módulos
     
     # Literais
     INTEGER = auto()
@@ -72,6 +73,9 @@ class TokenType(Enum):
     # Outros
     IDENTIFIER = auto()
     EOF = auto()
+    NOT = auto()
+    AND = auto()
+    OR = auto()
 
 class Token:
     def __init__(self, type, value=None, line=0, column=0):
@@ -127,9 +131,11 @@ class Lexer:
             'list': TokenType.LIST,
             'type': TokenType.TYPE,
             'flux': TokenType.FLUX,
-            'any': TokenType.ANY,  # Adicionando any às palavras-chave
+            'any': TokenType.ANY,
             'true': TokenType.TRUE,
             'false': TokenType.FALSE,
+            'import': TokenType.IMPORT,  # Adicionando a palavra-chave import
+            'importar': TokenType.IMPORT,  # Permitindo 'importar' como alias para 'import'
         }
     
     def advance(self):
@@ -155,7 +161,7 @@ class Lexer:
             self.advance()
     
     def skip_comment(self):
-        # Pula comentários de linha única (#)
+        """Pula comentários de linha única (# ou //)"""
         while self.current_char is not None and self.current_char != '\n':
             self.advance()
     
@@ -240,9 +246,24 @@ class Lexer:
                 self.skip_whitespace()
                 continue
             
-            # Comentários
-            if self.current_char == '#':
+            # Comentários de linha única (# ou //)
+            if self.current_char == '#' or (self.current_char == '/' and self.peek() == '/'):
                 self.skip_comment()
+                continue
+            
+            # Comentários de bloco (/* ... */)
+            if self.current_char == '/' and self.peek() == '*':
+                # Avança /* 
+                self.advance()
+                self.advance()
+                
+                # Continua até encontrar */
+                while self.current_char is not None:
+                    if self.current_char == '*' and self.peek() == '/':
+                        self.advance()  # avança *
+                        self.advance()  # avança /
+                        break
+                    self.advance()
                 continue
             
             # Identificadores e palavras-chave
@@ -303,7 +324,26 @@ class Lexer:
                 if self.current_char == '=':
                     self.advance()
                     return Token(TokenType.NEQ, '!=', self.line, column)
-                raise Exception(f"Caractere inválido '!' na linha {self.line}, coluna {column}")
+                # Operador NOT, não é mais inválido
+                return Token(TokenType.NOT, '!', self.line, column)
+            
+            # Suporte para operador AND (&&)
+            if self.current_char == '&':
+                column = self.column
+                self.advance()
+                if self.current_char == '&':
+                    self.advance()
+                    return Token(TokenType.AND, '&&', self.line, column)
+                raise Exception(f"Caractere inválido '&' na linha {self.line}, coluna {column}, esperado '&&'")
+            
+            # Suporte para operador OR (||)
+            if self.current_char == '|':
+                column = self.column
+                self.advance()
+                if self.current_char == '|':
+                    self.advance()
+                    return Token(TokenType.OR, '||', self.line, column)
+                raise Exception(f"Caractere inválido '|' na linha {self.line}, coluna {column}, esperado '||'")
             
             if self.current_char == '<':
                 column = self.column

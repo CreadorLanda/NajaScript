@@ -1,0 +1,104 @@
+# Teste do NajaPt - Programação em português com NajaScript
+importar "NajaPt";
+
+# Exemplo de função em português
+funcao calculadora(inteiro a, inteiro b, texto operacao) {
+    se (operacao == "soma") {
+        retornar a + b;
+    } senao se (operacao == "subtracao") {
+        retornar a - b;
+    } senao se (operacao == "multiplicacao") {
+        retornar a * b;
+    } senao se (operacao == "divisao") {
+        se (b == 0) {
+            escreverln("Erro: Divisão por zero!");
+            retornar 0;
+        }
+        retornar a / b;
+    } senao {
+        escreverln("Operação desconhecida!");
+        retornar 0;
+    }
+}
+
+# Exemplo de uso de estruturas de controle
+funcao exemploEstruturasControle() {
+    escreverln("--- Exemplo de Estruturas de Controle ---");
+    
+    # Exemplo de loop para
+    escreverln("Contagem de 1 a 5:");
+    para (inteiro i = 1; i <= 5; i = i + 1) {
+        escrever(i + " ");
+    }
+    escreverln("");
+    
+    # Exemplo de loop enquanto
+    escreverln("Contagem regressiva:");
+    inteiro contador = 5;
+    enquanto (contador > 0) {
+        escrever(contador + " ");
+        contador = contador - 1;
+    }
+    escreverln("");
+    
+    # Exemplo de condicional
+    inteiro idade = 18;
+    se (idade >= 18) {
+        escreverln("Maior de idade");
+    } senao {
+        escreverln("Menor de idade");
+    }
+}
+
+# Exemplo de uso de listas e dicionários
+funcao exemploColecoes() {
+    escreverln("--- Exemplo de Coleções ---");
+    
+    # Lista
+    lista frutas = ["maçã", "banana", "laranja"];
+    escreverln("Frutas: " + frutas);
+    
+    frutas.adicionar("uva");
+    escreverln("Frutas após adicionar uva: " + frutas);
+    
+    frutas.remover(1);  # Remove banana
+    escreverln("Frutas após remover banana: " + frutas);
+    
+    # Dicionário
+    dicionario pessoa = {
+        nome: "João",
+        idade: 30,
+        cidade: "São Paulo"
+    };
+    
+    escreverln("Pessoa: " + pessoa);
+    escreverln("Nome: " + pessoa.obter("nome"));
+    
+    pessoa.adicionar("profissao", "Programador");
+    escreverln("Pessoa após adicionar profissão: " + pessoa);
+    
+    pessoa.remover("cidade");
+    escreverln("Pessoa após remover cidade: " + pessoa);
+}
+
+# Função principal
+funcao principal() {
+    escreverln("=== Teste do NajaPt ===");
+    
+    # Teste calculadora
+    escreverln("Resultado da soma: " + calculadora(10, 5, "soma"));
+    escreverln("Resultado da subtração: " + calculadora(10, 5, "subtracao"));
+    escreverln("Resultado da multiplicação: " + calculadora(10, 5, "multiplicacao"));
+    escreverln("Resultado da divisão: " + calculadora(10, 5, "divisao"));
+    
+    # Teste estruturas de controle
+    exemploEstruturasControle();
+    
+    # Teste coleções
+    exemploColecoes();
+    
+    escreverln("=== Fim do Teste ===");
+}
+
+# Executa a função principal
+principal(); 

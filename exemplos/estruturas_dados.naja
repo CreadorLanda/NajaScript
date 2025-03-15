@@ -1,0 +1,234 @@
+// Demonstração completa de estruturas de dados e repetições em NajaScript
+importar "NajaPt";
+
+funcao principal() {
+    escreverln("=== Demonstração de Estruturas de Dados e Repetições em NajaScript ===");
+    
+    //===========================================================
+    // 1. ESTRUTURAS DE REPETIÇÃO
+    //===========================================================
+    escreverln("\n1. ESTRUTURAS DE REPETIÇÃO:");
+    
+    // For tradicional
+    escreverln("\n  1.1 Loop 'para' (for):");
+    escreverln("  Contando de 1 a 5:");
+    
+    para (inteiro i = 1; i <= 5; i = i + 1) {
+        escrever("    " + i);
+        se (i < 5) escrever(", ");
+    }
+    escreverln("");
+    
+    // While
+    escreverln("\n  1.2 Loop 'enquanto' (while):");
+    escreverln("  Contando de 5 a 1 (regressivo):");
+    
+    inteiro contador = 5;
+    enquanto (contador > 0) {
+        escrever("    " + contador);
+        se (contador > 1) escrever(", ");
+        contador = contador - 1;
+    }
+    escreverln("");
+    
+    // Do-While
+    escreverln("\n  1.3 Loop 'fazer-enquanto' (do-while):");
+    escreverln("  Gerando números pares até 10:");
+    
+    inteiro num = 2;
+    fazer {
+        escrever("    " + num);
+        se (num < 10) escrever(", ");
+        num = num + 2;
+    } enquanto (num <= 10);
+    escreverln("");
+    
+    // ForIn com lista
+    escreverln("\n  1.4 Loop 'para cada' (forin):");
+    lista frutas = lista("Maçã", "Banana", "Uva", "Morango", "Abacaxi");
+    escreverln("  Frutas na lista:");
+    
+    paracada (item em frutas) {
+        escreverln("    - " + item);
+    }
+    
+    //===========================================================
+    // 2. LISTAS
+    //===========================================================
+    escreverln("\n2. LISTAS:");
+    
+    // Criação de listas
+    escreverln("\n  2.1 Criação de listas:");
+    lista numeros = lista(10, 20, 30, 40, 50);
+    escreverln("  Lista de números: " + numeros);
+    
+    // Lista vazia
+    lista listaVazia = lista();
+    escreverln("  Lista vazia: " + listaVazia);
+    
+    // Operações com listas
+    escreverln("\n  2.2 Operações com listas:");
+    
+    // Adicionar elementos
+    escreverln("  Adicionando elementos:");
+    listaVazia.adicionar("Primeiro");
+    listaVazia.adicionar("Segundo");
+    listaVazia.adicionar("Terceiro");
+    escreverln("    Lista após adições: " + listaVazia);
+    
+    // Acessar elementos
+    escreverln("  Acessando elementos:");
+    escreverln("    Primeiro elemento da lista 'numeros': " + numeros.obter(0));
+    escreverln("    Terceiro elemento da lista 'listaVazia': " + listaVazia.obter(2));
+    
+    // Remover elementos
+    escreverln("  Removendo elementos:");
+    texto removido = listaVazia.remover(1);  // Remove o elemento no índice 1
+    escreverln("    Elemento removido: " + removido);
+    escreverln("    Lista após remoção: " + listaVazia);
+    
+    // Comprimento da lista
+    escreverln("  Comprimento da lista:");
+    escreverln("    A lista 'numeros' tem " + comprimento(numeros) + " elementos");
+    
+    // Verificar se a lista está vazia
+    escreverln("  Verificação de lista vazia:");
+    lista novaLista = lista();
+    escreverln("    Lista nova está vazia? " + novaLista.estaVazia());
+    escreverln("    Lista 'numeros' está vazia? " + numeros.estaVazia());
+    
+    //===========================================================
+    // 3. DICIONÁRIOS
+    //===========================================================
+    escreverln("\n3. DICIONÁRIOS:");
+    
+    // Criação de dicionários
+    escreverln("\n  3.1 Criação de dicionários:");
+    dicionario pessoa = dicionario();
+    pessoa.adicionar("nome", "João");
+    pessoa.adicionar("idade", 30);
+    pessoa.adicionar("cidade", "São Paulo");
+    pessoa.adicionar("profissao", "Desenvolvedor");
+    
+    escreverln("  Dicionário pessoa: " + pessoa);
+    
+    // Acessar valores
+    escreverln("\n  3.2 Acessando valores do dicionário:");
+    escreverln("    Nome: " + pessoa.obter("nome"));
+    escreverln("    Idade: " + pessoa.obter("idade"));
+    escreverln("    Cidade: " + pessoa.obter("cidade"));
+    
+    // Modificar valores
+    escreverln("\n  3.3 Modificando valores do dicionário:");
+    pessoa.adicionar("idade", 31);  // Sobrescreve o valor existente
+    pessoa.adicionar("linguagens", lista("Python", "JavaScript", "NajaScript"));
+    escreverln("    Dicionário após modificações: " + pessoa);
+    
+    // Remover valores
+    escreverln("\n  3.4 Removendo valores do dicionário:");
+    pessoa.remover("profissao");
+    escreverln("    Dicionário após remoção: " + pessoa);
+    
+    // Comprimento do dicionário
+    escreverln("\n  3.5 Comprimento do dicionário:");
+    escreverln("    O dicionário 'pessoa' tem " + comprimento(pessoa) + " chaves");
+    
+    //===========================================================
+    // 4. VETORES (IMMUTÁVEIS)
+    //===========================================================
+    escreverln("\n4. VETORES (VECTO - Estruturas Imutáveis):");
+    
+    // Criação de vetores
+    escreverln("\n  4.1 Criação de vetores:");
+    vecto coordenadas = vecto(10, 20, 30);
+    escreverln("  Vetor de coordenadas: " + coordenadas);
+    
+    // Acessar elementos
+    escreverln("\n  4.2 Acessando elementos do vetor:");
+    escreverln("    Coordenada X (índice 0): " + coordenadas.obter(0));
+    escreverln("    Coordenada Y (índice 1): " + coordenadas.obter(1));
+    escreverln("    Coordenada Z (índice 2): " + coordenadas.obter(2));
+    
+    // Comprimento do vetor
+    escreverln("\n  4.3 Comprimento do vetor:");
+    escreverln("    O vetor 'coordenadas' tem " + comprimento(coordenadas) + " elementos");
+    
+    //===========================================================
+    // 5. EXEMPLO PRÁTICO: SISTEMA DE CADASTRO DE ALUNOS
+    //===========================================================
+    escreverln("\n5. EXEMPLO PRÁTICO: SISTEMA DE CADASTRO DE ALUNOS");
+    
+    // Inicialização da base de dados
+    lista alunos = lista();
+    
+    // Adicionar alguns alunos
+    dicionario aluno1 = dicionario();
+    aluno1.adicionar("matricula", "A001");
+    aluno1.adicionar("nome", "Maria Silva");
+    aluno1.adicionar("notas", lista(9.5, 8.7, 7.8));
+    
+    dicionario aluno2 = dicionario();
+    aluno2.adicionar("matricula", "A002");
+    aluno2.adicionar("nome", "Pedro Santos");
+    aluno2.adicionar("notas", lista(6.5, 7.2, 8.1));
+    
+    dicionario aluno3 = dicionario();
+    aluno3.adicionar("matricula", "A003");
+    aluno3.adicionar("nome", "Ana Oliveira");
+    aluno3.adicionar("notas", lista(9.8, 9.2, 9.5));
+    
+    // Adicionar os alunos à lista
+    alunos.adicionar(aluno1);
+    alunos.adicionar(aluno2);
+    alunos.adicionar(aluno3);
+    
+    // Mostrar informações de todos os alunos
+    escreverln("\n  5.1 Lista de alunos cadastrados:");
+    
+    paracada (aluno em alunos) {
+        escreverln("    Matrícula: " + aluno.obter("matricula"));
+        escreverln("    Nome: " + aluno.obter("nome"));
+        
+        // Calcular média das notas
+        lista notas = aluno.obter("notas");
+        decimal soma = 0;
+        paracada (nota em notas) {
+            soma = soma + nota;
+        }
+        decimal media = soma / comprimento(notas);
+        
+        escreverln("    Média: " + media);
+        
+        // Verificar situação com base na média
+        se (media >= 7.0) {
+            escreverln("    Situação: Aprovado");
+        } senao {
+            escreverln("    Situação: Reprovado");
+        }
+        escreverln("");
+    }
+    
+    // Função de busca por matrícula
+    escreverln("  5.2 Busca de aluno por matrícula (A003):");
+    dicionario alunoBuscado = buscarAlunoPorMatricula(alunos, "A003");
+    
+    se (alunoBuscado != nulo) {
+        escreverln("    Aluno encontrado: " + alunoBuscado.obter("nome"));
+    } senao {
+        escreverln("    Aluno não encontrado.");
+    }
+    
+    escreverln("\n=== Demonstração Concluída ===");
+}
+
+// Função auxiliar para buscar um aluno por matrícula
+funcao buscarAlunoPorMatricula(lista alunos, texto matricula) {
+    paracada (aluno em alunos) {
+        se (aluno.obter("matricula") == matricula) {
+            retornar aluno;
+        }
+    }
+    retornar nulo;
+}
+
+principal(); 

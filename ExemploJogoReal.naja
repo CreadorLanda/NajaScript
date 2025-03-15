@@ -1,0 +1,476 @@
+# ExemploJogoReal.naja
+# Um exemplo simples de jogo usando a biblioteca NajaGame2D real
+import "NajaGame2D.naja";
+
+# ==========================================================
+# CONFIGURAÇÕES INICIAIS
+# ==========================================================
+
+# Inicializa a página HTML
+inicializarPagina();
+
+# Configurações do jogo
+int LARGURA_TELA = 800;
+int ALTURA_TELA = 600;
+int GRAVIDADE = 980;  # pixels por segundo ao quadrado
+int VELOCIDADE_JOGADOR = 250;
+int FORCA_PULO = 500;
+
+# Caminhos dos recursos
+string IMG_JOGADOR = "assets/jogador.png";
+string IMG_INIMIGO = "assets/inimigo.png";
+string IMG_PLATAFORMA = "assets/plataforma.png";
+string IMG_MOEDA = "assets/moeda.png"; 
+string IMG_FUNDO = "assets/fundo.png";
+string SOM_PULO = "assets/pulo.wav";
+string SOM_COLETA = "assets/coleta.wav";
+string SOM_DANO = "assets/dano.wav";
+string MUSICA_FUNDO = "assets/musica.mp3";
+
+# ==========================================================
+# INICIALIZAÇÃO DO JOGO
+# ==========================================================
+
+fun iniciarJogo() {
+    # Cria o objeto do jogo
+    dict jogo = initGame(LARGURA_TELA, ALTURA_TELA, "NajaGame2D - Exemplo Real");
+    
+    # Carrega recursos (sprites)
+    dict spriteJogador = criarSprite(IMG_JOGADOR, 192, 256);  # Sprite sheet 3x4
+    configurarSpriteSheet(spriteJogador, 8, 3, 0.1);  # 8 frames, 3 por linha, 100ms por frame
+    
+    dict spriteInimigo = criarSprite(IMG_INIMIGO, 128, 64);  # Sprite sheet 2x1
+    configurarSpriteSheet(spriteInimigo, 2, 2, 0.2);  # 2 frames, 2 por linha, 200ms por frame
+    
+    dict spritePlataforma = criarSprite(IMG_PLATAFORMA, 128, 32);
+    dict spriteMoeda = criarSprite(IMG_MOEDA, 128, 32);  # Sprite sheet 4x1
+    configurarSpriteSheet(spriteMoeda, 4, 4, 0.15);  # 4 frames, 4 por linha, 150ms por frame
+    
+    dict spriteFundo = criarSprite(IMG_FUNDO, LARGURA_TELA, ALTURA_TELA);
+    
+    # Carrega sprites no jogo
+    carregarSprite(jogo, "jogador", spriteJogador);
+    carregarSprite(jogo, "inimigo", spriteInimigo);
+    carregarSprite(jogo, "plataforma", spritePlataforma);
+    carregarSprite(jogo, "moeda", spriteMoeda);
+    carregarSprite(jogo, "fundo", spriteFundo);
+    
+    # Cria o jogador
+    dict jogador = criarObjeto("jogador", 100, 100, spriteJogador);
+    jogador.velocidade_x = 0;
+    jogador.velocidade_y = 0;
+    jogador.no_chao = false;
+    jogador.pontos = 0;
+    jogador.vidas = 3;
+    jogador.invencivel = false;
+    jogador.tempo_invencibilidade = 0;
+    
+    # Variáveis para controle do jogo usando flux (reatividade)
+    flux pontuacao_texto = "PONTOS: " + jogador.pontos;
+    flux vidas_texto = "VIDAS: " + jogador.vidas;
+    
+    # ==========================================================
+    # FUNÇÕES DE ATUALIZAÇÃO (LÓGICA DO JOGO)
+    # ==========================================================
+    
+    # Atualização da cena principal
+    fun atualizarJogo(dict game, float delta) {
+        # Renderiza o fundo primeiro (antes de atualizar objetos)
+        renderizarFundo(game);
+        
+        # Atualiza cada objeto do jogo
+        forin (objeto in game.cenas.get(game.cena_atual).objetos) {
+            # Atualiza posição baseada na velocidade
+            atualizarObjeto(objeto, delta);
+            
+            # Lógica específica para o jogador
+            if (objeto.nome == "jogador") {
+                # Movimento horizontal
+                if (teclaEstaPressionada(game, "ArrowRight") || teclaEstaPressionada(game, "d")) {
+                    objeto.velocidade_x = VELOCIDADE_JOGADOR;
+                    objeto.escala_x = 1;  # Olha para direita
+                } elif (teclaEstaPressionada(game, "ArrowLeft") || teclaEstaPressionada(game, "a")) {
+                    objeto.velocidade_x = -VELOCIDADE_JOGADOR;
+                    objeto.escala_x = -1;  # Olha para esquerda
+                } else {
+                    objeto.velocidade_x = 0;
+                }
+                
+                # Gravidade sempre aplicada quando não está no chão
+                if (!objeto.no_chao) {
+                    aplicarGravidade(objeto, GRAVIDADE, delta);
+                }
+                
+                # Pulo
+                if ((teclaEstaPressionada(game, "ArrowUp") || 
+                     teclaEstaPressionada(game, "w") || 
+                     teclaEstaPressionada(game, "Space")) && 
+                    objeto.no_chao) {
+                    objeto.velocidade_y = -FORCA_PULO;
+                    objeto.no_chao = false;
+                    tocarSom(SOM_PULO);
+                }
+                
+                # Limites da tela
+                if (objeto.x < 0) {
+                    objeto.x = 0;
+                }
+                if (objeto.x + objeto.largura > LARGURA_TELA) {
+                    objeto.x = LARGURA_TELA - objeto.largura;
+                }
+                
+                # Se cair fora da tela, perde uma vida
+                if (objeto.y > ALTURA_TELA) {
+                    objeto.y = 100;
+                    objeto.x = 100;
+                    objeto.velocidade_y = 0;
+                    objeto.vidas = objeto.vidas - 1;
+                    objeto.invencivel = true;
+                    objeto.tempo_invencibilidade = 2.0;  # 2 segundos invencível
+                    tocarSom(SOM_DANO);
+                    
+                    if (objeto.vidas <= 0) {
+                        trocarCena(game, "gameOver");
+                    }
+                }
+                
+                # Atualiza tempo de invencibilidade
+                if (objeto.invencivel) {
+                    objeto.tempo_invencibilidade = objeto.tempo_invencibilidade - delta;
+                    
+                    # Efeito piscar (a cada 0.1 segundos)
+                    if (Math.floor(objeto.tempo_invencibilidade * 10) % 2 == 0) {
+                        objeto.visivel = false;
+                    } else {
+                        objeto.visivel = true;
+                    }
+                    
+                    # Termina invencibilidade
+                    if (objeto.tempo_invencibilidade <= 0) {
+                        objeto.invencivel = false;
+                        objeto.visivel = true;
+                    }
+                }
+                
+                # Reset no_chao a cada frame
+                objeto.no_chao = false;
+                
+                # Verifica colisões com plataformas
+                forin (outro_objeto in game.cenas.get(game.cena_atual).objetos) {
+                    # Colisão com plataformas
+                    if (outro_objeto.nome.indexOf("plataforma") >= 0) {
+                        if (verificarColisao(objeto, outro_objeto)) {
+                            # Verifica se está caindo e acima da plataforma
+                            if (objeto.velocidade_y > 0 && 
+                                (objeto.y + objeto.altura - objeto.velocidade_y * delta) <= outro_objeto.y) {
+                                objeto.y = outro_objeto.y - objeto.altura;
+                                objeto.velocidade_y = 0;
+                                objeto.no_chao = true;
+                            }
+                        }
+                    }
+                    
+                    # Coleta de moedas
+                    if (outro_objeto.nome.indexOf("moeda") >= 0 && outro_objeto.visivel) {
+                        if (verificarColisaoCircular(objeto, outro_objeto)) {
+                            outro_objeto.visivel = false;
+                            objeto.pontos = objeto.pontos + 10;
+                            tocarSom(SOM_COLETA);
+                            
+                            # Cria efeito de partículas na posição da moeda
+                            dict particulas = criarSistemaParticulas(
+                                outro_objeto.x + outro_objeto.centro_x,
+                                outro_objeto.y + outro_objeto.centro_y,
+                                "255, 215, 0", 15, 0.8
+                            );
+                            particulas.nome = "particulas" + outro_objeto.nome;
+                            adicionarObjetoACena(game.cenas.get(game.cena_atual), particulas);
+                        }
+                    }
+                    
+                    # Colisão com inimigos
+                    if (outro_objeto.nome.indexOf("inimigo") >= 0 && !objeto.invencivel) {
+                        if (verificarColisaoCircular(objeto, outro_objeto)) {
+                            objeto.vidas = objeto.vidas - 1;
+                            objeto.invencivel = true;
+                            objeto.tempo_invencibilidade = 2.0;
+                            tocarSom(SOM_DANO);
+                            
+                            # Efeito de knockback
+                            float direcao = objeto.x < outro_objeto.x ? -1 : 1;
+                            objeto.velocidade_x = direcao * VELOCIDADE_JOGADOR * 1.5;
+                            objeto.velocidade_y = -FORCA_PULO * 0.6;
+                            
+                            if (objeto.vidas <= 0) {
+                                trocarCena(game, "gameOver");
+                            }
+                        }
+                    }
+                }
+                
+                # Atualiza texto de pontuação e vidas
+                pontuacao_texto = "PONTOS: " + objeto.pontos;
+                vidas_texto = "VIDAS: " + objeto.vidas;
+            }
+            
+            # Lógica de movimento para inimigos
+            if (objeto.nome.indexOf("inimigo") >= 0) {
+                # Movimentação horizontal com rebote nas bordas da área patrulhada
+                if (objeto.direcao == "direita") {
+                    objeto.velocidade_x = 100;
+                    objeto.escala_x = 1;  # Olha para direita
+                    
+                    if (objeto.x > objeto.limite_direita) {
+                        objeto.direcao = "esquerda";
+                    }
+                } else {
+                    objeto.velocidade_x = -100;
+                    objeto.escala_x = -1;  # Olha para esquerda
+                    
+                    if (objeto.x < objeto.limite_esquerda) {
+                        objeto.direcao = "direita";
+                    }
+                }
+                
+                # Verifica colisão com plataformas para os inimigos também
+                objeto.no_chao = false;
+                aplicarGravidade(objeto, GRAVIDADE, delta);
+                
+                forin (plat in game.cenas.get(game.cena_atual).objetos) {
+                    if (plat.nome.indexOf("plataforma") >= 0) {
+                        if (verificarColisao(objeto, plat)) {
+                            if (objeto.velocidade_y > 0 && 
+                                (objeto.y + objeto.altura - objeto.velocidade_y * delta) <= plat.y) {
+                                objeto.y = plat.y - objeto.altura;
+                                objeto.velocidade_y = 0;
+                                objeto.no_chao = true;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            # Atualiza sistemas de partículas
+            if (objeto.nome.indexOf("particulas") >= 0) {
+                atualizarParticulas(objeto, delta);
+                
+                # Se o sistema de partículas não está mais ativo, remove-o
+                if (!objeto.ativo) {
+                    # Para remover da lista, marcamos para exclusão
+                    objeto.remover = true;
+                }
+            }
+        }
+        
+        # Remove objetos marcados para exclusão
+        list objetos_para_manter = list();
+        forin (obj in game.cenas.get(game.cena_atual).objetos) {
+            if (!obj.remover) {
+                objetos_para_manter.add(obj);
+            }
+        }
+        
+        game.cenas.get(game.cena_atual).objetos = objetos_para_manter;
+    }
+    
+    # Renderização do fundo
+    fun renderizarFundo(dict game) {
+        # Desenha o sprite de fundo completo
+        dict fundo = {
+            sprite: game.sprites.get("fundo"),
+            x: 0,
+            y: 0,
+            visivel: true,
+            centro_x: 0,
+            centro_y: 0,
+            rotacao: 0,
+            escala_x: 1,
+            escala_y: 1,
+            largura: LARGURA_TELA,
+            altura: ALTURA_TELA
+        };
+        
+        renderizarObjeto(game, fundo);
+    }
+    
+    # Renderização da cena principal
+    fun renderizarJogo(dict game) {
+        # Renderiza todos os objetos
+        forin (objeto in game.cenas.get(game.cena_atual).objetos) {
+            if (objeto.nome.indexOf("particulas") >= 0) {
+                # Renderiza sistemas de partículas
+                renderizarParticulas(objeto);
+            } else {
+                # Renderiza objetos normais
+                renderizarObjeto(game, objeto);
+            }
+        }
+        
+        # Desenha elementos da interface (pontuação, vidas)
+        desenharTexto(pontuacao_texto, 20, 30, "#FFFFFF", "24px Arial");
+        desenharTexto(vidas_texto, 20, 60, "#FFFFFF", "24px Arial");
+    }
+    
+    # ==========================================================
+    # TELA DE GAME OVER
+    # ==========================================================
+    
+    # Atualização da tela de game over
+    fun atualizarGameOver(dict game, float delta) {
+        if (teclaEstaPressionada(game, "Enter") || teclaEstaPressionada(game, "r")) {
+            # Reinicia o jogo
+            trocarCena(game, "nivel1");
+            
+            # Restaura o jogador
+            forin (obj in game.cenas.get("nivel1").objetos) {
+                if (obj.nome == "jogador") {
+                    obj.vidas = 3;
+                    obj.pontos = 0;
+                    obj.x = 100;
+                    obj.y = 100;
+                    obj.velocidade_x = 0;
+                    obj.velocidade_y = 0;
+                    obj.invencivel = false;
+                }
+            }
+            
+            # Restaura moedas
+            forin (obj in game.cenas.get("nivel1").objetos) {
+                if (obj.nome.indexOf("moeda") >= 0) {
+                    obj.visivel = true;
+                }
+            }
+        }
+    }
+    
+    # Renderização da tela de game over
+    fun renderizarGameOver(dict game) {
+        # Desenha fundo escurecido
+        desenharRetangulo(0, 0, LARGURA_TELA, ALTURA_TELA, "rgba(0, 0, 0, 0.7)", true);
+        
+        # Desenha texto de game over
+        desenharTexto("GAME OVER", LARGURA_TELA / 2 - 150, ALTURA_TELA / 2 - 50, "#FF0000", "60px Arial");
+        desenharTexto("Pressione ENTER para reiniciar", LARGURA_TELA / 2 - 200, ALTURA_TELA / 2 + 20, "#FFFFFF", "30px Arial");
+        desenharTexto("Pontuação final: " + jogador.pontos, LARGURA_TELA / 2 - 120, ALTURA_TELA / 2 + 70, "#FFFFFF", "30px Arial");
+    }
+    
+    # ==========================================================
+    # CRIAÇÃO DO NÍVEL
+    # ==========================================================
+    
+    # Cria a cena do nível 1
+    fun criarNivel1() {
+        dict nivel = criarCena("nivel1", atualizarJogo, renderizarJogo);
+        
+        # Adiciona o jogador
+        adicionarObjetoACena(nivel, jogador);
+        
+        # Adiciona plataformas
+        dict chao = criarObjeto("plataforma_chao", 0, ALTURA_TELA - 40, spritePlataforma);
+        chao.largura = LARGURA_TELA;
+        
+        dict plataforma1 = criarObjeto("plataforma1", 100, 450, spritePlataforma);
+        dict plataforma2 = criarObjeto("plataforma2", 300, 350, spritePlataforma);
+        dict plataforma3 = criarObjeto("plataforma3", 500, 400, spritePlataforma);
+        dict plataforma4 = criarObjeto("plataforma4", 700, 350, spritePlataforma);
+        dict plataforma5 = criarObjeto("plataforma5", 200, 250, spritePlataforma);
+        dict plataforma6 = criarObjeto("plataforma6", 500, 200, spritePlataforma);
+        
+        adicionarObjetoACena(nivel, chao);
+        adicionarObjetoACena(nivel, plataforma1);
+        adicionarObjetoACena(nivel, plataforma2);
+        adicionarObjetoACena(nivel, plataforma3);
+        adicionarObjetoACena(nivel, plataforma4);
+        adicionarObjetoACena(nivel, plataforma5);
+        adicionarObjetoACena(nivel, plataforma6);
+        
+        # Adiciona moedas
+        int[] posicoesX = [150, 320, 520, 720, 220, 520, 400];
+        int[] posicoesY = [410, 310, 360, 310, 210, 160, 500];
+        
+        for (int i = 0; i < 7; i = i + 1) {
+            dict moeda = criarObjeto("moeda" + i, posicoesX[i], posicoesY[i], spriteMoeda);
+            adicionarObjetoACena(nivel, moeda);
+        }
+        
+        # Adiciona inimigos
+        dict inimigo1 = criarObjeto("inimigo1", 300, 310, spriteInimigo);
+        inimigo1.direcao = "direita";
+        inimigo1.limite_esquerda = 300;
+        inimigo1.limite_direita = 450;
+        
+        dict inimigo2 = criarObjeto("inimigo2", 600, 360, spriteInimigo);
+        inimigo2.direcao = "esquerda";
+        inimigo2.limite_esquerda = 500;
+        inimigo2.limite_direita = 700;
+        
+        adicionarObjetoACena(nivel, inimigo1);
+        adicionarObjetoACena(nivel, inimigo2);
+        
+        return nivel;
+    }
+    
+    # Cria a tela de game over
+    fun criarTelaGameOver() {
+        dict gameOver = criarCena("gameOver", atualizarGameOver, renderizarGameOver);
+        return gameOver;
+    }
+    
+    # ==========================================================
+    # INICIALIZAÇÃO E EXECUÇÃO DO JOGO
+    # ==========================================================
+    
+    # Cria e adiciona as cenas
+    dict nivel1 = criarNivel1();
+    dict telaGameOver = criarTelaGameOver();
+    
+    adicionarCena(jogo, nivel1);
+    adicionarCena(jogo, telaGameOver);
+    
+    # Toca música de fundo
+    tocarMusicaFundo(MUSICA_FUNDO, true);
+    ajustarVolumeMusicaFundo(0.3);
+    
+    # Adiciona botões na página para controle de volume
+    adicionarBotao("Volume +", "najaGame.ajustarVolumeMusicaFundo(Math.min(1.0, najaGame.musicaFundo.volume + 0.1))");
+    adicionarBotao("Volume -", "najaGame.ajustarVolumeMusicaFundo(Math.max(0.0, najaGame.musicaFundo.volume - 0.1))");
+    adicionarBotao("Pausar Música", "najaGame.pausarMusicaFundo()");
+    adicionarBotao("Tocar Música", "najaGame.tocarMusicaFundo('" + MUSICA_FUNDO + "', true)");
+    
+    # Inicia o jogo no nível 1
+    trocarCena(jogo, "nivel1");
+    startGame(jogo);
+    
+    # Mostra instruções
+    println("========= INSTRUÇÕES =========");
+    println("Setas ou WASD: Mover jogador");
+    println("Espaço/Seta para cima/W: Pular");
+    println("Colete as moedas, evite os inimigos");
+    println("============================");
+    
+    return jogo;
+}
+
+# ==========================================================
+# FUNÇÃO PRINCIPAL
+# ==========================================================
+
+# Inicia o jogo automaticamente quando carregado
+fun main() {
+    println("Iniciando NajaGame2D...");
+    
+    # Adiciona o título na página
+    __eval("
+        var titulo = document.createElement('h1');
+        titulo.innerText = 'NajaGame2D - Exemplo Real';
+        titulo.style.textAlign = 'center';
+        titulo.style.fontFamily = 'Arial, sans-serif';
+        titulo.style.color = '#333';
+        document.body.appendChild(titulo);
+    ");
+    
+    dict jogo = iniciarJogo();
+}
+
+# Chamada da função principal
+main(); 

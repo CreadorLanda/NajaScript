@@ -1,0 +1,208 @@
+# Exemplo de Jogo - Pássaro Voador
+# Um jogo estilo Flappy Bird usando NajaPt e NajaGame2D
+
+importar "NajaPt";
+importar "NajaGame2D";
+
+# Constantes do jogo
+decimal GRAVIDADE = 1500;
+decimal FORCA_PULO = -400;
+inteiro VELOCIDADE_CANOS = 200;
+decimal INTERVALO_CANOS = 1.5;  # segundos
+inteiro ABERTURA_CANOS = 150;   # espaço entre canos
+
+# Variáveis globais
+dicionario passaro;
+lista canos = lista();
+dicionario fundo;
+dicionario chao;
+inteiro pontuacao = 0;
+booleano fim_jogo = falso;
+decimal tempo_ultimo_cano = 0;
+
+# Inicializa o jogo
+funcao iniciarJogo() {
+    # Cria a janela e inicializa o jogo
+    dicionario jogo = iniciarJogo(800, 600, "Pássaro Voador");
+    
+    # Carrega sprites
+    dicionario sprite_passaro = criarSprite("imagens/passaro.png", 50, 35);
+    configurarSpriteSheet(sprite_passaro, 3, 3, 0.1);  # 3 frames de animação
+    
+    dicionario sprite_cano = criarSprite("imagens/cano.png", 60, 300);
+    dicionario sprite_fundo = criarSprite("imagens/fundo.png", 800, 600);
+    dicionario sprite_chao = criarSprite("imagens/chao.png", 800, 100);
+    
+    # Carrega sons
+    tocarMusicaFundo("sons/musica_jogo.mp3", verdadeiro);
+    
+    # Cria o pássaro
+    passaro = criarObjeto("passaro", 150, 300, sprite_passaro);
+    passaro.velocidade_y = 0;
+    
+    # Cria o fundo e o chão
+    fundo = criarObjeto("fundo", 0, 0, sprite_fundo);
+    chao = criarObjeto("chao", 0, 500, sprite_chao);
+    
+    # Cria as cenas
+    dicionario cena_jogo = criarCena("jogo", atualizarJogo, renderizarJogo);
+    dicionario cena_fim_jogo = criarCena("fim_jogo", atualizarFimJogo, renderizarFimJogo);
+    
+    # Adiciona objetos às cenas
+    adicionarObjetoACena(cena_jogo, fundo);
+    adicionarObjetoACena(cena_jogo, passaro);
+    adicionarObjetoACena(cena_jogo, chao);
+    
+    # Adiciona cenas ao jogo
+    adicionarCena(jogo, cena_jogo);
+    adicionarCena(jogo, cena_fim_jogo);
+    
+    # Inicia o jogo
+    comecarJogo(jogo);
+    
+    retornar jogo;
+}
+
+# Cria um novo par de canos
+funcao criarCanos(dicionario jogo, dicionario sprite) {
+    # Altura aleatória para os canos
+    inteiro altura_cano_baixo = Matematica.aleatorio() * 200 + 150;
+    
+    # Cria o cano de baixo
+    dicionario cano_baixo = criarObjeto("cano_baixo", 800, altura_cano_baixo, sprite);
+    
+    # Cria o cano de cima (invertido)
+    dicionario cano_cima = criarObjeto("cano_cima", 800, altura_cano_baixo - ABERTURA_CANOS - 300, sprite);
+    cano_cima.escala_y = -1;  # Inverte o sprite verticalmente
+    
+    # Adiciona à lista de canos
+    canos.adicionar(cano_baixo);
+    canos.adicionar(cano_cima);
+    
+    # Adiciona os canos à cena atual
+    dicionario cena = jogo.cenas.obter(jogo.cena_atual);
+    adicionarObjetoACena(cena, cano_baixo);
+    adicionarObjetoACena(cena, cano_cima);
+}
+
+# Atualiza a lógica do jogo
+funcao atualizarJogo(dicionario jogo, decimal delta_tempo) {
+    se (fim_jogo) {
+        trocarCena(jogo, "fim_jogo");
+        retornar;
+    }
+    
+    # Processa entrada
+    se (teclaEstaPressionada(jogo, "espaco") || mouseEstaSendoClicado(jogo)) {
+        passaro.velocidade_y = FORCA_PULO;
+        tocarSom("sons/pulo.wav");
+    }
+    
+    # Aplica gravidade ao pássaro
+    aplicarGravidade(passaro, GRAVIDADE, delta_tempo);
+    
+    # Rotaciona o pássaro de acordo com a velocidade
+    passaro.rotacao = Matematica.limitar(passaro.velocidade_y * 0.05, -30, 90);
+    
+    # Atualiza posição do pássaro
+    atualizarObjeto(passaro, delta_tempo);
+    
+    # Cria novos canos periodicamente
+    tempo_ultimo_cano = tempo_ultimo_cano + delta_tempo;
+    se (tempo_ultimo_cano >= INTERVALO_CANOS) {
+        dicionario sprite_cano = jogo.sprites.obter("cano");
+        criarCanos(jogo, sprite_cano);
+        tempo_ultimo_cano = 0;
+    }
+    
+    # Atualiza os canos
+    para (inteiro i = canos.comprimento() - 1; i >= 0; i = i - 1) {
+        dicionario cano = canos.obter(i);
+        cano.velocidade_x = -VELOCIDADE_CANOS;
+        atualizarObjeto(cano, delta_tempo);
+        
+        # Remove canos que saíram da tela
+        se (cano.x < -cano.largura) {
+            canos.remover(i);
+        }
+        
+        # Verifica se o pássaro passou por um cano (incrementa pontuação)
+        se (cano.x + cano.largura <= passaro.x && !cano.contado && cano.nome == "cano_baixo") {
+            pontuacao = pontuacao + 1;
+            tocarSom("sons/ponto.wav");
+            cano.contado = verdadeiro;
+        }
+        
+        # Verifica colisão com canos
+        se (verificarColisao(passaro, cano)) {
+            tocarSom("sons/colisao.wav");
+            fim_jogo = verdadeiro;
+        }
+    }
+    
+    # Verifica colisão com o chão
+    se (passaro.y + passaro.altura >= chao.y) {
+        passaro.y = chao.y - passaro.altura;
+        tocarSom("sons/colisao.wav");
+        fim_jogo = verdadeiro;
+    }
+    
+    # Verifica se o pássaro saiu por cima da tela
+    se (passaro.y < 0) {
+        passaro.y = 0;
+        passaro.velocidade_y = 0;
+    }
+}
+
+# Renderiza o jogo
+funcao renderizarJogo(dicionario jogo) {
+    dicionario cena = jogo.cenas.obter(jogo.cena_atual);
+    
+    # Renderiza todos os objetos da cena
+    paracada (objeto em cena.objetos) {
+        renderizarObjeto(jogo, objeto);
+    }
+    
+    # Renderiza a pontuação
+    desenharTexto("Pontuação: " + pontuacao, 20, 20, _CORES.branco, "30px Arial");
+}
+
+# Atualiza a tela de fim de jogo
+funcao atualizarFimJogo(dicionario jogo, decimal delta_tempo) {
+    se (teclaEstaPressionada(jogo, "r")) {
+        # Reinicia o jogo
+        reiniciarJogo();
+        trocarCena(jogo, "jogo");
+    }
+}
+
+# Renderiza a tela de fim de jogo
+funcao renderizarFimJogo(dicionario jogo) {
+    # Renderiza o fundo
+    renderizarObjeto(jogo, fundo);
+    
+    # Renderiza mensagem de fim de jogo
+    desenharTexto("FIM DE JOGO", 250, 200, _CORES.vermelho, "48px Arial");
+    desenharTexto("Pontuação: " + pontuacao, 300, 250, _CORES.branco, "30px Arial");
+    desenharTexto("Pressione R para reiniciar", 250, 300, _CORES.branco, "24px Arial");
+}
+
+# Reinicia o jogo
+funcao reiniciarJogo() {
+    # Limpa os canos
+    canos = lista();
+    
+    # Reseta o pássaro
+    passaro.x = 150;
+    passaro.y = 300;
+    passaro.velocidade_y = 0;
+    passaro.rotacao = 0;
+    
+    # Reseta variáveis de jogo
+    pontuacao = 0;
+    fim_jogo = falso;
+    tempo_ultimo_cano = 0;
+}
+
+# Inicia o jogo
+dicionario jogo = iniciarJogo(); 

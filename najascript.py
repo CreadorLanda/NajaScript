@@ -3,6 +3,7 @@
 
 import sys
 import argparse
+import os
 from lexer import Lexer
 from parser_naja import Parser
 from interpreter import Interpreter
@@ -23,87 +24,99 @@ def initialize_llvm():
     return target_machine
 
 def main():
-    parser = argparse.ArgumentParser(description='Interpretador NajaScript')
-    parser.add_argument('arquivo', help='Arquivo fonte NajaScript')
-    parser.add_argument('--interpret', action='store_true', help='Usar interpretador')
-    parser.add_argument('--bytecode', action='store_true', help='Usar bytecode')
-    parser.add_argument('--llvm', action='store_true', help='Usar LLVM')
+    parser = argparse.ArgumentParser(description='NajaScript Interpreter')
+    parser.add_argument('file', nargs='?', help='Script para executar')
+    parser.add_argument('--module-path', action='append', help='Caminhos adicionais para buscar módulos')
+    parser.add_argument('--pt', action='store_true', help='Habilitar suporte a português')
+    parser.add_argument('--debug', action='store_true', help='Mostrar informações de depuração')
     args = parser.parse_args()
-    
-    # Lê o arquivo fonte
-    try:
-        with open(args.arquivo, 'r', encoding='utf-8') as f:
-            source = f.read()
-    except FileNotFoundError:
-        print(f"Erro: Arquivo '{args.arquivo}' não encontrado")
-        sys.exit(1)
-    except Exception as e:
-        print(f"Erro ao ler arquivo: {e}")
-        sys.exit(1)
-        
-    # Análise léxica e sintática
-    lexer = Lexer(source)
-    parser = Parser(lexer)
-    ast = parser.parse()
-    
-    if args.interpret:
-        # Modo interpretador
-        interpreter = Interpreter()
-        interpreter.interpret(ast)
-        
-    elif args.bytecode:
-        # Modo bytecode
-        compiler = NajaBytecodeCompiler()
-        bytecode = compiler.compile(ast)
-        interpreter = BytecodeInterpreter()
-        # Configura o interpretador
-        compiler.set_interpreter(interpreter)
-        interpreter.execute(bytecode)
-        
-    elif args.llvm:
-        # Modo LLVM
-        # Primeiro compila para bytecode
-        compiler = NajaBytecodeCompiler()
-        bytecode = compiler.compile(ast)
-        
-        # Depois gera LLVM IR
-        llvm_gen = NajaLLVMGenerator()
-        module = llvm_gen.generate(bytecode)
-        
-        # Inicializa LLVM
-        target_machine = initialize_llvm()
-        
-        # Compila e executa
-        llvm_ir = str(module)
-        mod = llvm.parse_assembly(llvm_ir)
-        mod.verify()
-        
-        # Aplica otimizações
-        pmb = llvm.create_pass_manager_builder()
-        pmb.opt_level = 2
-        pm = llvm.create_module_pass_manager()
-        pmb.populate(pm)
-        pm.run(mod)
-        
-        # Executa o código
-        engine = llvm.create_mcjit_compiler(mod, target_machine)
-        engine.finalize_object()
-        
-        # Obtém e executa a função main
-        func_ptr = engine.get_function_address("main")
-        
-        # Cria um wrapper Python para a função
-        from ctypes import CFUNCTYPE, c_int
-        cfunc = CFUNCTYPE(c_int)(func_ptr)
-        
-        # Executa
-        result = cfunc()
-        print(f"Resultado: {result}")
-        
-    else:
-        # Modo padrão (interpretador)
-        interpreter = Interpreter()
-        interpreter.interpret(ast)
 
-if __name__ == '__main__':
+    # Criar o interpretador
+    interpreter = Interpreter()
+    
+    # Modo de depuração
+    debug = args.debug
+    
+    # Definir caminhos de módulos
+    module_paths = ['.', './modules']
+    if args.module_path:
+        module_paths.extend(args.module_path)
+    
+    # Se o arquivo for fornecido, adiciona o diretório do arquivo como caminho de módulo
+    if args.file:
+        file_dir = os.path.dirname(os.path.abspath(args.file))
+        if file_dir not in module_paths:
+            module_paths.append(file_dir)
+    
+    # Configurar caminhos de módulos no interpretador
+    interpreter.module_paths = module_paths
+    
+    # Carregar o módulo NajaPt se a flag --pt estiver presente
+    if args.pt:
+        interpreter.import_module("NajaPt")
+    
+    if args.file:
+        try:
+            with open(args.file, 'r', encoding='utf-8') as f:
+                source = f.read()
+            
+            # Aplicar pré-processamento ao código fonte
+            if hasattr(interpreter, 'preprocess_source'):
+                source = interpreter.preprocess_source(source)
+                if debug:
+                    print("\n--- Código após pré-processamento ---")
+                    print(source)
+                    print("--------------------------------------\n")
+                
+            # Analisar e executar o código
+            lexer = Lexer(source)
+            parser = Parser(lexer)
+            ast = parser.parse()
+            
+            if debug:
+                print("\n--- AST gerada ---")
+                print(f"Tipo: {type(ast)}")
+                print(f"Statements: {len(ast.statements) if hasattr(ast, 'statements') else 'N/A'}")
+                print("------------------\n")
+                
+            result = interpreter.interpret(ast)
+            
+            # Valor de retorno de script
+            if result is not None:
+                print(result)
+                
+        except FileNotFoundError:
+            print(f"Erro: Arquivo '{args.file}' não encontrado.")
+        except Exception as e:
+            print(f"Erro: {e}")
+    else:
+        # Modo interativo
+        print("NajaScript v0.1 - Modo Interativo (Digite 'sair()' para encerrar)")
+        while True:
+            try:
+                line = input(">> ")
+                if line.strip() == 'sair()':
+                    break
+                
+                # Aplicar pré-processamento ao código fonte
+                if hasattr(interpreter, 'preprocess_source'):
+                    processed_line = interpreter.preprocess_source(line)
+                    if debug and processed_line != line:
+                        print(f"Processado: {processed_line}")
+                    line = processed_line
+                
+                lexer = Lexer(line)
+                parser = Parser(lexer)
+                ast = parser.parse()
+                result = interpreter.interpret(ast)
+                
+                if result is not None:
+                    print(result)
+            except KeyboardInterrupt:
+                print("\nOperação interrompida")
+                break
+            except Exception as e:
+                print(f"Erro: {e}")
+
+if __name__ == "__main__":
     main() 

@@ -1,0 +1,8 @@
+// Teste simples usando println diretamente
+importar "NajaPt";
+
+funcao principal() {
+    println("Olá, mundo!");
+}
+
+principal(); 

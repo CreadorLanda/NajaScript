@@ -1,0 +1,104 @@
+// Demonstração completa de operadores lógicos e de comparação em NajaScript
+importar "NajaPt";
+
+funcao principal() {
+    escreverln("=== Demonstração de Operadores em NajaScript ===");
+    
+    // Valores para teste
+    inteiro a = 5;
+    inteiro b = 10;
+    inteiro c = 15;
+    booleano valorVerdadeiro = verdadeiro;
+    booleano valorFalso = falso;
+    
+    // Operadores de comparação
+    escreverln("\n1. Operadores de Comparação:");
+    escreverln("  a = " + a + ", b = " + b + ", c = " + c);
+    escreverln("  a == b: " + (a == b));
+    escreverln("  a != b: " + (a != b));
+    escreverln("  a < b: " + (a < b));
+    escreverln("  a > b: " + (a > b));
+    escreverln("  a <= b: " + (a <= b));
+    escreverln("  a >= b: " + (a >= b));
+    
+    // Operador E (AND)
+    escreverln("\n2. Operador 'e' (AND):");
+    escreverln("  verdadeiro e verdadeiro: " + (verdadeiro e verdadeiro));
+    escreverln("  verdadeiro e falso: " + (verdadeiro e falso));
+    escreverln("  falso e falso: " + (falso e falso));
+    
+    // Uso do AND com expressões
+    escreverln("\n  Uso de 'e' com expressões:");
+    escreverln("  a < b e b < c: " + (a < b e b < c));
+    escreverln("  a > b e b < c: " + (a > b e b < c));
+    
+    // Operador OU (OR)
+    escreverln("\n3. Operador 'ou' (OR):");
+    escreverln("  verdadeiro ou verdadeiro: " + (verdadeiro ou verdadeiro));
+    escreverln("  verdadeiro ou falso: " + (verdadeiro ou falso));
+    escreverln("  falso ou falso: " + (falso ou falso));
+    
+    // Uso do OR com expressões
+    escreverln("\n  Uso de 'ou' com expressões:");
+    escreverln("  a < b ou a > c: " + (a < b ou a > c));
+    escreverln("  a > b ou b > c: " + (a > b ou b > c));
+    
+    // Negação com comparações invertidas
+    escreverln("\n4. Negação (através de comparações inversas):");
+    escreverln("  Para negar 'a < b', usamos 'a >= b'");
+    escreverln("  a < b: " + (a < b));
+    escreverln("  a >= b (negação de a < b): " + (a >= b));
+    
+    escreverln("  Para negar 'a == b', usamos 'a != b'");
+    escreverln("  a == b: " + (a == b));
+    escreverln("  a != b (negação de a == b): " + (a != b));
+    
+    // Operador de negação booleana
+    escreverln("\n  Negação de valores booleanos:");
+    escreverln("  valorVerdadeiro: " + (valorVerdadeiro));
+    escreverln("  valorFalso (oposto de valorVerdadeiro): " + (valorFalso));
+    
+    // Combinação de operadores
+    escreverln("\n5. Combinação de Operadores:");
+    escreverln("  (a < b ou b > c) e (a < c): " + ((a < b ou b > c) e (a < c)));
+    escreverln("  (a >= b ou a > c) e a < c: " + ((a >= b ou a > c) e a < c));
+    
+    // Exemplo prático: Validação de usuário
+    escreverln("\n6. Exemplo Prático - Validação de Usuário:");
+    
+    string usuario = "admin";
+    string senha = "senha123";
+    inteiro tentativas = 3;
+    booleano contaBloqueada = falso;
+    
+    // Validação de login
+    se ((usuario == "admin" e senha == "senha123") e tentativas > 0 e contaBloqueada == falso) {
+        escreverln("  Login bem-sucedido! Bem-vindo, " + usuario);
+    } senao {
+        escreverln("  Login falhou. Verifique suas credenciais.");
+    }
+    
+    // Alterando alguns valores
+    senha = "senha_errada";
+    
+    // Validação de login novamente
+    se ((usuario == "admin" e senha == "senha123") e tentativas > 0 e contaBloqueada == falso) {
+        escreverln("  Login bem-sucedido! Bem-vindo, " + usuario);
+    } senao {
+        escreverln("  Login falhou. Verifique suas credenciais.");
+    }
+    
+    // Explicação de curto-circuito
+    escreverln("\n7. Operadores de Curto-Circuito:");
+    escreverln("  'e' (AND) curto-circuita quando o primeiro operando é falso");
+    escreverln("  'ou' (OR) curto-circuita quando o primeiro operando é verdadeiro");
+    
+    // Testes de precedência
+    escreverln("\n8. Precedência de Operadores:");
+    escreverln("  a + b * c = " + (a + b * c) + " (multiplicação tem precedência)");
+    escreverln("  (a + b) * c = " + ((a + b) * c) + " (parênteses alteram a precedência)");
+    escreverln("  a < b e b < c ou a > c = " + (a < b e b < c ou a > c) + " ('e' tem precedência sobre 'ou')");
+    escreverln("  a < b e (b < c ou a > c) = " + (a < b e (b < c ou a > c)) + " (parênteses alteram a precedência)");
+}
+
+principal(); 

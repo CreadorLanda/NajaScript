@@ -1,0 +1,16 @@
+// Exemplo muito básico
+importar "NajaPt";
+
+funcao principal() {
+    booleano a = verdadeiro;
+    booleano b = verdadeiro;
+    
+    // Apenas operador AND
+    se (a e b) {
+        escreverln("Ambos são verdadeiros");
+    } senao {
+        escreverln("Pelo menos um é falso");
+    }
+}
+
+principal(); 

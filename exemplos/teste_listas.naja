@@ -1,0 +1,20 @@
+// Teste muito simples de listas em NajaScript
+importar "NajaPt";
+
+funcao principal() {
+    escreverln("=== Teste Simples de Listas ===");
+    
+    // Criar e exibir uma lista 
+    escreverln("Criando uma lista:");
+    lista minhaLista = lista(1, 2, 3);
+    escreverln(minhaLista);
+    
+    // Comprimento da lista
+    escreverln("Comprimento da lista: " + comprimento(minhaLista));
+    
+    // Adicionar elemento
+    minhaLista.adicionar(4);
+    escreverln("Lista após adicionar elemento: " + minhaLista);
+}
+
+principal(); 

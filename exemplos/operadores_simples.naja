@@ -1,0 +1,18 @@
+// Exemplo simples de operadores lógicos
+importar "NajaPt";
+
+funcao principal() {
+    // Operadores AND e OR
+    booleano a = verdadeiro;
+    booleano b = falso;
+    
+    escreverln("a = verdadeiro, b = falso");
+    escreverln("a e b = " + (a e b));
+    escreverln("a ou b = " + (a ou b));
+    
+    // Operador NOT - apenas verificando a sintaxe
+    booleano resultado = !b;  // usando o operador ! diretamente
+    escreverln("!b = " + resultado);
+}
+
+principal(); 

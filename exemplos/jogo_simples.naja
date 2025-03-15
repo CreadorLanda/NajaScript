@@ -1,0 +1,156 @@
+// Exemplo de um jogo simples em NajaScript usando português
+
+importar "NajaPt";
+
+// Constantes do jogo
+inteiro LARGURA_TELA = 800;
+inteiro ALTURA_TELA = 600;
+inteiro TAMANHO_JOGADOR = 50;
+inteiro TAMANHO_INIMIGO = 30;
+decimal VELOCIDADE_JOGADOR = 5.0;
+decimal VELOCIDADE_INIMIGO = 3.0;
+inteiro PONTUACAO_MAXIMA = 10;
+
+// Variáveis do jogo
+inteiro posX = 0;
+inteiro posY = 0;
+inteiro inimigoPosX = 0;
+inteiro inimigoPosY = 0;
+inteiro pontuacao = 0;
+booleano jogoAtivo = verdadeiro;
+
+// Inicializa o jogo
+funcao inicializarJogo() {
+    posX = LARGURA_TELA / 2 - TAMANHO_JOGADOR / 2;
+    posY = ALTURA_TELA - TAMANHO_JOGADOR - 10;
+    
+    // Posiciona inimigo aleatoriamente no topo da tela
+    inimigoPosX = aleatorio(0, LARGURA_TELA - TAMANHO_INIMIGO);
+    inimigoPosY = 0;
+    
+    pontuacao = 0;
+    jogoAtivo = verdadeiro;
+    
+    escreverln("Jogo inicializado! Use as teclas A e D para mover.");
+}
+
+// Gera um número aleatório entre min e max
+funcao aleatorio(inteiro min, inteiro max) {
+    // Esta é uma implementação simples
+    retornar min + ((max - min) * (posX % 100) / 100);
+}
+
+// Atualiza a posição do jogador
+funcao moverJogador(texto direcao) {
+    se (direcao == "esquerda") {
+        posX = posX - VELOCIDADE_JOGADOR;
+        se (posX < 0) {
+            posX = 0;
+        }
+    } senao se (direcao == "direita") {
+        posX = posX + VELOCIDADE_JOGADOR;
+        se (posX > LARGURA_TELA - TAMANHO_JOGADOR) {
+            posX = LARGURA_TELA - TAMANHO_JOGADOR;
+        }
+    }
+}
+
+// Atualiza a posição do inimigo
+funcao moverInimigo() {
+    inimigoPosY = inimigoPosY + VELOCIDADE_INIMIGO;
+    
+    // Se inimigo sair da tela, reposiciona
+    se (inimigoPosY > ALTURA_TELA) {
+        inimigoPosX = aleatorio(0, LARGURA_TELA - TAMANHO_INIMIGO);
+        inimigoPosY = 0;
+        // Aumenta a pontuação quando o jogador evita o inimigo
+        pontuacao = pontuacao + 1;
+        escreverln("Pontuação: " + pontuacao);
+    }
+}
+
+// Verifica colisão entre jogador e inimigo
+funcao booleano verificarColisao() {
+    booleano colisaoX = (posX < inimigoPosX + TAMANHO_INIMIGO) e (posX + TAMANHO_JOGADOR > inimigoPosX);
+    booleano colisaoY = (posY < inimigoPosY + TAMANHO_INIMIGO) e (posY + TAMANHO_JOGADOR > inimigoPosY);
+    
+    retornar colisaoX e colisaoY;
+}
+
+// Loop principal do jogo
+funcao loopJogo() {
+    enquanto (jogoAtivo) {
+        // Simula entrada do usuário
+        texto entrada = obterEntrada();
+        se (entrada == "a") {
+            moverJogador("esquerda");
+        } senao se (entrada == "d") {
+            moverJogador("direita");
+        } senao se (entrada == "q") {
+            jogoAtivo = falso;
+            escreverln("Jogo encerrado pelo usuário.");
+            retornar;
+        }
+        
+        // Atualiza posição do inimigo
+        moverInimigo();
+        
+        // Verifica colisões
+        se (verificarColisao()) {
+            escreverln("Colisão! Você perdeu.");
+            jogoAtivo = falso;
+            retornar;
+        }
+        
+        // Verifica vitória
+        se (pontuacao >= PONTUACAO_MAXIMA) {
+            escreverln("Parabéns! Você venceu com " + pontuacao + " pontos!");
+            jogoAtivo = falso;
+            retornar;
+        }
+        
+        // Verifica se o jogador está em perigo (inimigo próximo)
+        booleano jogadorEmPerigo = (abs(posX - inimigoPosX) < 100) e (inimigoPosY > ALTURA_TELA / 2);
+        
+        // Simula o tempo de frame
+        se (jogadorEmPerigo) {
+            escreverln("⚠️ CUIDADO! Inimigo próximo! ⚠️");
+        }
+        
+        escreverln("Jogador: (" + posX + "," + posY + ") | Inimigo: (" + inimigoPosX + "," + inimigoPosY + ")");
+    }
+}
+
+// Função para valor absoluto
+funcao inteiro abs(inteiro valor) {
+    se (valor < 0) {
+        retornar -valor;
+    }
+    retornar valor;
+}
+
+// Simula entrada do usuário
+funcao texto obterEntrada() {
+    // Na implementação real, isso seria uma função que obtém entrada do usuário
+    // Para simplificar, vamos alternar entre 'a' e 'd'
+    inteiro escolha = aleatorio(0, 3);
+    
+    se (escolha == 0) {
+        retornar "a";
+    } senao se (escolha == 1) {
+        retornar "d";
+    } senao {
+        retornar "";
+    }
+}
+
+// Função principal
+funcao principal() {
+    escreverln("=== Jogo Simples em NajaScript ===");
+    inicializarJogo();
+    loopJogo();
+    escreverln("Fim do jogo! Pontuação final: " + pontuacao);
+}
+
+// Chama a função principal
+principal(); 

@@ -1,0 +1,22 @@
+// Teste simples de dicionários
+importar "NajaPt";
+
+funcao principal() {
+    escreverln("=== Teste Simples de Dicionários ===");
+    
+    // Criar um dicionário
+    dicionario pessoa = {};
+    
+    // Adicionar elementos
+    pessoa.adicionar("nome", "João");
+    pessoa.adicionar("idade", 30);
+    
+    // Exibir o dicionário
+    escreverln("Dicionário: " + pessoa);
+    
+    // Acessar elementos
+    escreverln("Nome: " + pessoa.obter("nome"));
+    escreverln("Idade: " + pessoa.obter("idade"));
+}
+
+principal(); 

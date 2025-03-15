@@ -1,0 +1,119 @@
+// Teste completo de NajaScript em português
+importar "NajaPt";
+
+// Declaração de variáveis
+inteiro idade = 25;
+decimal altura = 1.75;
+texto nome = "João";
+booleano ativo = verdadeiro;
+
+// Função para calcular IMC
+funcao calcularIMC(peso, altura) {
+    retornar peso / (altura * altura);
+}
+
+// Função para classificar IMC
+funcao classificarIMC(imc) {
+    se (imc < 18.5) {
+        retornar "Abaixo do peso";
+    } senao {
+        se (imc < 25) {
+            retornar "Peso normal";
+        } senao {
+            se (imc < 30) {
+                retornar "Sobrepeso";
+            } senao {
+                retornar "Obesidade";
+            }
+        }
+    }
+}
+
+// Função principal
+funcao principal() {
+    escreverln("=== Teste Completo NajaScript em Português ===");
+    
+    // Exibir informações iniciais
+    escreverln("\nInformações da pessoa:");
+    escreverln("Nome: " + nome);
+    escreverln("Idade: " + idade + " anos");
+    escreverln("Altura: " + altura + " metros");
+    escreverln("Ativo: " + ativo);
+    
+    // Calcular e classificar IMC
+    decimal peso = 70.5;
+    
+    // Calcular IMC diretamente
+    decimal imc = peso / (altura * altura);
+    
+    // Classificar IMC
+    texto classificacao = "";
+    se (imc < 18.5) {
+        classificacao = "Abaixo do peso";
+    } senao {
+        se (imc < 25) {
+            classificacao = "Peso normal";
+        } senao {
+            se (imc < 30) {
+                classificacao = "Sobrepeso";
+            } senao {
+                classificacao = "Obesidade";
+            }
+        }
+    }
+    
+    escreverln("\nCálculo de IMC:");
+    escreverln("Peso: " + peso + " kg");
+    escreverln("IMC: " + imc);
+    escreverln("Classificação: " + classificacao);
+    
+    // Demonstração de estruturas de controle
+    escreverln("\nContagem regressiva:");
+    para (inteiro i = 5; i > 0; i = i - 1) {
+        escreverln("  " + i);
+    }
+    
+    // Demonstração de lista
+    escreverln("\nLista de frutas:");
+    lista frutas = lista();
+    frutas.adicionar("maçã");
+    frutas.adicionar("banana");
+    frutas.adicionar("laranja");
+    
+    inteiro i = 0;
+    enquanto (i < 3) {
+        escreverln("  - " + frutas.obter(i));
+        i = i + 1;
+    }
+    
+    // Adicionar elemento à lista
+    frutas.adicionar("uva");
+    escreverln("\nLista após adicionar uva:");
+    
+    i = 0;
+    enquanto (i < 4) {
+        escreverln("  - " + frutas.obter(i));
+        i = i + 1;
+    }
+    
+    // Demonstração de dicionário
+    escreverln("\nDicionário de pessoa:");
+    dicionario pessoa = {};
+    pessoa.adicionar("nome", nome);
+    pessoa.adicionar("idade", idade);
+    pessoa.adicionar("altura", altura);
+    pessoa.adicionar("ativo", ativo);
+    
+    escreverln("  Nome: " + pessoa.obter("nome"));
+    escreverln("  Idade: " + pessoa.obter("idade"));
+    
+    // Adicionar elemento ao dicionário
+    pessoa.adicionar("peso", peso);
+    escreverln("\nDicionário após adicionar peso:");
+    escreverln("  Peso: " + pessoa.obter("peso"));
+    
+    escreverln("\n=== Teste Concluído com Sucesso! ===");
+}
+
+// Chamar a função principal
+principal(); 

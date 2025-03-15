@@ -48,58 +48,55 @@ class Parser:
     def statement(self):
         """
         statement : declaration_statement
-                 | assignment_statement
-                 | if_statement
-                 | while_statement
-                 | for_statement
-                 | function_declaration
-                 | return_statement
-                 | expression_statement
-                 | flux_declaration
+                  | expression_statement
+                  | if_statement
+                  | while_statement
+                  | do_while_statement
+                  | for_statement
+                  | forin_statement
+                  | function_declaration
+                  | return_statement
+                  | break_statement
+                  | continue_statement
+                  | switch_statement
+                  | import_statement
+                  | flux_declaration
         """
-        if self.current_token.type in (TokenType.INT, TokenType.FLOAT, TokenType.STRING, 
-                                      TokenType.BOOL, TokenType.DICT, TokenType.CONST):
+        if self.current_token.type == TokenType.INT or \
+           self.current_token.type == TokenType.FLOAT or \
+           self.current_token.type == TokenType.STRING or \
+           self.current_token.type == TokenType.BOOL or \
+           self.current_token.type == TokenType.DICT or \
+           self.current_token.type == TokenType.LIST or \
+           self.current_token.type == TokenType.ANY or \
+           self.current_token.type == TokenType.CONST:
             return self.declaration_statement()
-        
         elif self.current_token.type == TokenType.IF:
             return self.if_statement()
-        
         elif self.current_token.type == TokenType.WHILE:
             return self.while_statement()
-        
-        elif self.current_token.type == TokenType.FOR:
-            return self.for_statement()
-        
-        elif self.current_token.type == TokenType.FUN:
-            return self.function_declaration()
-        
-        elif self.current_token.type == TokenType.RETURN:
-            return self.return_statement()
-        
         elif self.current_token.type == TokenType.DO:
             return self.do_while_statement()
-        
-        elif self.current_token.type == TokenType.SWITCH:
-            return self.switch_statement()
-        
-        elif self.current_token.type == TokenType.BREAK:
-            return self.break_statement()
-        
-        elif self.current_token.type == TokenType.CONTINUE:
-            return self.continue_statement()
-        
+        elif self.current_token.type == TokenType.FOR:
+            return self.for_statement()
         elif self.current_token.type == TokenType.FORIN:
             return self.forin_statement()
-            
+        elif self.current_token.type == TokenType.FUN:
+            return self.function_declaration()
+        elif self.current_token.type == TokenType.RETURN:
+            return self.return_statement()
+        elif self.current_token.type == TokenType.BREAK:
+            return self.break_statement()
+        elif self.current_token.type == TokenType.CONTINUE:
+            return self.continue_statement()
+        elif self.current_token.type == TokenType.SWITCH:
+            return self.switch_statement()
+        elif self.current_token.type == TokenType.IMPORT:
+            return self.import_statement()
         elif self.current_token.type == TokenType.FLUX:
             return self.flux_declaration()
-        
         else:
-            # Se não for nenhuma das opções acima, consideramos uma expressão ou atribuição
-            stmt = self.expression_statement()
-            if self.current_token.type == TokenType.SEMICOLON:
-                self.eat(TokenType.SEMICOLON)
-            return stmt
+            return self.expression_statement()
     
     def declaration_statement(self):
         """
@@ -461,17 +458,30 @@ class Parser:
         logical_or_expression : logical_and_expression
                              | logical_and_expression '||' logical_or_expression
         """
-        # Implementação simplificada para os operadores lógicos
-        # Você pode implementar outros operadores de forma semelhante
-        return self.equality_expression()
+        left = self.logical_and_expression()
+        
+        if self.current_token.type == TokenType.OR:
+            op = self.current_token.value
+            self.eat(TokenType.OR)
+            right = self.logical_or_expression()
+            return BinaryOperation(left, op, right)
+        
+        return left
     
     def logical_and_expression(self):
         """
         logical_and_expression : equality_expression
                               | equality_expression '&&' logical_and_expression
         """
-        # Implementação simplificada
-        return self.equality_expression()
+        left = self.equality_expression()
+        
+        if self.current_token.type == TokenType.AND:
+            op = self.current_token.value
+            self.eat(TokenType.AND)
+            right = self.logical_and_expression()
+            return BinaryOperation(left, op, right)
+        
+        return left
     
     def equality_expression(self):
         """
@@ -703,6 +713,25 @@ class Parser:
         
         self.eat(TokenType.RBRACE)
         return DictLiteral(items)
+    
+    def import_statement(self):
+        """
+        import_statement : IMPORT STRING_LIT SEMICOLON
+        """
+        self.eat(TokenType.IMPORT)
+        
+        # O módulo deve ser um literal de string
+        if self.current_token.type != TokenType.STRING_LIT:
+            self.error("String literal esperado após 'import'")
+        
+        module_name = self.current_token.value
+        self.eat(TokenType.STRING_LIT)
+        
+        # Semicolon opcional
+        if self.current_token.type == TokenType.SEMICOLON:
+            self.eat(TokenType.SEMICOLON)
+            
+        return ImportStatement(module_name)
     
     def flux_declaration(self):
         """

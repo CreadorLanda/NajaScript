@@ -1,0 +1,35 @@
+// Teste de chamadas de função
+importar "NajaPt";
+
+funcao soma(a, b) {
+    retornar a + b;
+}
+
+funcao multiplicacao(a, b) {
+    retornar a * b;
+}
+
+funcao printOperacao(a, b, operacao, resultado) {
+    escreverln(a + " " + operacao + " " + b + " = " + resultado);
+}
+
+funcao principal() {
+    escreverln("=== Teste de Chamadas de Função ===");
+    
+    inteiro a = 5;
+    inteiro b = 3;
+    
+    inteiro resultadoSoma = soma(a, b);
+    inteiro resultadoMult = multiplicacao(a, b);
+    
+    escreverln("Resultado da soma: " + resultadoSoma);
+    escreverln("Resultado da multiplicação: " + resultadoMult);
+    
+    // Chamada de função que chama outras funções
+    printOperacao(a, b, "+", resultadoSoma);
+    printOperacao(a, b, "*", resultadoMult);
+    
+    escreverln("Teste concluído com sucesso!");
+}
+
+principal(); 

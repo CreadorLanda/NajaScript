@@ -1,0 +1,8 @@
+// Teste muito simples de saída
+importar "NajaPt";
+
+funcao principal() {
+    escreverln("Olá, mundo!");
+}
+
+principal(); 

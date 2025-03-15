@@ -1,0 +1,14 @@
+// Teste direto sem tradução
+importar "NajaPt";
+
+fun soma(a, b) {
+    return a + b;
+}
+
+fun main() {
+    println("Teste direto");
+    println("5 + 3 = " + soma(5, 3));
+    println("Teste concluído");
+}
+
+main(); 

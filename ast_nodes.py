@@ -89,6 +89,10 @@ class SwitchStatement(Statement):
         self.cases = cases
         self.default = default
 
+class ImportStatement(Statement):
+    def __init__(self, module_name):
+        self.module_name = module_name
+
 # Expressões
 class Expression(Node):
     """Classe base para todas as expressões"""

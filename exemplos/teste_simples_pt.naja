@@ -1,0 +1,25 @@
+// Teste simples em Português
+importar "NajaPt";
+
+funcao principal() {
+    escreverln("Olá, mundo!");
+    
+    // Testar estrutura condicional
+    inteiro numero = 10;
+    
+    se (numero > 5) {
+        escreverln("O número é maior que 5");
+    } senao {
+        escreverln("O número é menor ou igual a 5");
+    }
+    
+    // Testar loop simples
+    escreverln("\nContando de 1 a 3:");
+    inteiro i = 1;
+    enquanto (i <= 3) {
+        escreverln(i);
+        i = i + 1;
+    }
+}
+
+principal(); 

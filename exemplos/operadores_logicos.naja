@@ -1,0 +1,92 @@
+importar "NajaPt";
+
+funcao principal() {
+    escreverln("=== Demonstração de Operadores Lógicos em Português ===");
+    
+    // Valores para teste
+    inteiro a = 5;
+    inteiro b = 10;
+    inteiro c = 15;
+    
+    // Operador E (AND)
+    escreverln("\nOperador 'e' (AND):");
+    se (a < b e b < c) {
+        escreverln("  a < b e b < c: verdadeiro");
+    } senao {
+        escreverln("  a < b e b < c: falso");
+    }
+    
+    se (a > b e b < c) {
+        escreverln("  a > b e b < c: verdadeiro");
+    } senao {
+        escreverln("  a > b e b < c: falso");
+    }
+    
+    // Operador OU (OR)
+    escreverln("\nOperador 'ou' (OR):");
+    se (a < b ou a > c) {
+        escreverln("  a < b ou a > c: verdadeiro");
+    } senao {
+        escreverln("  a < b ou a > c: falso");
+    }
+    
+    se (a > b ou b > c) {
+        escreverln("  a > b ou b > c: verdadeiro");
+    } senao {
+        escreverln("  a > b ou b > c: falso");
+    }
+    
+    // Operador NÃO (NOT)
+    escreverln("\nOperador 'negação' (usando comparações inversas):");
+    se (a <= b) {  // Equivalente a !(a > b)
+        escreverln("  a <= b (negação de a > b): verdadeiro");
+    } senao {
+        escreverln("  a <= b (negação de a > b): falso");
+    }
+    
+    se (a >= b) {  // Equivalente a !(a < b)
+        escreverln("  a >= b (negação de a < b): verdadeiro");
+    } senao {
+        escreverln("  a >= b (negação de a < b): falso");
+    }
+    
+    // Combinação de operadores
+    escreverln("\nCombinação de operadores:");
+    se ((a < b ou b > c) e (a < c)) {
+        escreverln("  (a < b ou b > c) e (a < c): verdadeiro");
+    } senao {
+        escreverln("  (a < b ou b > c) e (a < c): falso");
+    }
+    
+    se ((a <= b) e (b <= c)) {  // Equivalente a !(a > b) e !(b > c)
+        escreverln("  (a <= b) e (b <= c): verdadeiro");
+    } senao {
+        escreverln("  (a <= b) e (b <= c): falso");
+    }
+    
+    // Exemplo prático
+    escreverln("\nExemplo prático - Verificação de elegibilidade:");
+    inteiro idade = 25;
+    decimal salario = 3000.0;
+    booleano temCarteiraTrabalho = verdadeiro;
+    
+    // Este é um comentário em português que não deve afetar o código
+    se ((idade >= 18 e idade <= 65) e (salario >= 1500.0) e temCarteiraTrabalho) {
+        escreverln("  Pessoa elegível para o empréstimo!");
+    } senao {
+        escreverln("  Pessoa não elegível para o empréstimo.");
+    }
+    
+    /* Este é um comentário de bloco
+       que também não deve afetar o código,
+       mesmo tendo palavras-chave como "se", "enquanto", etc.
+    */
+    idade = 17;
+    se ((idade >= 18 e idade <= 65) e (salario >= 1500.0) e temCarteiraTrabalho) {
+        escreverln("  Pessoa elegível para o empréstimo!");
+    } senao {
+        escreverln("  Pessoa não elegível para o empréstimo.");
+    }
+}
+
+principal(); 

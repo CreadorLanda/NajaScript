@@ -1,0 +1,901 @@
+# NajaGame2D_Pygame - Biblioteca para Jogos 2D com NajaScript
+# Implementação real usando Pygame como backend
+
+# ==========================================================
+# VARIÁVEIS GLOBAIS E UTILITÁRIOS
+# ==========================================================
+
+# Importa as bibliotecas Python necessárias
+__python("
+import pygame
+import math
+import sys
+import os
+from time import time
+
+# Inicializa o pygame
+pygame.init()
+pygame.mixer.init()
+
+# Variáveis globais do sistema
+_najagame_data = {
+    'screen': None,
+    'clock': pygame.time.Clock(),
+    'recursos': {},
+    'recursos_total': 0,
+    'recursos_carregados': 0,
+    'teclas_pressionadas': {},
+    'mouse_pos': (0, 0),
+    'mouse_clicado': False,
+    'rodando': False,
+    'ultima_atualizacao': time(),
+    'jogo': None,
+    'titulo': 'NajaGame2D'
+}
+
+# Mapeamento de teclas para Pygame
+_key_mapping = {
+    'ArrowRight': pygame.K_RIGHT,
+    'ArrowLeft': pygame.K_LEFT,
+    'ArrowUp': pygame.K_UP,
+    'ArrowDown': pygame.K_DOWN,
+    'Space': pygame.K_SPACE,
+    'Enter': pygame.K_RETURN,
+    'a': pygame.K_a,
+    'w': pygame.K_w,
+    's': pygame.K_s,
+    'd': pygame.K_d,
+    'r': pygame.K_r
+}
+
+# Cores comuns
+_colors = {
+    'black': (0, 0, 0),
+    'white': (255, 255, 255),
+    'red': (255, 0, 0),
+    'green': (0, 255, 0),
+    'blue': (0, 0, 255)
+}
+
+# Função para processar cor
+def _processar_cor(cor):
+    if isinstance(cor, str):
+        if cor.startswith('#'):
+            # Converte hex para RGB
+            return tuple(int(cor[i:i+2], 16) for i in (1, 3, 5))
+        
+        if cor.startswith('rgb'):
+            # Processa 'rgb(r, g, b)' ou 'rgba(r, g, b, a)'
+            valores = cor.strip('rgba()').split(',')
+            if len(valores) >= 3:
+                r = int(valores[0].strip())
+                g = int(valores[1].strip())
+                b = int(valores[2].strip())
+                
+                if len(valores) == 4:
+                    a = float(valores[3].strip())
+                    return (r, g, b, int(a * 255))
+                return (r, g, b)
+        
+        # Cores predefinidas
+        return _colors.get(cor.lower(), (0, 0, 0))
+    
+    # Se já for uma tupla RGB/RGBA
+    return cor
+");
+
+# ==========================================================
+# CLASSE GAME - Núcleo do motor de jogos
+# ==========================================================
+
+# Inicializa o motor de jogos
+fun initGame(int largura, int altura, string titulo) {
+    __python("
+    # Cria a janela do jogo
+    _najagame_data['screen'] = pygame.display.set_mode((largura, altura))
+    pygame.display.set_caption(titulo)
+    _najagame_data['titulo'] = titulo
+    
+    # Configura as teclas
+    for key in _key_mapping.values():
+        _najagame_data['teclas_pressionadas'][key] = False
+        
+    # Cria e retorna o objeto de jogo
+    _najagame_data['jogo'] = {
+        'largura': largura,
+        'altura': altura,
+        'titulo': titulo,
+        'cena_atual': 'principal',
+        'cenas': {},
+        'sprites': {},
+        'delta_tempo': 0,
+        'mouse_x': 0,
+        'mouse_y': 0,
+        'mouse_clicado': False
+    }
+    ");
+    
+    dict game = __python("return _najagame_data['jogo']");
+    println("Jogo inicializado: " + titulo + " (" + largura + "x" + altura + ")");
+    return game;
+}
+
+# Função para verificar se todos os recursos foram carregados
+fun todosRecursosCarregados() {
+    return __python("
+    return _najagame_data['recursos_carregados'] >= _najagame_data['recursos_total']
+    ");
+}
+
+# Inicia o loop principal do jogo
+fun startGame(dict game) {
+    # Registra o objeto do jogo no sistema
+    __python("
+    _najagame_data['jogo'] = game
+    _najagame_data['rodando'] = True
+    _najagame_data['ultima_atualizacao'] = time()
+    
+    # Loop principal do jogo
+    def main_loop():
+        while _najagame_data['rodando']:
+            # Processa eventos
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    _najagame_data['rodando'] = False
+                
+                # Eventos de teclado
+                elif event.type == pygame.KEYDOWN:
+                    _najagame_data['teclas_pressionadas'][event.key] = True
+                elif event.type == pygame.KEYUP:
+                    _najagame_data['teclas_pressionadas'][event.key] = False
+                
+                # Eventos de mouse
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    _najagame_data['mouse_clicado'] = True
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    _najagame_data['mouse_clicado'] = False
+            
+            # Atualiza posição do mouse
+            _najagame_data['mouse_pos'] = pygame.mouse.get_pos()
+            _najagame_data['jogo']['mouse_x'] = _najagame_data['mouse_pos'][0]
+            _najagame_data['jogo']['mouse_y'] = _najagame_data['mouse_pos'][1]
+            _najagame_data['jogo']['mouse_clicado'] = _najagame_data['mouse_clicado']
+            
+            # Calcula delta_tempo
+            agora = time()
+            _najagame_data['jogo']['delta_tempo'] = agora - _najagame_data['ultima_atualizacao']
+            _najagame_data['ultima_atualizacao'] = agora
+            
+            # Limpa a tela
+            _najagame_data['screen'].fill((0, 0, 0))
+            
+            # Obtém a cena atual
+            cena_atual = _najagame_data['jogo']['cena_atual']
+            if cena_atual in _najagame_data['jogo']['cenas']:
+                cena = _najagame_data['jogo']['cenas'][cena_atual]
+                
+                # Chama a função de atualização da cena
+                if 'atualizar' in cena and callable(cena['atualizar']):
+                    cena['atualizar'](_najagame_data['jogo'], _najagame_data['jogo']['delta_tempo'])
+                
+                # Chama a função de renderização da cena
+                if 'renderizar' in cena and callable(cena['renderizar']):
+                    cena['renderizar'](_najagame_data['jogo'])
+            
+            # Atualiza a tela
+            pygame.display.flip()
+            
+            # Limita a taxa de quadros
+            _najagame_data['clock'].tick(60)
+        
+        # Finaliza o Pygame
+        pygame.quit()
+    
+    # Inicia o loop em uma thread para permitir a continuação do interpretador NajaScript
+    import threading
+    loop_thread = threading.Thread(target=main_loop)
+    loop_thread.daemon = True
+    loop_thread.start()
+    ");
+    
+    println("Jogo iniciado!");
+}
+
+# Função auxiliar para obter o tempo atual em milissegundos
+fun currentTime() {
+    return __python("return time() * 1000");
+}
+
+# Limpa a tela
+fun limparTela(dict game) {
+    __python("
+    # Preenche a tela com preto
+    _najagame_data['screen'].fill((0, 0, 0))
+    ");
+}
+
+# Para o jogo
+fun stopGame(dict game) {
+    __python("
+    # Para o loop principal do jogo
+    _najagame_data['rodando'] = False
+    ");
+    
+    println("Jogo parado");
+}
+
+# ==========================================================
+# GERENCIAMENTO DE CENAS
+# ==========================================================
+
+# Cria uma nova cena
+fun criarCena(string nome, fun atualizar, fun renderizar) {
+    dict cena = {
+        nome: nome,
+        atualizar: atualizar,
+        renderizar: renderizar,
+        objetos: list()
+    };
+    return cena;
+}
+
+# Adiciona uma cena ao jogo
+fun adicionarCena(dict game, dict cena) {
+    game.cenas.add(cena.nome, cena);
+    println("Cena '" + cena.nome + "' adicionada ao jogo");
+}
+
+# Troca para uma cena específica
+fun trocarCena(dict game, string nome_cena) {
+    if (game.cenas.get(nome_cena) != null) {
+        game.cena_atual = nome_cena;
+        println("Trocado para cena: " + nome_cena);
+    } else {
+        println("Erro: Cena '" + nome_cena + "' não encontrada");
+    }
+}
+
+# ==========================================================
+# CARREGAMENTO DE RECURSOS
+# ==========================================================
+
+# Carrega uma imagem e retorna quando estiver pronta
+fun carregarImagem(string caminho) {
+    return __python("
+    try:
+        # Incrementa o contador de recursos esperados
+        _najagame_data['recursos_total'] += 1
+        
+        # Verifica se o caminho existe
+        if not os.path.exists(caminho):
+            print(f'Erro: Imagem não encontrada: {caminho}')
+            return None
+        
+        # Carrega a imagem
+        imagem = pygame.image.load(caminho).convert_alpha()
+        
+        # Registra no dicionário de recursos
+        _najagame_data['recursos'][caminho] = imagem
+        _najagame_data['recursos_carregados'] += 1
+        
+        print(f'Imagem carregada: {caminho}')
+        return imagem
+    except Exception as e:
+        print(f'Erro ao carregar imagem: {caminho}: {e}')
+        return None
+    ");
+}
+
+# Carrega um arquivo de áudio e retorna quando estiver pronto
+fun carregarAudio(string caminho) {
+    return __python("
+    try:
+        # Incrementa o contador de recursos esperados
+        _najagame_data['recursos_total'] += 1
+        
+        # Verifica se o caminho existe
+        if not os.path.exists(caminho):
+            print(f'Erro: Áudio não encontrado: {caminho}')
+            return None
+        
+        # Carrega o som
+        som = pygame.mixer.Sound(caminho)
+        
+        # Registra no dicionário de recursos
+        _najagame_data['recursos'][caminho] = som
+        _najagame_data['recursos_carregados'] += 1
+        
+        print(f'Áudio carregado: {caminho}')
+        return som
+    except Exception as e:
+        print(f'Erro ao carregar áudio: {caminho}: {e}')
+        return None
+    ");
+}
+
+# ==========================================================
+# SPRITES E OBJETOS DO JOGO
+# ==========================================================
+
+# Cria um sprite (imagem 2D)
+fun criarSprite(string caminho, int largura, int altura) {
+    dict sprite = {
+        caminho: caminho,
+        imagem: null,
+        largura: largura,
+        altura: altura,
+        frame_atual: 0,
+        total_frames: 1,
+        tempo_animacao: 0,
+        intervalo_frame: 0.1,  # 100ms entre frames por padrão
+        animacao_ativa: false,
+        sprite_sheet: false,
+        frames_por_linha: 1
+    };
+    
+    # Carrega a imagem
+    sprite.imagem = carregarImagem(caminho);
+    
+    # Redimensiona a imagem se necessário
+    __python("
+    if sprite['imagem'] is not None:
+        imagem_original = sprite['imagem']
+        
+        # Se as dimensões são diferentes da imagem original, redimensiona
+        if (largura, altura) != imagem_original.get_size():
+            sprite['imagem'] = pygame.transform.scale(imagem_original, (largura, altura))
+    ");
+    
+    println("Sprite criado: " + caminho);
+    return sprite;
+}
+
+# Configura uma sprite sheet (imagem com vários frames)
+fun configurarSpriteSheet(dict sprite, int total_frames, int frames_por_linha, float intervalo_frame) {
+    sprite.total_frames = total_frames;
+    sprite.frames_por_linha = frames_por_linha > 0 ? frames_por_linha : 1;
+    sprite.intervalo_frame = intervalo_frame;
+    sprite.sprite_sheet = true;
+    sprite.animacao_ativa = true;
+    
+    # Calcula largura e altura de cada frame
+    sprite.frame_largura = sprite.largura / sprite.frames_por_linha;
+    sprite.frame_altura = sprite.altura / Math.ceil(sprite.total_frames / sprite.frames_por_linha);
+    
+    # Cria superfícies para os frames individuais
+    __python("
+    if sprite['imagem'] is not None:
+        # Calcula dimensões de cada frame
+        frame_largura = int(sprite['frame_largura'])
+        frame_altura = int(sprite['frame_altura'])
+        
+        # Prepara os frames
+        sprite['frames'] = []
+        for i in range(int(sprite['total_frames'])):
+            linha = i % int(sprite['frames_por_linha'])
+            coluna = i // int(sprite['frames_por_linha'])
+            
+            # Cria um retângulo para recortar o frame da sprite sheet
+            rect = pygame.Rect(
+                int(linha * frame_largura), 
+                int(coluna * frame_altura),
+                frame_largura, 
+                frame_altura
+            )
+            
+            # Cria uma nova superfície para o frame
+            frame = pygame.Surface((frame_largura, frame_altura), pygame.SRCALPHA)
+            frame.blit(sprite['imagem'], (0, 0), rect)
+            
+            sprite['frames'].append(frame)
+    ");
+    
+    return sprite;
+}
+
+# Atualiza a animação de um sprite
+fun atualizarAnimacao(dict sprite, float delta_tempo) {
+    if (!sprite.animacao_ativa || sprite.total_frames <= 1) {
+        return;
+    }
+    
+    sprite.tempo_animacao = sprite.tempo_animacao + delta_tempo;
+    
+    if (sprite.tempo_animacao >= sprite.intervalo_frame) {
+        sprite.frame_atual = (sprite.frame_atual + 1) % sprite.total_frames;
+        sprite.tempo_animacao = 0;
+    }
+}
+
+# Carrega um sprite no jogo
+fun carregarSprite(dict game, string nome, dict sprite) {
+    game.sprites.add(nome, sprite);
+    println("Sprite '" + nome + "' carregado");
+}
+
+# Cria um objeto de jogo
+fun criarObjeto(string nome, int x, int y, dict sprite) {
+    int largura = sprite.frame_largura || sprite.largura;
+    int altura = sprite.frame_altura || sprite.altura;
+    
+    dict objeto = {
+        nome: nome,
+        x: x,
+        y: y,
+        largura: largura,
+        altura: altura,
+        velocidade_x: 0,
+        velocidade_y: 0,
+        sprite: sprite,
+        colisor: true,
+        visivel: true,
+        rotacao: 0,
+        escala_x: 1,
+        escala_y: 1,
+        centro_x: largura / 2,
+        centro_y: altura / 2
+    };
+    return objeto;
+}
+
+# Adiciona um objeto a uma cena
+fun adicionarObjetoACena(dict cena, dict objeto) {
+    cena.objetos.add(objeto);
+    println("Objeto '" + objeto.nome + "' adicionado à cena '" + cena.nome + "'");
+}
+
+# Renderiza um objeto
+fun renderizarObjeto(dict game, dict objeto) {
+    if (!objeto.visivel) {
+        return;
+    }
+    
+    __python("
+    # Obtém a superfície do pygame
+    screen = _najagame_data['screen']
+    if screen is None or not objeto['visivel']:
+        return
+    
+    sprite = objeto['sprite']
+    if sprite is None or sprite.get('imagem') is None:
+        return
+    
+    # Determina a imagem a renderizar
+    if sprite.get('sprite_sheet', False) and 'frames' in sprite:
+        # Usa o frame atual da sprite sheet
+        frame_idx = int(sprite.get('frame_atual', 0))
+        if 0 <= frame_idx < len(sprite['frames']):
+            imagem = sprite['frames'][frame_idx]
+        else:
+            return
+    else:
+        # Usa a imagem completa
+        imagem = sprite['imagem']
+    
+    # Aplica escala se necessário
+    escala_x = objeto.get('escala_x', 1)
+    escala_y = objeto.get('escala_y', 1)
+    
+    if escala_x != 1 or escala_y != 1:
+        largura = int(objeto['largura'] * abs(escala_x))
+        altura = int(objeto['altura'] * abs(escala_y))
+        imagem = pygame.transform.scale(imagem, (largura, altura))
+    
+    # Espelha horizontalmente se a escala_x for negativa
+    if escala_x < 0:
+        imagem = pygame.transform.flip(imagem, True, False)
+    
+    # Aplica rotação se necessário
+    rotacao = objeto.get('rotacao', 0)
+    if rotacao != 0:
+        # Rotaciona em torno do centro
+        imagem = pygame.transform.rotate(imagem, -rotacao)  # Pygame usa ângulos no sentido anti-horário
+    
+    # Calcula a posição final considerando o centro do objeto
+    x = int(objeto['x'])
+    y = int(objeto['y'])
+    
+    # Desenha a imagem na tela
+    screen.blit(imagem, (x, y))
+    ");
+}
+
+# Desenha texto na tela
+fun desenharTexto(string texto, int x, int y, string cor, string fonte) {
+    __python("
+    texto_str = str(texto)
+    x_pos = int(x)
+    y_pos = int(y)
+    
+    # Processa a cor
+    cor_rgb = _processar_cor(cor) if cor else (255, 255, 255)
+    
+    # Processa a fonte
+    fonte_spec = fonte if fonte else '20px Arial'
+    
+    # Extrai tamanho e nome da fonte do formato '20px Arial'
+    import re
+    fonte_match = re.match(r'(\d+)px\s+(.+)', fonte_spec)
+    
+    if fonte_match:
+        tam_fonte = int(fonte_match.group(1))
+        nome_fonte = fonte_match.group(2)
+    else:
+        tam_fonte = 20
+        nome_fonte = 'Arial'
+    
+    # Usa a fonte padrão do sistema se o nome específico não for encontrado
+    try:
+        fonte_obj = pygame.font.SysFont(nome_fonte, tam_fonte)
+    except:
+        fonte_obj = pygame.font.Font(None, tam_fonte)
+    
+    # Renderiza o texto
+    superficie_texto = fonte_obj.render(texto_str, True, cor_rgb)
+    
+    # Desenha na tela
+    _najagame_data['screen'].blit(superficie_texto, (x_pos, y_pos))
+    ");
+}
+
+# Desenha formas geométricas
+fun desenharRetangulo(int x, int y, int largura, int altura, string cor, bool preenchido) {
+    __python("
+    # Converte parâmetros
+    x_pos = int(x)
+    y_pos = int(y)
+    w = int(largura)
+    h = int(altura)
+    cor_rgb = _processar_cor(cor)
+    
+    # Desenha o retângulo
+    if preenchido:
+        pygame.draw.rect(_najagame_data['screen'], cor_rgb, (x_pos, y_pos, w, h))
+    else:
+        pygame.draw.rect(_najagame_data['screen'], cor_rgb, (x_pos, y_pos, w, h), 1)
+    ");
+}
+
+fun desenharCirculo(int x, int y, int raio, string cor, bool preenchido) {
+    __python("
+    # Converte parâmetros
+    x_pos = int(x)
+    y_pos = int(y)
+    r = int(raio)
+    cor_rgb = _processar_cor(cor)
+    
+    # Desenha o círculo
+    if preenchido:
+        pygame.draw.circle(_najagame_data['screen'], cor_rgb, (x_pos, y_pos), r)
+    else:
+        pygame.draw.circle(_najagame_data['screen'], cor_rgb, (x_pos, y_pos), r, 1)
+    ");
+}
+
+# Atualiza a física de um objeto
+fun atualizarObjeto(dict objeto, float delta_tempo) {
+    # Atualiza posição baseada na velocidade
+    objeto.x = objeto.x + (objeto.velocidade_x * delta_tempo);
+    objeto.y = objeto.y + (objeto.velocidade_y * delta_tempo);
+    
+    # Atualiza animação do sprite
+    if (objeto.sprite.animacao_ativa) {
+        atualizarAnimacao(objeto.sprite, delta_tempo);
+    }
+}
+
+# ==========================================================
+# SISTEMA DE COLISÕES
+# ==========================================================
+
+# Verifica colisão entre dois objetos (AABB - Axis-Aligned Bounding Box)
+fun verificarColisao(dict objeto1, dict objeto2) {
+    if (!objeto1.colisor || !objeto2.colisor) {
+        return false;
+    }
+    
+    bool colisao_x = (objeto1.x + objeto1.largura >= objeto2.x) && 
+                    (objeto2.x + objeto2.largura >= objeto1.x);
+                    
+    bool colisao_y = (objeto1.y + objeto1.altura >= objeto2.y) && 
+                    (objeto2.y + objeto2.altura >= objeto1.y);
+                    
+    return colisao_x && colisao_y;
+}
+
+# Verifica colisões entre um objeto e todos da cena
+fun verificarTodasColisoes(dict cena, dict objeto) {
+    list colisoes = list();
+    
+    forin (outro_objeto in cena.objetos) {
+        if (outro_objeto != objeto) {
+            if (verificarColisao(objeto, outro_objeto)) {
+                colisoes.add(outro_objeto);
+            }
+        }
+    }
+    
+    return colisoes;
+}
+
+# Detector de colisão mais preciso usando círculos
+fun verificarColisaoCircular(dict objeto1, dict objeto2) {
+    if (!objeto1.colisor || !objeto2.colisor) {
+        return false;
+    }
+    
+    # Calcula o centro de cada objeto
+    float centro1_x = objeto1.x + objeto1.centro_x;
+    float centro1_y = objeto1.y + objeto1.centro_y;
+    
+    float centro2_x = objeto2.x + objeto2.centro_x;
+    float centro2_y = objeto2.y + objeto2.centro_y;
+    
+    # Calcula o raio de cada objeto (média de largura e altura / 2)
+    float raio1 = (objeto1.largura + objeto1.altura) / 4;
+    float raio2 = (objeto2.largura + objeto2.altura) / 4;
+    
+    # Calcula a distância entre os centros
+    float dx = centro1_x - centro2_x;
+    float dy = centro1_y - centro2_y;
+    float distancia = Math.sqrt(dx * dx + dy * dy);
+    
+    # Verifica se há colisão
+    return distancia < (raio1 + raio2);
+}
+
+# ==========================================================
+# INPUT (TECLADO E MOUSE)
+# ==========================================================
+
+# Verifica se uma tecla está pressionada
+fun teclaEstaPressionada(dict game, string tecla) {
+    return __python("
+    # Mapeia a tecla para o código do Pygame
+    pygame_key = _key_mapping.get(tecla)
+    
+    if pygame_key is None:
+        # Se não estiver no mapeamento, tenta usar a primeira letra como código ASCII
+        if len(tecla) == 1:
+            pygame_key = ord(tecla.lower())
+    
+    # Retorna o estado da tecla
+    return pygame_key is not None and _najagame_data['teclas_pressionadas'].get(pygame_key, False)
+    ");
+}
+
+# Obtém a posição do mouse
+fun obterPosicaoMouse(dict game) {
+    dict posicao = {
+        x: game.mouse_x,
+        y: game.mouse_y
+    };
+    return posicao;
+}
+
+# Verifica se o mouse está sendo clicado
+fun mouseEstaSendoClicado(dict game) {
+    return game.mouse_clicado;
+}
+
+# ==========================================================
+# ÁUDIO
+# ==========================================================
+
+# Toca um som
+fun tocarSom(string caminho_som) {
+    __python("
+    # Busca o som no cache de recursos ou carrega
+    som = _najagame_data['recursos'].get(caminho_som)
+    
+    if som is None:
+        # Tenta carregar o som
+        try:
+            som = pygame.mixer.Sound(caminho_som)
+            _najagame_data['recursos'][caminho_som] = som
+        except Exception as e:
+            print(f'Erro ao carregar som: {caminho_som}: {e}')
+            return
+    
+    # Toca o som
+    try:
+        som.play()
+    except Exception as e:
+        print(f'Erro ao tocar som: {caminho_som}: {e}')
+    ");
+    
+    println("Tocando som: " + caminho_som);
+}
+
+# Toca uma música de fundo
+fun tocarMusicaFundo(string caminho_musica, bool repetir) {
+    __python("
+    try:
+        # Para qualquer música que esteja tocando
+        pygame.mixer.music.stop()
+        
+        # Carrega e toca a nova música
+        pygame.mixer.music.load(caminho_musica)
+        pygame.mixer.music.set_volume(0.5)  # Volume padrão 50%
+        
+        # Define repetição
+        if repetir:
+            pygame.mixer.music.play(-1)  # -1 indica loop infinito
+        else:
+            pygame.mixer.music.play()
+            
+        # Registra a música atual
+        _najagame_data['musica_atual'] = caminho_musica
+        
+    except Exception as e:
+        print(f'Erro ao tocar música: {caminho_musica}: {e}')
+    ");
+    
+    println("Tocando música de fundo: " + caminho_musica);
+    if (repetir) {
+        println("Música configurada para repetir");
+    }
+}
+
+# Pausa a música de fundo
+fun pausarMusicaFundo() {
+    __python("
+    try:
+        pygame.mixer.music.pause()
+    except Exception as e:
+        print(f'Erro ao pausar música: {e}')
+    ");
+}
+
+# Ajusta o volume da música de fundo (0.0 a 1.0)
+fun ajustarVolumeMusicaFundo(float volume) {
+    if (volume < 0) volume = 0;
+    if (volume > 1) volume = 1;
+    
+    __python("
+    try:
+        pygame.mixer.music.set_volume(volume)
+    except Exception as e:
+        print(f'Erro ao ajustar volume: {e}')
+    ");
+}
+
+# ==========================================================
+# FÍSICA E PARTÍCULAS
+# ==========================================================
+
+# Aplica gravidade a um objeto
+fun aplicarGravidade(dict objeto, float gravidade, float delta_tempo) {
+    objeto.velocidade_y = objeto.velocidade_y + (gravidade * delta_tempo);
+}
+
+# Cria um sistema de partículas
+fun criarSistemaParticulas(int x, int y, string cor, int quantidade, float vida_max) {
+    dict sistema = {
+        x: x,
+        y: y,
+        cor: cor,
+        particulas: list(),
+        ativo: true,
+        nome: "particulas"
+    };
+    
+    # Cria as partículas
+    for (int i = 0; i < quantidade; i = i + 1) {
+        # Valores aleatórios para velocidade e vida
+        float angulo = Math.random() * Math.PI * 2;
+        float velocidade = Math.random() * 50 + 20;
+        
+        dict particula = {
+            x: x,
+            y: y,
+            velocidade_x: Math.cos(angulo) * velocidade,
+            velocidade_y: Math.sin(angulo) * velocidade,
+            vida: Math.random() * vida_max + 0.5,
+            tamanho: Math.random() * 5 + 2
+        };
+        
+        sistema.particulas.add(particula);
+    }
+    
+    return sistema;
+}
+
+# Atualiza um sistema de partículas
+fun atualizarParticulas(dict sistema, float delta_tempo) {
+    if (!sistema.ativo) {
+        return;
+    }
+    
+    # Atualiza cada partícula
+    for (int i = sistema.particulas.length() - 1; i >= 0; i = i - 1) {
+        dict particula = sistema.particulas.get(i);
+        
+        # Atualiza posição
+        particula.x = particula.x + (particula.velocidade_x * delta_tempo);
+        particula.y = particula.y + (particula.velocidade_y * delta_tempo);
+        
+        # Reduz a vida
+        particula.vida = particula.vida - delta_tempo;
+        
+        # Remove partículas mortas
+        if (particula.vida <= 0) {
+            sistema.particulas.remove(i);
+        }
+    }
+    
+    # Desativa o sistema se todas as partículas acabaram
+    if (sistema.particulas.length() == 0) {
+        sistema.ativo = false;
+    }
+}
+
+# Renderiza um sistema de partículas
+fun renderizarParticulas(dict sistema) {
+    if (!sistema.ativo) {
+        return;
+    }
+    
+    # Desenha cada partícula
+    forin (particula in sistema.particulas) {
+        # Calcula a opacidade baseada na vida
+        float opacidade = particula.vida > 1 ? 1 : particula.vida;
+        string cor = "rgba(" + sistema.cor + "," + opacidade + ")";
+        
+        desenharCirculo(particula.x, particula.y, particula.tamanho, cor, true);
+    }
+}
+
+# ==========================================================
+# EXEMPLOS E UTILIDADES
+# ==========================================================
+
+# Utilitário para extrair componentes RGB de uma cor
+fun obterRGB(string cor) {
+    dict rgb = __python("
+    cor_processada = _processar_cor(cor)
+    if isinstance(cor_processada, tuple):
+        r, g, b = cor_processada[:3]  # Pega os primeiros 3 valores (RGB)
+        return {'r': r, 'g': g, 'b': b}
+    return {'r': 0, 'g': 0, 'b': 0}
+    ");
+    
+    return rgb;
+}
+
+# Função para criar cores aleatórias
+fun corAleatoria() {
+    int r = Math.round(Math.random() * 255);
+    int g = Math.round(Math.random() * 255);
+    int b = Math.round(Math.random() * 255);
+    
+    return "rgb(" + r + "," + g + "," + b + ")";
+}
+
+# Função para calcular a distância entre dois pontos
+fun distancia(float x1, float y1, float x2, float y2) {
+    float dx = x2 - x1;
+    float dy = y2 - y1;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+# ==========================================================
+# INTEGRAÇÃO COM PYTHON
+# ==========================================================
+
+# Função auxiliar para executar código Python
+fun __python(string codigo) {
+    # Esta função será implementada pelo interpretador NajaScript
+    # para permitir a execução de código Python embutido
+    println("Executando Python: " + codigo);
+    return null;
+}
+
+# Debug: Imprime informações sobre um objeto
+fun debug(any objeto) {
+    __python("
+    import pprint
+    print('DEBUG:')
+    pprint.pprint(objeto)
+    ");
+} 

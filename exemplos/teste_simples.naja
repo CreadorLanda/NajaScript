@@ -1,0 +1,7 @@
+// Teste simples
+importar "NajaPt";
+escrever("Teste: ");
+escreverln("Olá, mundo!");
+escreverln("Isso é um teste simples.");
+
+
