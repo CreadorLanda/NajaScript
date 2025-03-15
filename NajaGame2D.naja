@@ -1,0 +1,366 @@
+# NajaGame2D - Biblioteca para Jogos 2D com NajaScript
+# Implementação básica para desenvolvimento de jogos 2D
+
+# ==========================================================
+# CLASSE GAME - Núcleo do motor de jogos
+# ==========================================================
+
+# Inicializa o motor de jogos
+fun initGame(int largura, int altura, string titulo) {
+    dict game = {
+        largura: largura,
+        altura: altura,
+        titulo: titulo,
+        cena_atual: "principal",
+        cenas: dict(),
+        sprites: dict(),
+        teclas_pressionadas: dict(),
+        mouse_x: 0,
+        mouse_y: 0,
+        mouse_clicado: false,
+        delta_tempo: 0,
+        ultimo_tempo: 0,
+        rodando: false
+    };
+    
+    # Configurações do canvas
+    setupCanvas(game);
+    
+    # Configuração de eventos do teclado e mouse
+    setupInputs(game);
+    
+    return game;
+}
+
+# Configura o canvas para renderização
+fun setupCanvas(dict game) {
+    # Na implementação real, isso criaria um canvas HTML
+    println("Canvas criado com dimensões " + game.largura + "x" + game.altura);
+    println("Título: " + game.titulo);
+}
+
+# Configura eventos de input
+fun setupInputs(dict game) {
+    # Na implementação real, isso adicionaria event listeners
+    println("Eventos de teclado e mouse configurados");
+}
+
+# Inicia o loop principal do jogo
+fun startGame(dict game) {
+    game.rodando = true;
+    game.ultimo_tempo = currentTime();
+    
+    # Na implementação real, isso usaria requestAnimationFrame
+    println("Jogo iniciado!");
+    
+    # Simulação do loop principal
+    loopPrincipal(game);
+}
+
+# Loop principal do jogo
+fun loopPrincipal(dict game) {
+    if (!game.rodando) {
+        return;
+    }
+    
+    # Calcula o delta tempo (tempo entre frames)
+    int tempo_atual = currentTime();
+    game.delta_tempo = (tempo_atual - game.ultimo_tempo) / 1000.0;
+    game.ultimo_tempo = tempo_atual;
+    
+    # Limpa a tela
+    limparTela(game);
+    
+    # Atualiza a lógica do jogo
+    if (game.cenas.get(game.cena_atual) != null) {
+        # Executa a função de atualização da cena atual
+        dict cena = game.cenas.get(game.cena_atual);
+        if (cena.atualizar != null) {
+            cena.atualizar(game, game.delta_tempo);
+        }
+        
+        # Renderiza a cena atual
+        if (cena.renderizar != null) {
+            cena.renderizar(game);
+        }
+    }
+    
+    # Continua o loop (na implementação real seria requestAnimationFrame)
+    if (game.rodando) {
+        # Simulado aqui, seria chamado a cada frame
+    }
+}
+
+# Função auxiliar para obter o tempo atual em milissegundos
+fun currentTime() {
+    # Na implementação real, retornaria Date.now() ou performance.now()
+    # Aqui retorna um valor simulado
+    return 0;
+}
+
+# Limpa a tela
+fun limparTela(dict game) {
+    # Na implementação real, limparia o canvas
+    # ctx.clearRect(0, 0, game.largura, game.altura);
+}
+
+# Para o jogo
+fun stopGame(dict game) {
+    game.rodando = false;
+    println("Jogo parado");
+}
+
+# ==========================================================
+# GERENCIAMENTO DE CENAS
+# ==========================================================
+
+# Cria uma nova cena
+fun criarCena(string nome, fun atualizar, fun renderizar) {
+    dict cena = {
+        nome: nome,
+        atualizar: atualizar,
+        renderizar: renderizar,
+        objetos: list()
+    };
+    return cena;
+}
+
+# Adiciona uma cena ao jogo
+fun adicionarCena(dict game, dict cena) {
+    game.cenas.add(cena.nome, cena);
+    println("Cena '" + cena.nome + "' adicionada ao jogo");
+}
+
+# Troca para uma cena específica
+fun trocarCena(dict game, string nome_cena) {
+    if (game.cenas.get(nome_cena) != null) {
+        game.cena_atual = nome_cena;
+        println("Trocado para cena: " + nome_cena);
+    } else {
+        println("Erro: Cena '" + nome_cena + "' não encontrada");
+    }
+}
+
+# ==========================================================
+# SPRITES E OBJETOS DO JOGO
+# ==========================================================
+
+# Cria um sprite (imagem 2D)
+fun criarSprite(string caminho, int largura, int altura) {
+    dict sprite = {
+        caminho: caminho,
+        largura: largura,
+        altura: altura,
+        frame_atual: 0,
+        total_frames: 1,
+        animacao_ativa: false
+    };
+    
+    # Na implementação real, carregaria a imagem
+    println("Sprite criado: " + caminho);
+    
+    return sprite;
+}
+
+# Carrega um sprite no jogo
+fun carregarSprite(dict game, string nome, dict sprite) {
+    game.sprites.add(nome, sprite);
+    println("Sprite '" + nome + "' carregado");
+}
+
+# Cria um objeto de jogo
+fun criarObjeto(string nome, int x, int y, dict sprite) {
+    dict objeto = {
+        nome: nome,
+        x: x,
+        y: y,
+        largura: sprite.largura,
+        altura: sprite.altura,
+        velocidade_x: 0,
+        velocidade_y: 0,
+        sprite: sprite,
+        colisor: true,
+        visivel: true
+    };
+    return objeto;
+}
+
+# Adiciona um objeto a uma cena
+fun adicionarObjetoACena(dict cena, dict objeto) {
+    cena.objetos.add(objeto);
+    println("Objeto '" + objeto.nome + "' adicionado à cena '" + cena.nome + "'");
+}
+
+# Renderiza um objeto
+fun renderizarObjeto(dict game, dict objeto) {
+    if (objeto.visivel) {
+        # Na implementação real, desenharia o sprite no canvas
+        # ctx.drawImage(objeto.sprite, objeto.x, objeto.y);
+        println("Renderizando objeto em (" + objeto.x + ", " + objeto.y + ")");
+    }
+}
+
+# Atualiza a física de um objeto
+fun atualizarObjeto(dict objeto, float delta_tempo) {
+    # Atualiza posição baseada na velocidade
+    objeto.x = objeto.x + (objeto.velocidade_x * delta_tempo);
+    objeto.y = objeto.y + (objeto.velocidade_y * delta_tempo);
+}
+
+# ==========================================================
+# SISTEMA DE COLISÕES
+# ==========================================================
+
+# Verifica colisão entre dois objetos (AABB - Axis-Aligned Bounding Box)
+fun verificarColisao(dict objeto1, dict objeto2) {
+    if (!objeto1.colisor || !objeto2.colisor) {
+        return false;
+    }
+    
+    bool colisao_x = (objeto1.x + objeto1.largura >= objeto2.x) && 
+                    (objeto2.x + objeto2.largura >= objeto1.x);
+                    
+    bool colisao_y = (objeto1.y + objeto1.altura >= objeto2.y) && 
+                    (objeto2.y + objeto2.altura >= objeto1.y);
+                    
+    return colisao_x && colisao_y;
+}
+
+# Verifica colisões entre um objeto e todos da cena
+fun verificarTodasColisoes(dict cena, dict objeto) {
+    list colisoes = list();
+    
+    forin (outro_objeto in cena.objetos) {
+        if (outro_objeto != objeto) {
+            if (verificarColisao(objeto, outro_objeto)) {
+                colisoes.add(outro_objeto);
+            }
+        }
+    }
+    
+    return colisoes;
+}
+
+# ==========================================================
+# INPUT (TECLADO E MOUSE)
+# ==========================================================
+
+# Verifica se uma tecla está pressionada
+fun teclaEstaPressionada(dict game, string tecla) {
+    return game.teclas_pressionadas.get(tecla) == true;
+}
+
+# Obtém a posição do mouse
+fun obterPosicaoMouse(dict game) {
+    dict posicao = {
+        x: game.mouse_x,
+        y: game.mouse_y
+    };
+    return posicao;
+}
+
+# Verifica se o mouse está sendo clicado
+fun mouseEstaSendoClicado(dict game) {
+    return game.mouse_clicado;
+}
+
+# ==========================================================
+# ÁUDIO
+# ==========================================================
+
+# Toca um som
+fun tocarSom(string caminho_som) {
+    # Na implementação real, usaria a API de áudio
+    println("Tocando som: " + caminho_som);
+}
+
+# Toca uma música de fundo
+fun tocarMusicaFundo(string caminho_musica, bool repetir) {
+    # Na implementação real, usaria a API de áudio
+    println("Tocando música de fundo: " + caminho_musica);
+    if (repetir) {
+        println("Música configurada para repetir");
+    }
+}
+
+# ==========================================================
+# EXEMPLO DE USO
+# ==========================================================
+
+# Este exemplo demonstraria como usar a biblioteca
+fun exemploJogo() {
+    # Inicializa o jogo
+    dict meuJogo = initGame(800, 600, "Meu Primeiro Jogo Naja");
+    
+    # Cria sprites
+    dict spriteJogador = criarSprite("jogador.png", 64, 64);
+    dict spriteInimigo = criarSprite("inimigo.png", 48, 48);
+    
+    # Carrega sprites no jogo
+    carregarSprite(meuJogo, "jogador", spriteJogador);
+    carregarSprite(meuJogo, "inimigo", spriteInimigo);
+    
+    # Função de atualização da cena principal
+    fun atualizarPrincipal(dict game, float delta) {
+        # Atualiza todos os objetos
+        forin (objeto in game.cenas.get(game.cena_atual).objetos) {
+            atualizarObjeto(objeto, delta);
+            
+            # Lógica específica para o jogador
+            if (objeto.nome == "jogador") {
+                # Movimento com teclado
+                if (teclaEstaPressionada(game, "ArrowRight")) {
+                    objeto.velocidade_x = 200;
+                } elif (teclaEstaPressionada(game, "ArrowLeft")) {
+                    objeto.velocidade_x = -200;
+                } else {
+                    objeto.velocidade_x = 0;
+                }
+                
+                if (teclaEstaPressionada(game, "ArrowUp")) {
+                    objeto.velocidade_y = -200;
+                } elif (teclaEstaPressionada(game, "ArrowDown")) {
+                    objeto.velocidade_y = 200;
+                } else {
+                    objeto.velocidade_y = 0;
+                }
+                
+                # Verifica colisões
+                list colisoes = verificarTodasColisoes(game.cenas.get(game.cena_atual), objeto);
+                if (colisoes.length() > 0) {
+                    println("Colisão detectada!");
+                    tocarSom("colisao.wav");
+                }
+            }
+        }
+    }
+    
+    # Função de renderização da cena principal
+    fun renderizarPrincipal(dict game) {
+        # Renderiza todos os objetos da cena
+        forin (objeto in game.cenas.get(game.cena_atual).objetos) {
+            renderizarObjeto(game, objeto);
+        }
+    }
+    
+    # Cria e configura a cena principal
+    dict cenaPrincipal = criarCena("principal", atualizarPrincipal, renderizarPrincipal);
+    
+    # Cria objetos de jogo
+    dict jogador = criarObjeto("jogador", 100, 100, spriteJogador);
+    dict inimigo = criarObjeto("inimigo", 400, 300, spriteInimigo);
+    
+    # Adiciona objetos à cena
+    adicionarObjetoACena(cenaPrincipal, jogador);
+    adicionarObjetoACena(cenaPrincipal, inimigo);
+    
+    # Adiciona a cena ao jogo
+    adicionarCena(meuJogo, cenaPrincipal);
+    
+    # Inicia o jogo na cena principal
+    trocarCena(meuJogo, "principal");
+    startGame(meuJogo);
+}
+
+# Executa o exemplo
+# exemploJogo(); 

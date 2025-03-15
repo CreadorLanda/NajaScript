@@ -1,0 +1,27 @@
+println("Teste simples de NajaScript");
+string nome = input("Digite seu nome: ");
+println("Olá, " + nome);
+
+string idade_str = input("Digite sua idade: ");
+
+int idade = 0;
+
+if (idade_str == "18") {
+    idade = 18;
+} else if (idade_str == "19") {
+    idade = 19;
+} else if (idade_str == "20") {
+    idade = 20;
+} else {
+    idade = 10;
+}
+
+println("Idade definida: " + idade);
+
+if (idade >= 18) {
+    println("Você é adulto.");
+} else {
+    println("Você não é adulto.");
+}
+
+println("Teste concluído com sucesso!"); 

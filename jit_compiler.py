@@ -102,9 +102,28 @@ class JITCompiler:
         
         # Armazena o código fonte para uso posterior
         self.cached_code[ast_function.name] = py_code
-        print(f"Código Python gerado:\n{py_code}")  # Debugging
+        # Gera o código Python
+        py_code = self._generate_python_code(ast_function, environment)
         
-        return py_code
+        # Compila o código Python
+        try:
+            # Comentado para remover debug
+            # print(f"Código Python gerado:\n{py_code}")  # Debugging
+            
+            # Compila o código Python para uma função
+            compiled_code = compile(py_code, f"<{ast_function.name}>", "exec")
+            
+            # Cria o namespace para a função
+            namespace = {}
+            
+            # Executa o código compilado no namespace criado
+            exec(compiled_code, namespace)
+            
+            # Retorna a função compilada
+            return namespace[ast_function.name]
+        except Exception as e:
+            print(f"Erro ao compilar função {ast_function.name}: {e}")
+            raise
     
     def _compile_with_numba(self, py_code, function_name):
         """

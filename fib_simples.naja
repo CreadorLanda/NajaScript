@@ -1,9 +1,9 @@
-// Exemplo simples de Fibonacci sem recursão
+
 int a = 0;
 int b = 1;
 int temp;
 
-println("Sequência de Fibonacci:");
+println("Sequencia de Fibonacci:");
 println(a);
 println(b);
 
@@ -14,4 +14,4 @@ for (int i = 2; i < 10; i = i + 1) {
     println(temp);
 }
 
-println("Programa concluído!"); 
+println("Programa concluido!"); 

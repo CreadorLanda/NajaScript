@@ -57,15 +57,16 @@ class NajaBytecodeCompiler:
     """Compila AST NajaScript para bytecode"""
     
     def __init__(self):
-        self.instructions = []
+        self.code = []
         self.constants = []
-        self.variables = {}
-        self.current_scope = 0
-        self.functions = {}
-        self.debug = True  # Habilita depuração
+        self.names = []
+        self.current_scope = None
+        self.scopes = []
+        self.interpreter = None
+        self.debug = False  # Desabilitando depuração
         
     def debug_print(self, msg):
-        """Imprime mensagem de depuração"""
+        """Imprime mensagens de depuração, se habilitado"""
         if self.debug:
             print(f"DEBUG: {msg}")
             

@@ -1,0 +1,18 @@
+println("Teste básico");
+
+int idade = 18;
+int experiencia = 2;
+
+if (idade >= 18) {
+    println("Maior de idade");
+    
+    if (experiencia > 1) {
+        println("Tem experiência suficiente");
+    } else {
+        println("Não tem experiência suficiente");
+    }
+} else {
+    println("Menor de idade");
+}
+
+println("Programa concluído!"); 

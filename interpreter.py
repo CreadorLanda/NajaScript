@@ -181,11 +181,6 @@ class Function:
     
     def __call__(self, interpreter, arguments):
         """Chama a função com os argumentos fornecidos"""
-        # Adiciona informações de depuração
-        print(f"DEBUG: Chamando função: {self.declaration.name}")
-        print(f"DEBUG: Parâmetros da declaração: {self.declaration.parameters}")
-        print(f"DEBUG: Argumentos fornecidos: {arguments}")
-        
         # Verifica se podemos usar a versão compilada JIT
         if self.compiled_version:
             try:
@@ -202,7 +197,7 @@ class Function:
         # Define os parâmetros no novo ambiente
         for i, param in enumerate(self.declaration.parameters):
             if i < len(arguments):
-                # Aqui está o problema - param pode ser uma tupla (tipo, nome)
+                # param pode ser uma tupla (tipo, nome)
                 param_name = param.name if hasattr(param, 'name') else param[1]
                 environment.define(param_name, arguments[i])
             else:
@@ -216,8 +211,7 @@ class Function:
         
         try:
             # Executa o corpo da função
-            for statement in self.declaration.body:
-                interpreter.execute(statement)
+            interpreter.execute_block(self.declaration.body, environment)
             return None
         except ReturnException as return_value:
             return return_value.value
@@ -580,9 +574,6 @@ class Interpreter:
     
     def execute_functiondeclaration(self, stmt):
         """Executa uma declaração de função"""
-        print(f"DEBUG: Declaração de função: {stmt.name}")
-        print(f"DEBUG: Parâmetros: {stmt.parameters}")
-        
         function = Function(stmt, self.environment)
         self.environment.define(stmt.name, function)
         
@@ -646,6 +637,10 @@ class Interpreter:
         try:
             self.environment = environment
             
+            # Executamos cada instrução no bloco
+            # NOTA: É importante que ReturnException, BreakException e ContinueException
+            # sejam propagadas para o chamador, para permitir que funções recursivas
+            # retornem corretamente.
             for statement in statements:
                 self.execute(statement)
             
@@ -664,10 +659,7 @@ class Interpreter:
             method = getattr(self, method_name, self.evaluate_default)
             return method(expr)
         except Exception as e:
-            # Adicionar informações detalhadas de depuração
-            print(f"DEBUG: Erro ao avaliar expressão do tipo {expr.__class__.__name__}")
-            print(f"DEBUG: Método procurado: {method_name}")
-            print(f"DEBUG: Expressão: {expr}")
+            # Adicionar informações detalhadas de depuração apenas em modo desenvolvimento
             raise e
     
     def evaluate_default(self, expr):
@@ -743,12 +735,6 @@ class Interpreter:
     
     def evaluate_functioncall(self, expr):
         """Avalia uma chamada de função"""
-        # Adiciona informações de depuração
-        print(f"DEBUG: FunctionCall: {expr}")
-        print(f"DEBUG: expr.name type: {type(expr.name)}")
-        print(f"DEBUG: expr.name: {expr.name}")
-        print(f"DEBUG: expr.arguments: {expr.arguments}")
-        
         # Verifica se o nome da função é uma string ou uma expressão
         if isinstance(expr.name, str):
             # Se for uma string, tenta obter a função diretamente do ambiente
