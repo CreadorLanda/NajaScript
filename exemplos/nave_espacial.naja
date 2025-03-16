@@ -1,0 +1,299 @@
+// Jogo de Nave Espacial em NajaScript
+importar "NajaGame";
+
+// Configurações do jogo
+inteiro LARGURA_TELA = 800;
+inteiro ALTURA_TELA = 600;
+inteiro VELOCIDADE_NAVE = 250;
+inteiro VELOCIDADE_TIRO = 350;
+inteiro VELOCIDADE_METEORO = 150;
+inteiro PONTUACAO_VITORIA = 100;
+
+// Variáveis do jogo
+inteiro pontuacao = 0;
+inteiro naveX = 400;
+inteiro naveY = 500;
+lista tiros = lista();
+lista meteoros = lista();
+booleano jogoAtivo = verdadeiro;
+inteiro temporizadorMeteoro = 0;
+
+// Função para inicializar o jogo
+funcao inicializar() {
+    escreverln("Inicializando Jogo da Nave Espacial...");
+    
+    // Inicializa o jogo com configurações básicas
+    dicionario jogo = iniciarJogo(LARGURA_TELA, ALTURA_TELA, "Nave Espacial NajaScript");
+    
+    // Inicializa as teclas
+    atualizarTecla("ESC", falso);
+    atualizarTecla("A", falso);
+    atualizarTecla("D", falso);
+    atualizarTecla("W", falso);
+    atualizarTecla("S", falso);
+    atualizarTecla("SPACE", falso);
+    
+    // Inicializa as listas de tiros e meteoros
+    tiros = lista();
+    meteoros = lista();
+    
+    escreverln("Jogo inicializado! Use A e D para mover, ESPAÇO para atirar.");
+}
+
+// Função para criar um novo tiro
+funcao criarTiro() {
+    dicionario tiro = criarRetangulo(naveX + 22, naveY - 10, 6, 15, "amarelo");
+    tiro.adicionar("tipo", "tiro");
+    tiros.adicionar(tiro);
+    
+    escreverln("Tiro disparado!");
+}
+
+// Função para criar um novo meteoro
+funcao criarMeteoro() {
+    inteiro tamanho = aleatorio(30, 60);
+    inteiro posX = aleatorio(0, LARGURA_TELA - tamanho);
+    
+    dicionario meteoro = criarCirculo(posX, 0 - tamanho, tamanho / 2, "cinza");
+    meteoro.adicionar("tipo", "meteoro");
+    meteoro.adicionar("velocidade", aleatorio(VELOCIDADE_METEORO * 0.7, VELOCIDADE_METEORO * 1.3));
+    
+    meteoros.adicionar(meteoro);
+}
+
+// Função para atualizar a posição dos tiros
+funcao atualizarTiros(decimal delta_tempo) {
+    inteiro i = 0;
+    
+    enquanto (i < tiros.tamanho()) {
+        dicionario tiro = tiros.obter(i);
+        decimal novoY = tiro.y;
+        novoY = novoY - (VELOCIDADE_TIRO * delta_tempo);
+        tiro.y = novoY;
+        
+        // Remove tiros que saíram da tela
+        se (tiro.y < 0 - 20) {
+            tiros.remover(i);
+        } senao {
+            i = i + 1;
+        }
+    }
+}
+
+// Função para atualizar a posição dos meteoros
+funcao atualizarMeteoros(decimal delta_tempo) {
+    inteiro i = 0;
+    
+    enquanto (i < meteoros.tamanho()) {
+        dicionario meteoro = meteoros.obter(i);
+        decimal novoY = meteoro.y;
+        novoY = novoY + (meteoro.velocidade * delta_tempo);
+        meteoro.y = novoY;
+        
+        // Remove meteoros que saíram da tela
+        se (meteoro.y > ALTURA_TELA + 50) {
+            meteoros.remover(i);
+        } senao {
+            i = i + 1;
+        }
+    }
+}
+
+// Função para verificar colisões
+funcao verificarColisoes() {
+    // Verifica colisões entre tiros e meteoros
+    inteiro i = 0;
+    
+    enquanto (i < tiros.tamanho()) {
+        dicionario tiro = tiros.obter(i);
+        booleano tiroColidiu = falso;
+        
+        inteiro j = 0;
+        enquanto (j < meteoros.tamanho()) {
+            dicionario meteoro = meteoros.obter(j);
+            
+            // Para simplificar, tratamos o tiro como um ponto central
+            decimal tiroXcentro = tiro.x + (tiro.largura / 2);
+            decimal tiroYcentro = tiro.y + (tiro.altura / 2);
+            
+            // Verifica se o ponto central do tiro está dentro do meteoro
+            decimal distancia = calcularDistancia(
+                {"x": tiroXcentro, "y": tiroYcentro},
+                {"x": meteoro.x, "y": meteoro.y}
+            );
+            
+            se (distancia < meteoro.raio) {
+                // Tiro acertou o meteoro
+                meteoros.remover(j);
+                tiroColidiu = verdadeiro;
+                pontuacao = pontuacao + 10;
+                escreverln("Meteoro destruído! Pontuação: " + pontuacao);
+                parar; // Sai do loop interno
+            } senao {
+                j = j + 1;
+            }
+        }
+        
+        // Se o tiro colidiu, removemos ele
+        se (tiroColidiu) {
+            tiros.remover(i);
+        } senao {
+            i = i + 1;
+        }
+    }
+    
+    // Verifica colisões entre nave e meteoros
+    para (inteiro i = 0; i < meteoros.tamanho(); i = i + 1) {
+        dicionario meteoro = meteoros.obter(i);
+        dicionario nave = criarRetangulo(naveX, naveY, 50, 30, "verde");
+        
+        // Verifica se o centro da nave está próximo do meteoro
+        decimal naveXcentro = naveX + 25;
+        decimal naveYcentro = naveY + 15;
+        
+        decimal distancia = calcularDistancia(
+            {"x": naveXcentro, "y": naveYcentro},
+            {"x": meteoro.x, "y": meteoro.y}
+        );
+        
+        // Colisão se o centro da nave estiver a menos de 2/3 do raio do meteoro
+        se (distancia < meteoro.raio * 0.9) {
+            fimDeJogo(falso);
+            retornar;
+        }
+    }
+    
+    // Verifica se o jogador venceu
+    se (pontuacao >= PONTUACAO_VITORIA) {
+        fimDeJogo(verdadeiro);
+    }
+}
+
+// Função principal de atualização da cena de jogo
+funcao atualizarJogo(dicionario jogo, decimal delta_tempo) {
+    // Se o jogo não estiver ativo, não atualiza
+    se (nao jogoAtivo) {
+        retornar;
+    }
+    
+    // Movimentação da nave
+    se (teclaPressionada("A")) {
+        decimal deslocamento = VELOCIDADE_NAVE * delta_tempo;
+        naveX = naveX - deslocamento;
+    }
+    
+    se (teclaPressionada("D")) {
+        decimal deslocamento = VELOCIDADE_NAVE * delta_tempo;
+        naveX = naveX + deslocamento;
+    }
+    
+    se (teclaPressionada("W")) {
+        decimal deslocamento = VELOCIDADE_NAVE * delta_tempo;
+        naveY = naveY - deslocamento;
+    }
+    
+    se (teclaPressionada("S")) {
+        decimal deslocamento = VELOCIDADE_NAVE * delta_tempo;
+        naveY = naveY + deslocamento;
+    }
+    
+    // Limites da tela para a nave
+    decimal limite_direita = LARGURA_TELA - 50;
+    naveX = limitar(naveX, 0, limite_direita);
+    naveY = limitar(naveY, 0, ALTURA_TELA - 30);
+    
+    // Disparo de tiros
+    se (teclaPressionada("SPACE")) {
+        // Limitamos a 5 tiros na tela
+        se (tiros.tamanho() < 5) {
+            criarTiro();
+        }
+    }
+    
+    // Atualiza o temporizador para criar meteoros
+    temporizadorMeteoro = temporizadorMeteoro + 1;
+    se (temporizadorMeteoro > 60) {  // Cria um meteoro a cada segundo aproximadamente
+        criarMeteoro();
+        temporizadorMeteoro = 0;
+    }
+    
+    // Atualiza posições
+    atualizarTiros(delta_tempo);
+    atualizarMeteoros(delta_tempo);
+    
+    // Verifica colisões
+    verificarColisoes();
+    
+    // Encerra o jogo se ESC for pressionado
+    se (teclaPressionada("ESC")) {
+        escreverln("Jogo encerrado pelo usuário.");
+        jogoAtivo = falso;
+    }
+}
+
+// Função principal de renderização da cena de jogo
+funcao renderizarJogo(dicionario jogo) {
+    // Desenha a nave
+    dicionario nave = criarRetangulo(naveX, naveY, 50, 30, "verde");
+    desenharForma(nave);
+    
+    // Desenha os tiros
+    para (inteiro i = 0; i < tiros.tamanho(); i = i + 1) {
+        dicionario tiro = tiros.obter(i);
+        desenharForma(tiro);
+    }
+    
+    // Desenha os meteoros
+    para (inteiro i = 0; i < meteoros.tamanho(); i = i + 1) {
+        dicionario meteoro = meteoros.obter(i);
+        desenharForma(meteoro);
+    }
+    
+    // Desenha a pontuação
+    desenharTexto("Pontuação: " + pontuacao, 20, 20);
+}
+
+// Função para lidar com o fim de jogo
+funcao fimDeJogo(booleano vitoria) {
+    jogoAtivo = falso;
+    
+    se (vitoria) {
+        escreverln("Parabéns! Você venceu com " + pontuacao + " pontos!");
+    } senao {
+        escreverln("Sua nave foi destruída! Pontuação final: " + pontuacao);
+    }
+}
+
+// Teste o jogo
+funcao testarJogo() {
+    // Inicializa o jogo
+    inicializar();
+    
+    // Cria uma cena de jogo
+    dicionario cena_jogo = criarCena("jogo", atualizarJogo, renderizarJogo);
+    
+    // Define a cena atual
+    definirCenaAtual("jogo");
+    
+    // Simula algumas teclas pressionadas para testar
+    atualizarTecla("D", verdadeiro);  // Move para a direita
+    atualizarTecla("SPACE", verdadeiro);  // Atira
+    
+    // Executa o jogo
+    executarJogo();
+    
+    // Libera as teclas
+    atualizarTecla("D", falso);
+    atualizarTecla("SPACE", falso);
+    
+    // Simula mais algumas teclas
+    atualizarTecla("A", verdadeiro);  // Move para a esquerda
+    
+    // Executa mais alguns frames
+    executarJogo();
+}
+
+// Executa o jogo
+escreverln("=== Jogo da Nave Espacial em NajaScript ===");
+testarJogo();
+escreverln("Fim do jogo! Pontuação final: " + pontuacao); 

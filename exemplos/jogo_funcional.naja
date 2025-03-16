@@ -1,0 +1,148 @@
+// Jogo Funcional em NajaScript
+importar "NajaGame";
+
+// Configurações do Jogo
+inteiro LARGURA_TELA = 800;
+inteiro ALTURA_TELA = 600;
+inteiro VELOCIDADE_JOGADOR = 200;
+inteiro VELOCIDADE_INIMIGO = 100;
+inteiro PONTOS_PARA_VENCER = 5;
+
+// Variáveis do Jogo
+inteiro pontos = 0;
+inteiro jogadorX = 400;
+inteiro jogadorY = 500;
+inteiro inimigoX = 400;
+inteiro inimigoY = 100;
+booleano jogoAtivo = verdadeiro;
+
+// Função para inicializar o jogo
+funcao inicializar() {
+    escreverln("Inicializando Jogo...");
+    
+    // Inicializa o jogo com configurações básicas
+    iniciarJogo(LARGURA_TELA, ALTURA_TELA, "Jogo NajaScript Funcional");
+    
+    // Inicializa as teclas
+    atualizarTecla("ESC", falso);
+    atualizarTecla("LEFT", falso);
+    atualizarTecla("RIGHT", falso);
+    
+    escreverln("Jogo inicializado! Use LEFT e RIGHT para mover.");
+}
+
+// Função para verificar colisões
+funcao verificarColisoes() {
+    // Calcula a distância entre o jogador e o inimigo
+    inteiro jogadorCentroX = jogadorX + 25;
+    inteiro jogadorCentroY = jogadorY + 15;
+    inteiro inimigoCentroX = inimigoX + 15;
+    inteiro inimigoCentroY = inimigoY + 15;
+    
+    // Cálculo simples de distância
+    inteiro dx = jogadorCentroX - inimigoCentroX;
+    inteiro dy = jogadorCentroY - inimigoCentroY;
+    decimal distancia = (dx * dx + dy * dy);
+    
+    // Se a distância for menor que a soma dos raios ao quadrado, ocorreu colisão
+    se (distancia < 1600) { // 40^2
+        // Reposiciona o inimigo
+        inimigoX = aleatorio(50, LARGURA_TELA - 50);
+        inimigoY = 100;
+        
+        // Aumenta a pontuação
+        pontos = pontos + 1;
+        escreverln("Colisão! Pontuação: " + pontos);
+        
+        // Verifica se o jogador venceu
+        se (pontos >= PONTOS_PARA_VENCER) {
+            jogoAtivo = falso;
+            escreverln("Você venceu com " + pontos + " pontos!");
+        }
+    }
+}
+
+// Função principal para atualizar a cena do jogo
+funcao atualizarJogo(dicionario jogo, decimal delta_tempo) {
+    // Se o jogo não estiver ativo, não atualiza
+    se (jogoAtivo == falso) {
+        retornar;
+    }
+    
+    // Movimento do jogador
+    se (teclaPressionada("LEFT")) {
+        decimal deslocamento = VELOCIDADE_JOGADOR * delta_tempo;
+        jogadorX = jogadorX - deslocamento;
+    }
+    
+    se (teclaPressionada("RIGHT")) {
+        decimal deslocamento = VELOCIDADE_JOGADOR * delta_tempo;
+        jogadorX = jogadorX + deslocamento;
+    }
+    
+    // Movimento do inimigo (IA simples para seguir o jogador)
+    se (inimigoX < jogadorX) {
+        decimal deslocamento = VELOCIDADE_INIMIGO * delta_tempo;
+        inimigoX = inimigoX + deslocamento;
+    } senao {
+        decimal deslocamento = VELOCIDADE_INIMIGO * delta_tempo;
+        inimigoX = inimigoX - deslocamento;
+    }
+    
+    // Move o inimigo para baixo
+    decimal deslocamento = VELOCIDADE_INIMIGO * delta_tempo;
+    inimigoY = inimigoY + deslocamento;
+    
+    // Reposiciona o inimigo se ele sair da tela
+    se (inimigoY > ALTURA_TELA) {
+        inimigoX = aleatorio(50, LARGURA_TELA - 50);
+        inimigoY = 100;
+    }
+    
+    // Limites da tela para o jogador
+    decimal limite_direito = LARGURA_TELA - 50;
+    jogadorX = limitar(jogadorX, 0, limite_direito);
+    
+    // Verifica colisões
+    verificarColisoes();
+    
+    // Termina o jogo se ESC for pressionado
+    se (teclaPressionada("ESC")) {
+        escreverln("Jogo terminado pelo usuário.");
+        jogoAtivo = falso;
+    }
+}
+
+// Função principal para renderizar a cena do jogo
+funcao renderizarJogo(dicionario jogo) {
+    // Desenha o jogador
+    dicionario jogador = criarRetangulo(jogadorX, jogadorY, 50, 30, "verde");
+    desenharForma(jogador);
+    
+    // Desenha o inimigo
+    dicionario inimigo = criarCirculo(inimigoX, inimigoY, 15, "vermelho");
+    desenharForma(inimigo);
+    
+    // Desenha a pontuação
+    desenharTexto("Pontuação: " + pontos, 20, 20);
+}
+
+// Testa o jogo
+funcao testarJogo() {
+    // Inicializa o jogo
+    inicializar();
+    
+    // Cria uma cena de jogo
+    dicionario cena_jogo = criarCena("jogo", atualizarJogo, renderizarJogo);
+    
+    // Define a cena atual
+    definirCenaAtual("jogo");
+    
+    // Executa o jogo
+    executarJogo();
+}
+
+// Executa o jogo
+escreverln("=== Jogo NajaScript Funcional ===");
+testarJogo();
+escreverln("Jogo terminado! Pontuação final: " + pontos); 

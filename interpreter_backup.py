@@ -334,24 +334,6 @@ class Interpreter:
             return None
         self.environment.define("printChange", print_change_func)
     
-    def _register_native_functions(self):
-        """Registra funções nativas no ambiente"""
-        # Funções de E/S
-        self.environment.define("print", print)
-        self.environment.define("input", input)
-        
-        # Funções de conversão
-        self.environment.define("int", int)
-        self.environment.define("float", float)
-        self.environment.define("str", str)
-        self.environment.define("toString", str)  # Alias para str
-        
-        # Funções matemáticas
-        self.environment.define("abs", abs)
-        self.environment.define("round", round)
-        self.environment.define("min", min)
-        self.environment.define("max", max)
-    
     def interpret(self, ast):
         """Interpreta a árvore sintática abstrata"""
         if ast is None:
@@ -367,7 +349,7 @@ class Interpreter:
             
             # Executa todas as statements
             for statement in statements:
-                result = self.execute(statement)
+                result = self.evaluate(statement)
             
         except Exception as e:
             self.error = str(e)
@@ -375,165 +357,25 @@ class Interpreter:
         
         return result
     
-    def execute(self, stmt):
-        """Executa uma instrução e retorna seu valor"""
-        if stmt is None:
-            return None
-        
-        stmt_type = stmt.__class__.__name__
-        method_name = f"execute_{stmt_type}"
-        
-        if hasattr(self, method_name):
-            return getattr(self, method_name)(stmt)
-        else:
-            raise Exception(f"Tipo de instrução não implementado: {stmt_type}")
-    
-    def evaluate(self, expr):
-        """Avalia uma expressão e retorna seu valor"""
-        if expr is None:
-            return None
-        
-        expr_type = expr.__class__.__name__
-        method_name = f"evaluate_{expr_type}"
-        
-        if hasattr(self, method_name):
-            return getattr(self, method_name)(expr)
-        else:
-            raise Exception(f"Tipo de expressão não implementado: {expr_type}")
-    
-    def evaluate_Variable(self, expr):
-        """Avalia uma variável"""
-        return self.environment.get(expr.name)
-    
-    def evaluate_StringLiteral(self, expr):
-        """Avalia um literal de string"""
-        return expr.value
-    
-    def evaluate_IntegerLiteral(self, expr):
-        """Avalia um literal inteiro"""
-        return expr.value
-    
-    def evaluate_FloatLiteral(self, expr):
-        """Avalia um literal de ponto flutuante"""
-        return expr.value
-    
-    def evaluate_BooleanLiteral(self, expr):
-        """Avalia um literal booleano"""
-        return expr.value
-    
-    def evaluate_NullLiteral(self, expr):
-        """Avalia um literal nulo"""
-        return None
-    
-    def evaluate_BinaryOperation(self, expr):
-        """Avalia uma operação binária"""
-        left = self.evaluate(expr.left)
-        right = self.evaluate(expr.right)
-        
-        if expr.operator == "+":
-            # Concatenação de strings
-            if isinstance(left, str) or isinstance(right, str):
-                return str(left) + str(right)
-            # Soma numérica
-            return left + right
-        elif expr.operator == "-":
-            return left - right
-        elif expr.operator == "*":
-            return left * right
-        elif expr.operator == "/":
-            return left / right
-        elif expr.operator == "%":
-            return left % right
-        elif expr.operator == "**":
-            return left ** right
-        elif expr.operator == "==":
-            return left == right
-        elif expr.operator == "!=":
-            return left != right
-        elif expr.operator == "<":
-            return left < right
-        elif expr.operator == ">":
-            return left > right
-        elif expr.operator == "<=":
-            return left <= right
-        elif expr.operator == ">=":
-            return left >= right
-        elif expr.operator == "&&" or expr.operator == "and":
-            return self.is_truthy(left) and self.is_truthy(right)
-        elif expr.operator == "||" or expr.operator == "or":
-            return self.is_truthy(left) or self.is_truthy(right)
-        else:
-            raise Exception(f"Operador não implementado: {expr.operator}")
-    
-    def evaluate_UnaryOperation(self, expr):
-        """Avalia uma operação unária"""
-        operand = self.evaluate(expr.operand)
-        
-        if expr.operator == "-":
-            return -operand
-        elif expr.operator == "!" or expr.operator == "not":
-            return not self.is_truthy(operand)
-        else:
-            raise Exception(f"Operador unário não implementado: {expr.operator}")
-    
-    def evaluate_FunctionCall(self, expr):
-        """Avalia uma chamada de função"""
-        # Avalia a função (pode ser um nome ou uma expressão)
-        callee = None
-        if isinstance(expr.name, str):
-            # Função referenciada por nome
-            callee = self.environment.get(expr.name)
-        else:
-            # Função referenciada por expressão
-            callee = self.evaluate(expr.name)
-        
-        # Avalia os argumentos
-        arguments = []
-        for arg in expr.arguments:
-            arguments.append(self.evaluate(arg))
-        
-        # Verifica se é uma função NajaGameFunction
-        if callee.__class__.__name__ == "NajaGameFunction":
-            return callee(self, arguments)
-        # Verifica se é uma função chamável
-        elif callable(callee):
-            # Função nativa do Python
-            return callee(*arguments)
-        elif hasattr(callee, "__call__"):
-            # Função definida em NajaScript
-            return callee(self, arguments)
-        else:
-            raise Exception(f"{expr.name} não é uma função")
-    
-    def is_truthy(self, value):
-        """Verifica se um valor é considerado verdadeiro"""
-        if value is None:
-            return False
-        if isinstance(value, bool):
-            return value
-        if isinstance(value, (int, float)):
-            return value != 0
-        if isinstance(value, str):
-            return len(value) > 0
-        if hasattr(value, "length") and callable(value.length):
-            return value.length() > 0
-        if hasattr(value, "isEmpty") and callable(value.isEmpty):
-            return not value.isEmpty()
-        # Por padrão, qualquer objeto é considerado verdadeiro
-        return True
-    
-    def execute_block(self, statements, environment):
-        """Executa um bloco de código em um ambiente específico"""
-        previous_env = self.environment
-        self.environment = environment
-        
+    def execute(self, statement):
+        """Executa uma declaração"""
         try:
-            for statement in statements:
-                self.execute(statement)
-        finally:
-            self.environment = previous_env
-        
-        return None
+            statement_type = statement.__class__.__name__
+            method_name = f"execute_{statement_type}"
+            
+            if hasattr(self, method_name):
+                return getattr(self, method_name)(statement)
+            else:
+                return self.execute_default(statement)
+        except (ReturnException, BreakException, ContinueException):
+            # Propaga exceções de controle de fluxo
+            raise
+        except Exception as e:
+            print(f"Erro durante a interpretação: {e}")
+    
+    def execute_default(self, statement):
+        """Método padrão para executar instruções não tratadas especificamente"""
+        raise Exception(f"Tipo de instrução não implementado: {type(statement).__name__}")
     
     def execute_VarDeclaration(self, stmt):
         """Executa uma declaração de variável"""
@@ -567,104 +409,7 @@ class Interpreter:
         
         return None
     
-    def execute_ImportStatement(self, stmt):
-        """Executa uma instrução de importação"""
-        module_name = stmt.module_name
-        
-        # Remove aspas se presentes
-        if module_name.startswith('"'): module_name = module_name[1:]
-        if module_name.endswith('"'): module_name = module_name[:-1]
-        if module_name.startswith("'"): module_name = module_name[1:]
-        if module_name.endswith("'"): module_name = module_name[:-1]
-        
-        # Verifica se o módulo já foi importado
-        if module_name in self.imported_modules:
-            return self.imported_modules[module_name]
-        
-        # Tratamento especial para o módulo NajaGame
-        if module_name == "NajaGame":
-            try:
-                # Importa o módulo pygame_bridge
-                import importlib.util
-                spec = importlib.util.spec_from_file_location("pygame_bridge", "modules/pygame_bridge.py")
-                pygame_bridge = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(pygame_bridge)
-                
-                # Registra as funções exportadas no ambiente global
-                for name, func in pygame_bridge.naja_exports.items():
-                    self.environment.define(name, func)
-                
-                self.imported_modules[module_name] = True
-                return True
-            except Exception as e:
-                raise Exception(f"Erro ao importar módulo NajaGame: {str(e)}")
-        
-        # Procura o módulo nos caminhos definidos
-        module_found = False
-        module_path = None
-        
-        for path in self.module_paths:
-            # Tenta encontrar o módulo como arquivo .naja
-            potential_path = os.path.join(path, module_name + ".naja")
-            if os.path.exists(potential_path):
-                module_path = potential_path
-                module_found = True
-                break
-            
-            # Tenta encontrar o módulo como arquivo .py
-            potential_path = os.path.join(path, module_name + ".py")
-            if os.path.exists(potential_path):
-                module_path = potential_path
-                module_found = True
-                break
-            
-            # Tenta encontrar o módulo como diretório com __init__.naja
-            potential_path = os.path.join(path, module_name, "__init__.naja")
-            if os.path.exists(potential_path):
-                module_path = potential_path
-                module_found = True
-                break
-        
-        if not module_found:
-            raise Exception(f"Módulo não encontrado: {module_name}")
-        
-        # Carrega e executa o módulo
-        try:
-            with open(module_path, "r", encoding="utf-8") as f:
-                module_source = f.read()
-            
-            # Cria um novo ambiente para o módulo
-            module_env = Environment(self.globals)
-            
-            # Analisa e executa o código do módulo
-            lexer = Lexer(module_source)
-            parser = Parser(lexer)
-            ast = parser.parse()
-            
-            # Salva o ambiente atual
-            previous_env = self.environment
-            self.environment = module_env
-            
-            try:
-                # Executa o módulo
-                self.interpret(ast)
-                
-                # Registra o módulo como importado
-                self.imported_modules[module_name] = module_env
-                
-                # Exporta as definições do módulo para o ambiente atual
-                for name, value in module_env.values.items():
-                    if not name.startswith("_"):  # Não exporta variáveis privadas
-                        self.globals.define(name, value)
-                
-                return module_env
-            finally:
-                # Restaura o ambiente original
-                self.environment = previous_env
-        except Exception as e:
-            raise Exception(f"Erro ao carregar módulo {module_name}: {str(e)}")
-    
-    def execute_WhileStatement(self, stmt):
+        def execute_WhileStatement(self, stmt):
         """Executa uma declaração while"""
         result = None
         

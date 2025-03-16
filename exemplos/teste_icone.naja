@@ -1,0 +1,30 @@
+// Importa o módulo NajaGame
+import "NajaGame"
+
+// Imprime uma mensagem
+print("Módulo NajaGame importado com sucesso!")
+
+// Inicializa o jogo com valores simples
+print("Tentando inicializar o jogo...");
+initGame(400, 300, "Teste com Ícone");
+
+// Define o ícone da janela
+print("Definindo o ícone da janela...");
+setIcon("assets/logoNajaGame.png");
+print("Ícone definido com sucesso!");
+
+// Aguarda 5 segundos
+print("Aguardando 5 segundos...");
+float start_time = time();
+while (time() - start_time < 5) {
+    // Limpa a tela com cor preta
+    clearScreen(0, 0, 0);
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Encerra o jogo
+print("Tentando encerrar o jogo...");
+quitGame();
+
+print("Teste concluído com sucesso!"); 

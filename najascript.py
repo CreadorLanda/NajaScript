@@ -4,12 +4,19 @@
 import sys
 import argparse
 import os
-from lexer import Lexer
-from parser_naja import Parser
-from interpreter import Interpreter
-from naja_bytecode import NajaBytecodeCompiler, BytecodeInterpreter
-from naja_llvm import NajaLLVMGenerator
-from llvmlite import binding as llvm
+import traceback
+
+try:
+    from lexer import Lexer
+    from parser_naja import Parser
+    from interpreter import Interpreter
+    from naja_bytecode import NajaBytecodeCompiler, BytecodeInterpreter
+    from naja_llvm import NajaLLVMGenerator
+    from llvmlite import binding as llvm
+except Exception as e:
+    print(f"Erro ao importar módulos: {e}")
+    traceback.print_exc()
+    sys.exit(1)
 
 def initialize_llvm():
     """Inicializa o LLVM"""

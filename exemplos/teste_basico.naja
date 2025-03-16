@@ -1,0 +1,64 @@
+// Teste de funcionalidades básicas do NajaScript
+
+// Declaração de variáveis
+int idade = 25;
+float altura = 1.75;
+string nome = "João";
+bool ativo = true;
+
+// Saída básica
+println("=== Teste de Variáveis ===");
+println("Nome:", nome);
+println("Idade:", idade);
+println("Altura:", altura);
+println("Ativo:", ativo);
+
+// Teste de operações aritméticas
+println("\n=== Teste de Operações Aritméticas ===");
+int a = 10;
+int b = 5;
+println("a + b =", a + b);
+println("a - b =", a - b);
+println("a * b =", a * b);
+println("a / b =", a / b);
+
+// Teste de estruturas condicionais
+println("\n=== Teste de Estruturas Condicionais ===");
+if (idade > 18) {
+    println("Maior de idade");
+} else {
+    println("Menor de idade");
+}
+
+// Teste de loop while
+println("\n=== Teste de Loop While ===");
+int contador = 0;
+while (contador < 5) {
+    println("Contador:", contador);
+    contador = contador + 1;
+}
+
+// Teste de loop for
+println("\n=== Teste de Loop For ===");
+for (int i = 0; i < 5; i = i + 1) {
+    println("i =", i);
+}
+
+// Teste de listas
+println("\n=== Teste de Listas ===");
+any numeros = [1, 2, 3, 4, 5];
+println("Lista:", numeros);
+println("Tamanho da lista:", numeros.length());
+println("Primeiro elemento:", numeros.get(0));
+
+// Teste de funções
+println("\n=== Teste de Funções ===");
+fun somar(int x, int y) {
+    return x + y;
+}
+
+println("Soma de 3 e 4:", somar(3, 4));
+
+// Teste completo
+println("\n=== Teste Completo Finalizado ===");
+println("O NajaScript está funcionando corretamente!"); 

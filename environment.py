@@ -7,6 +7,7 @@ class Environment:
         self.values = {}  # Armazena valores das variáveis
         self.constants = set()  # Conjunto para rastrear variáveis constantes
         self.enclosing = enclosing  # Ambiente envolvente para escopo
+        self.functions = {}  # Armazena funções separadamente
     
     def define(self, name, value, is_const=False, is_flux=False):
         """Define uma variável no ambiente atual"""
@@ -14,13 +15,22 @@ class Environment:
             # Não permite redefinir constantes
             raise RuntimeError(f"Não é possível redefinir a constante '{name}'")
         
-        self.values[name] = (value, is_const, is_flux)
-        
-        if is_const:
-            self.constants.add(name)
+        # Se for uma função, armazena separadamente
+        if callable(value):
+            self.functions[name] = value
+        else:
+            self.values[name] = (value, is_const, is_flux)
+            
+            if is_const:
+                self.constants.add(name)
     
     def get(self, name):
         """Obtém o valor de uma variável pelo nome"""
+        # Primeiro procura nas funções
+        if name in self.functions:
+            return self.functions[name]
+        
+        # Depois procura nas variáveis
         if name in self.values:
             return self.values[name][0]  # Retorna apenas o valor
         
@@ -31,6 +41,10 @@ class Environment:
     
     def assign(self, name, value):
         """Atribui um novo valor a uma variável existente"""
+        # Não permite atribuir a funções
+        if name in self.functions:
+            raise RuntimeError(f"Não é possível reatribuir a função '{name}'")
+        
         if name in self.values:
             # Verifica se é uma constante
             if name in self.constants:

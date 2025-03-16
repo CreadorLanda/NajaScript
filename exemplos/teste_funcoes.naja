@@ -1,0 +1,32 @@
+// Teste de funções no NajaScript
+
+// Função simples que retorna a soma de dois números
+fun somar(int a, int b) {
+    return a + b;
+}
+
+// Função que retorna o maior de dois números
+fun maior(int a, int b) {
+    if (a > b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+// Função que calcula o fatorial de um número
+fun fatorial(int n) {
+    if (n <= 1) {
+        return 1;
+    } else {
+        return n * fatorial(n - 1);
+    }
+}
+
+// Testando as funções
+println("=== Teste de Funções ===");
+println("Soma de 3 e 4:", somar(3, 4));
+println("Maior entre 5 e 8:", maior(5, 8));
+println("Fatorial de 5:", fatorial(5));
+
+println("\nTeste concluído com sucesso!"); 

@@ -1,0 +1,315 @@
+// SpaceShip Game in NajaScript
+import "NajaGame";
+
+// Game Settings
+int SCREEN_WIDTH = 800;
+int SCREEN_HEIGHT = 600;
+int SHIP_SPEED = 250;
+int BULLET_SPEED = 350;
+int METEOR_SPEED = 150;
+int VICTORY_SCORE = 100;
+
+// Game Variables
+int score = 0;
+int shipX = 400;
+int shipY = 500;
+list bullets = list();
+list meteors = list();
+bool gameActive = true;
+int meteorTimer = 0;
+
+// Function to initialize the game
+fun initialize() {
+    println("Initializing Space Ship Game...");
+    
+    // Initialize the game with basic settings
+    dict game = iniciarJogo(SCREEN_WIDTH, SCREEN_HEIGHT, "NajaScript Space Ship");
+    
+    // Initialize keys
+    atualizarTecla("ESC", false);
+    atualizarTecla("A", false);
+    atualizarTecla("D", false);
+    atualizarTecla("W", false);
+    atualizarTecla("S", false);
+    atualizarTecla("SPACE", false);
+    
+    // Initialize bullet and meteor lists
+    bullets = list();
+    meteors = list();
+    
+    println("Game initialized! Use A and D to move, SPACE to shoot.");
+}
+
+// Function to create a new bullet
+fun createBullet() {
+    dict bullet = criarRetangulo(shipX + 22, shipY - 10, 6, 15, "amarelo");
+    bullet.add("type", "bullet");
+    bullets.add(bullet);
+    
+    println("Bullet fired!");
+}
+
+// Function to create a new meteor
+fun createMeteor() {
+    int size = aleatorio(30, 60);
+    int posX = aleatorio(0, SCREEN_WIDTH - size);
+    
+    dict meteor = criarCirculo(posX, 0 - size, size / 2, "cinza");
+    meteor.add("type", "meteor");
+    meteor.add("speed", aleatorio(METEOR_SPEED * 0.7, METEOR_SPEED * 1.3));
+    
+    meteors.add(meteor);
+}
+
+// Function to update the position of bullets
+fun updateBullets(float delta_time) {
+    int i = 0;
+    
+    while (i < bullets.length()) {
+        dict bullet = bullets.get(i);
+        float bulletY = bullet.get("y");
+        float newY = bulletY - (BULLET_SPEED * delta_time);
+        bullet.add("y", newY);
+        
+        // Remove bullets that left the screen
+        if (bullet.get("y") < 0 - 20) {
+            bullets.remove(i);
+        } else {
+            i = i + 1;
+        }
+    }
+}
+
+// Function to update the position of meteors
+fun updateMeteors(float delta_time) {
+    int i = 0;
+    
+    while (i < meteors.length()) {
+        dict meteor = meteors.get(i);
+        float meteorY = meteor.get("y");
+        float meteorSpeed = meteor.get("speed");
+        float newY = meteorY + (meteorSpeed * delta_time);
+        meteor.add("y", newY);
+        
+        // Remove meteors that left the screen
+        if (meteor.get("y") > SCREEN_HEIGHT + 50) {
+            meteors.remove(i);
+        } else {
+            i = i + 1;
+        }
+    }
+}
+
+// Function to check collisions
+fun checkCollisions() {
+    // Check collisions between bullets and meteors
+    int i = 0;
+    
+    while (i < bullets.length()) {
+        dict bullet = bullets.get(i);
+        bool bulletCollided = false;
+        
+        int j = 0;
+        while (j < meteors.length()) {
+            dict meteor = meteors.get(j);
+            
+            // For simplicity, we treat the bullet as a central point
+            float bulletX = bullet.get("x");
+            float bulletY = bullet.get("y");
+            float bulletWidth = bullet.get("largura");
+            float bulletHeight = bullet.get("altura");
+            
+            float bulletCenterX = bulletX + (bulletWidth / 2);
+            float bulletCenterY = bulletY + (bulletHeight / 2);
+            
+            // Check if the bullet's center is inside the meteor
+            dict bulletPos = dict();
+            bulletPos.add("x", bulletCenterX);
+            bulletPos.add("y", bulletCenterY);
+            
+            dict meteorPos = dict();
+            meteorPos.add("x", meteor.get("x"));
+            meteorPos.add("y", meteor.get("y"));
+            
+            float distance = calcularDistancia(bulletPos, meteorPos);
+            
+            if (distance < meteor.get("raio")) {
+                // Bullet hit the meteor
+                meteors.remove(j);
+                bulletCollided = true;
+                score = score + 10;
+                println("Meteor destroyed! Score: " + score);
+                break; // Exit inner loop
+            } else {
+                j = j + 1;
+            }
+        }
+        
+        // If the bullet collided, remove it
+        if (bulletCollided) {
+            bullets.remove(i);
+        } else {
+            i = i + 1;
+        }
+    }
+    
+    // Check collisions between ship and meteors
+    for (int i = 0; i < meteors.length(); i = i + 1) {
+        dict meteor = meteors.get(i);
+        dict ship = criarRetangulo(shipX, shipY, 50, 30, "verde");
+        
+        // Check if the ship's center is near the meteor
+        float shipCenterX = shipX + 25;
+        float shipCenterY = shipY + 15;
+        
+        dict shipPos = dict();
+        shipPos.add("x", shipCenterX);
+        shipPos.add("y", shipCenterY);
+        
+        dict meteorPos = dict();
+        meteorPos.add("x", meteor.get("x"));
+        meteorPos.add("y", meteor.get("y"));
+        
+        float distance = calcularDistancia(shipPos, meteorPos);
+        
+        // Collision if the ship's center is less than 90% of the meteor's radius
+        if (distance < meteor.get("raio") * 0.9) {
+            endGame(false);
+            return;
+        }
+    }
+    
+    // Check if player won
+    if (score >= VICTORY_SCORE) {
+        endGame(true);
+    }
+}
+
+// Main function to update the game scene
+fun updateGame(dict game, float delta_time) {
+    // If game is not active, don't update
+    if (!gameActive) {
+        return;
+    }
+    
+    // Ship movement
+    if (teclaPressionada("A")) {
+        float displacement = SHIP_SPEED * delta_time;
+        shipX = shipX - displacement;
+    }
+    
+    if (teclaPressionada("D")) {
+        float displacement = SHIP_SPEED * delta_time;
+        shipX = shipX + displacement;
+    }
+    
+    if (teclaPressionada("W")) {
+        float displacement = SHIP_SPEED * delta_time;
+        shipY = shipY - displacement;
+    }
+    
+    if (teclaPressionada("S")) {
+        float displacement = SHIP_SPEED * delta_time;
+        shipY = shipY + displacement;
+    }
+    
+    // Screen boundaries for the ship
+    float right_limit = SCREEN_WIDTH - 50;
+    shipX = limitar(shipX, 0, right_limit);
+    shipY = limitar(shipY, 0, SCREEN_HEIGHT - 30);
+    
+    // Bullet firing
+    if (teclaPressionada("SPACE")) {
+        // Limit to 5 bullets on screen
+        if (bullets.length() < 5) {
+            createBullet();
+        }
+    }
+    
+    // Update the timer to create meteors
+    meteorTimer = meteorTimer + 1;
+    if (meteorTimer > 60) {  // Create a meteor approximately every second
+        createMeteor();
+        meteorTimer = 0;
+    }
+    
+    // Update positions
+    updateBullets(delta_time);
+    updateMeteors(delta_time);
+    
+    // Check collisions
+    checkCollisions();
+    
+    // End the game if ESC is pressed
+    if (teclaPressionada("ESC")) {
+        println("Game terminated by user.");
+        gameActive = false;
+    }
+}
+
+// Main function to render the game scene
+fun renderGame(dict game) {
+    // Draw the ship
+    dict ship = criarRetangulo(shipX, shipY, 50, 30, "verde");
+    desenharForma(ship);
+    
+    // Draw bullets
+    for (int i = 0; i < bullets.length(); i = i + 1) {
+        dict bullet = bullets.get(i);
+        desenharForma(bullet);
+    }
+    
+    // Draw meteors
+    for (int i = 0; i < meteors.length(); i = i + 1) {
+        dict meteor = meteors.get(i);
+        desenharForma(meteor);
+    }
+    
+    // Draw score
+    desenharTexto("Score: " + score, 20, 20);
+}
+
+// Function to handle the end of game
+fun endGame(bool victory) {
+    gameActive = false;
+    
+    if (victory) {
+        println("Congratulations! You won with " + score + " points!");
+    } else {
+        println("Your ship was destroyed! Final score: " + score);
+    }
+}
+
+// Test the game
+fun testGame() {
+    // Initialize the game
+    initialize();
+    
+    // Create a game scene
+    dict game_scene = criarCena("game", updateGame, renderGame);
+    
+    // Set the current scene
+    definirCenaAtual("game");
+    
+    // Simulate some key presses for testing
+    atualizarTecla("D", true);  // Move right
+    atualizarTecla("SPACE", true);  // Shoot
+    
+    // Run the game
+    executarJogo();
+    
+    // Release keys
+    atualizarTecla("D", false);
+    atualizarTecla("SPACE", false);
+    
+    // Simulate more key presses
+    atualizarTecla("A", true);  // Move left
+    
+    // Run a few more frames
+    executarJogo();
+}
+
+// Run the game
+println("=== NajaScript Space Ship Game ===");
+testGame();
+println("Game over! Final score: " + score); 

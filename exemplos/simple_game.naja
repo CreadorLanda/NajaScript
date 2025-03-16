@@ -1,0 +1,22 @@
+// Simple game example using NajaGame
+import "NajaGame"
+
+// Initialize game window
+initGame(800, 600, "Simple Game")
+
+// Main game loop
+while (updateWindow()) {
+    // Clear screen with black color
+    clearScreen([0, 0, 0])
+    
+    // Draw a blue rectangle in the center
+    drawRect(350, 250, 100, 100, [0, 0, 255])
+    
+    // Draw some text
+    drawText("Simple Game", 10, 10, [255, 255, 255])
+    
+    // Check for key press to quit
+    if (isKeyPressed("ESC")) {
+        quitGame()
+    }
+} 

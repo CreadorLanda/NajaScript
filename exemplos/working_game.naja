@@ -1,0 +1,148 @@
+// Working Game in NajaScript
+import "NajaGame";
+
+// Game Settings
+int SCREEN_WIDTH = 800;
+int SCREEN_HEIGHT = 600;
+int PLAYER_SPEED = 200;
+int ENEMY_SPEED = 100;
+int SCORE_TO_WIN = 5;
+
+// Game Variables
+int score = 0;
+int playerX = 400;
+int playerY = 500;
+int enemyX = 400;
+int enemyY = 100;
+bool gameActive = true;
+
+// Function to initialize the game
+fun initialize() {
+    println("Initializing Game...");
+    
+    // Initialize the game with basic settings
+    iniciarJogo(SCREEN_WIDTH, SCREEN_HEIGHT, "Working NajaScript Game");
+    
+    // Initialize keys
+    atualizarTecla("ESC", false);
+    atualizarTecla("LEFT", false);
+    atualizarTecla("RIGHT", false);
+    
+    println("Game initialized! Use LEFT and RIGHT to move.");
+}
+
+// Function to check collisions
+fun checkCollisions() {
+    // Calculate distance between player and enemy
+    int playerCenterX = playerX + 25;
+    int playerCenterY = playerY + 15;
+    int enemyCenterX = enemyX + 15;
+    int enemyCenterY = enemyY + 15;
+    
+    // Simple distance calculation
+    int dx = playerCenterX - enemyCenterX;
+    int dy = playerCenterY - enemyCenterY;
+    float distance = (dx * dx + dy * dy);
+    
+    // If distance is less than sum of radii squared, collision occurred
+    if (distance < 1600) { // 40^2
+        // Reset enemy position
+        enemyX = aleatorio(50, SCREEN_WIDTH - 50);
+        enemyY = 100;
+        
+        // Increase score
+        score = score + 1;
+        println("Collision! Score: " + score);
+        
+        // Check if player won
+        if (score >= SCORE_TO_WIN) {
+            gameActive = false;
+            println("You won with " + score + " points!");
+        }
+    }
+}
+
+// Main function to update the game scene
+fun updateGame(dict game, float delta_time) {
+    // If game is not active, don't update
+    if (gameActive == false) {
+        return;
+    }
+    
+    // Player movement
+    if (teclaPressionada("LEFT")) {
+        float displacement = PLAYER_SPEED * delta_time;
+        playerX = playerX - displacement;
+    }
+    
+    if (teclaPressionada("RIGHT")) {
+        float displacement = PLAYER_SPEED * delta_time;
+        playerX = playerX + displacement;
+    }
+    
+    // Enemy movement (simple AI to follow player)
+    if (enemyX < playerX) {
+        float displacement = ENEMY_SPEED * delta_time;
+        enemyX = enemyX + displacement;
+    } else {
+        float displacement = ENEMY_SPEED * delta_time;
+        enemyX = enemyX - displacement;
+    }
+    
+    // Move enemy down
+    float displacement = ENEMY_SPEED * delta_time;
+    enemyY = enemyY + displacement;
+    
+    // Reset enemy if it goes off screen
+    if (enemyY > SCREEN_HEIGHT) {
+        enemyX = aleatorio(50, SCREEN_WIDTH - 50);
+        enemyY = 100;
+    }
+    
+    // Screen boundaries for the player
+    float right_limit = SCREEN_WIDTH - 50;
+    playerX = limitar(playerX, 0, right_limit);
+    
+    // Check collisions
+    checkCollisions();
+    
+    // End the game if ESC is pressed
+    if (teclaPressionada("ESC")) {
+        println("Game terminated by user.");
+        gameActive = false;
+    }
+}
+
+// Main function to render the game scene
+fun renderGame(dict game) {
+    // Draw the player
+    dict player = criarRetangulo(playerX, playerY, 50, 30, "verde");
+    desenharForma(player);
+    
+    // Draw the enemy
+    dict enemy = criarCirculo(enemyX, enemyY, 15, "vermelho");
+    desenharForma(enemy);
+    
+    // Draw score
+    desenharTexto("Score: " + score, 20, 20);
+}
+
+// Test the game
+fun testGame() {
+    // Initialize the game
+    initialize();
+    
+    // Create a game scene
+    dict game_scene = criarCena("game", updateGame, renderGame);
+    
+    // Set the current scene
+    definirCenaAtual("game");
+    
+    // Run the game
+    executarJogo();
+}
+
+// Run the game
+println("=== Working NajaScript Game ===");
+testGame();
+println("Game over! Final score: " + score); 

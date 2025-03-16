@@ -1,0 +1,55 @@
+// Minimal Game in NajaScript
+import "NajaGame";
+
+// Game Settings
+int SCREEN_WIDTH = 800;
+int SCREEN_HEIGHT = 600;
+
+// Game Variables
+int playerX = 400;
+int playerY = 300;
+
+// Function to initialize the game
+fun initialize() {
+    println("Initializing Minimal Game...");
+    
+    // Initialize the game with basic settings
+    dict game = iniciarJogo(SCREEN_WIDTH, SCREEN_HEIGHT, "Minimal NajaScript Game");
+    
+    println("Game initialized!");
+}
+
+// Main function to update the game scene
+fun updateGame(dict game, float delta_time) {
+    // Nothing to update in this minimal example
+}
+
+// Main function to render the game scene
+fun renderGame(dict game) {
+    // Draw a simple rectangle
+    dict player = criarRetangulo(playerX, playerY, 50, 50, "azul");
+    desenharForma(player);
+    
+    // Draw some text
+    desenharTexto("Minimal Game", 20, 20);
+}
+
+// Test the game
+fun testGame() {
+    // Initialize the game
+    initialize();
+    
+    // Create a game scene
+    dict game_scene = criarCena("game", updateGame, renderGame);
+    
+    // Set the current scene
+    definirCenaAtual("game");
+    
+    // Run the game
+    executarJogo();
+}
+
+// Run the game
+println("=== Minimal NajaScript Game ===");
+testGame();
+println("Game finished!"); 

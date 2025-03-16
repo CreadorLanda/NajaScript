@@ -1,0 +1,48 @@
+// Importa o módulo NajaGame
+import "NajaGame"
+
+// Imprime uma mensagem
+print("Módulo NajaGame importado com sucesso!")
+
+// Inicializa o jogo
+print("Tentando inicializar o jogo...");
+initGame(800, 600, "Teste com Logo NajaGame");
+print("Jogo inicializado com sucesso!");
+
+// Carrega a imagem do logo
+print("Carregando o logo...");
+int logo = loadImage("assets/logoNajaGame.png");
+print("Logo carregado com ID: " + toString(logo));
+
+// Define o ícone da janela
+print("Definindo o ícone da janela...");
+setIcon("assets/logoNajaGame.png");
+print("Ícone definido com sucesso!");
+
+// Loop principal
+print("Entrando no loop principal...");
+float start_time = time();
+while (time() - start_time < 5) {  // Aumentei para 5 segundos para ver melhor
+    // Limpa a tela com cor preta (usando tupla em vez de lista)
+    clearScreen(0, 0, 0);
+    
+    // Obtém as dimensões da tela
+    int screenWidth = 800;
+    int screenHeight = 600;
+    
+    // Centraliza o logo na tela
+    int logoWidth = 200;  // Tamanho estimado, ajuste conforme necessário
+    int logoHeight = 200;
+    
+    // Desenha o logo centralizado (usando menos argumentos)
+    drawImage(logo, screenWidth/2 - logoWidth/2, screenHeight/2 - logoHeight/2);
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Encerra o jogo
+print("Tentando encerrar o jogo...");
+quitGame();
+
+print("Teste concluído com sucesso!"); 

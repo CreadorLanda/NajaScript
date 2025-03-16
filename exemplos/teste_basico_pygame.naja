@@ -1,0 +1,20 @@
+// Teste básico do Pygame
+import "NajaGame";
+
+// Inicializa o jogo
+iniciarJogo(800, 600, "Teste Básico");
+
+// Função de atualização simples
+fun atualizar(jogo, delta) {
+    println("Atualizando...");
+}
+
+// Função de renderização simples
+fun renderizar(jogo) {
+    println("Renderizando...");
+}
+
+// Cria uma cena básica e executa
+criarCena("principal", atualizar, renderizar);
+definirCenaAtual("principal");
+executarJogo(); 

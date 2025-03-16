@@ -1,0 +1,18 @@
+// Importa o módulo NajaGame
+import "NajaGame"
+
+// Imprime uma mensagem
+print("Módulo NajaGame importado com sucesso!")
+
+// Inicializa o jogo com valores simples
+print("Tentando inicializar o jogo...");
+initGame(400, 300, "Teste Mínimo");
+
+// Imprime uma mensagem
+print("Jogo inicializado com sucesso!");
+
+// Encerra o jogo
+print("Tentando encerrar o jogo...");
+quitGame();
+
+print("Teste concluído com sucesso!"); 

@@ -1,0 +1,29 @@
+// Teste básico de janela com Pygame
+import "NajaGame";
+
+// Inicializa o jogo
+dict game = iniciarJogo(800, 600, "Janela Básica");
+
+// Função simples para renderizar
+fun renderizarTela(dict game) {
+    // Desenha um retângulo no centro
+    dict retangulo = criarRetangulo(350, 250, 100, 100, "azul");
+    desenharForma(retangulo);
+    
+    // Desenha texto
+    desenharTexto("Teste de Janela", 10, 10);
+}
+
+// Função simples para atualizar
+fun atualizarTela(dict game, float delta_tempo) {
+    // Nada a fazer, apenas verificar se ESC foi pressionado
+    if (teclaPressionada("ESC")) {
+        println("Tecla ESC pressionada, encerrando...");
+        return;
+    }
+}
+
+// Cria cena e executa
+dict cena = criarCena("teste", atualizarTela, renderizarTela);
+definirCenaAtual("teste");
+executarJogo(); 

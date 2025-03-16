@@ -1,7 +1,12 @@
-// Teste simples
-importar "NajaPt";
-escrever("Teste: ");
-escreverln("Olá, mundo!");
-escreverln("Isso é um teste simples.");
+// Teste simples sem importações
+print("Olá, mundo!");
+
+// Variáveis
+int x = 10;
+int y = 20;
+int soma = x + y;
+
+// Imprime o resultado
+print("A soma de " + toString(x) + " e " + toString(y) + " é " + toString(soma));
 
 

@@ -1,0 +1,11 @@
+// Exemplo de janela simples com Pygame
+import "NajaGame";
+
+// Inicializa uma janela básica
+inicializarPygame(800, 600, "Janela Simples");
+
+// Mantém a janela aberta
+while (true) {
+    // Apenas mantém a janela aberta
+    atualizarJanela();
+} 

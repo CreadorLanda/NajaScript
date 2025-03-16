@@ -1,0 +1,35 @@
+// NajaGame module - Simple game engine for NajaScript
+// Based on Pygame with a simpler API
+
+// Initialize game window
+fun initGame(int width, int height, string title)
+
+// Update game window
+fun updateWindow()
+
+// Draw functions
+fun drawRect(int x, int y, int width, int height, list color)
+
+// Clear screen with a color
+fun clearScreen(list color)
+
+// Check if key is pressed
+fun isKeyPressed(string key)
+
+// Get mouse position
+fun getMousePos()
+
+// Check if mouse button is pressed
+fun isMousePressed(int button)
+
+// Draw text on screen
+fun drawText(string text, int x, int y, list color)
+
+// Load image
+fun loadImage(string image_file)
+
+// Draw image
+fun drawImage(string image, int x, int y)
+
+// Quit game
+fun quitGame() 

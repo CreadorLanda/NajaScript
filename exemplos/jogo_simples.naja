@@ -1,156 +1,175 @@
-// Exemplo de um jogo simples em NajaScript usando português
+// Jogo Simples em NajaScript
+importar "NajaGame";
 
-importar "NajaPt";
-
-// Constantes do jogo
+// Configurações do jogo
 inteiro LARGURA_TELA = 800;
 inteiro ALTURA_TELA = 600;
-inteiro TAMANHO_JOGADOR = 50;
-inteiro TAMANHO_INIMIGO = 30;
-decimal VELOCIDADE_JOGADOR = 5.0;
-decimal VELOCIDADE_INIMIGO = 3.0;
-inteiro PONTUACAO_MAXIMA = 10;
+inteiro VELOCIDADE_JOGADOR = 200;
+inteiro VELOCIDADE_INIMIGO = 150;
+inteiro PONTUACAO_VITORIA = 500;
 
 // Variáveis do jogo
-inteiro posX = 0;
-inteiro posY = 0;
-inteiro inimigoPosX = 0;
-inteiro inimigoPosY = 0;
 inteiro pontuacao = 0;
+inteiro posX = 100;
+inteiro posY = 300;
+inteiro inimigoPosX = 700;
+inteiro inimigoPosY = 300;
 booleano jogoAtivo = verdadeiro;
 
-// Inicializa o jogo
-funcao inicializarJogo() {
-    posX = LARGURA_TELA / 2 - TAMANHO_JOGADOR / 2;
-    posY = ALTURA_TELA - TAMANHO_JOGADOR - 10;
+// Função para inicializar o jogo
+funcao inicializar() {
+    // Inicializar o jogo com configurações básicas
+    dicionario jogo = iniciarJogo(LARGURA_TELA, ALTURA_TELA, "Jogo Simples em NajaScript");
     
-    // Posiciona inimigo aleatoriamente no topo da tela
-    inimigoPosX = aleatorio(0, LARGURA_TELA - TAMANHO_INIMIGO);
-    inimigoPosY = 0;
-    
-    pontuacao = 0;
-    jogoAtivo = verdadeiro;
+    // Simular teclas pressionadas
+    atualizarTecla("A", falso);
+    atualizarTecla("D", falso);
+    atualizarTecla("W", falso);
+    atualizarTecla("S", falso);
+    atualizarTecla("ESC", falso);
     
     escreverln("Jogo inicializado! Use as teclas A e D para mover.");
 }
 
-// Gera um número aleatório entre min e max
-funcao aleatorio(inteiro min, inteiro max) {
-    // Esta é uma implementação simples
-    retornar min + ((max - min) * (posX % 100) / 100);
-}
-
-// Atualiza a posição do jogador
-funcao moverJogador(texto direcao) {
-    se (direcao == "esquerda") {
-        posX = posX - VELOCIDADE_JOGADOR;
-        se (posX < 0) {
-            posX = 0;
-        }
-    } senao se (direcao == "direita") {
-        posX = posX + VELOCIDADE_JOGADOR;
-        se (posX > LARGURA_TELA - TAMANHO_JOGADOR) {
-            posX = LARGURA_TELA - TAMANHO_JOGADOR;
-        }
+// Função principal de atualização da cena de jogo
+funcao atualizarJogo(dicionario jogo, decimal delta_tempo) {
+    // Se o jogo não estiver ativo, não atualiza
+    se (nao jogoAtivo) {
+        retornar;
     }
-}
-
-// Atualiza a posição do inimigo
-funcao moverInimigo() {
-    inimigoPosY = inimigoPosY + VELOCIDADE_INIMIGO;
     
-    // Se inimigo sair da tela, reposiciona
-    se (inimigoPosY > ALTURA_TELA) {
-        inimigoPosX = aleatorio(0, LARGURA_TELA - TAMANHO_INIMIGO);
-        inimigoPosY = 0;
-        // Aumenta a pontuação quando o jogador evita o inimigo
-        pontuacao = pontuacao + 1;
+    // Movimentação do jogador
+    se (teclaPressionada("A")) {
+        posX = posX - VELOCIDADE_JOGADOR * delta_tempo;
+    }
+    
+    se (teclaPressionada("D")) {
+        posX = posX + VELOCIDADE_JOGADOR * delta_tempo;
+    }
+    
+    se (teclaPressionada("W")) {
+        posY = posY - VELOCIDADE_JOGADOR * delta_tempo;
+    }
+    
+    se (teclaPressionada("S")) {
+        posY = posY + VELOCIDADE_JOGADOR * delta_tempo;
+    }
+    
+    // Limites da tela
+    posX = limitar(posX, 0, LARGURA_TELA - 50);
+    posY = limitar(posY, 0, ALTURA_TELA - 50);
+    
+    // Movimento do inimigo
+    decimal dirX = posX - inimigoPosX;
+    decimal dirY = posY - inimigoPosY;
+    decimal distancia = sqrt(dirX * dirX + dirY * dirY);
+    
+    se (distancia > 0) {
+        inimigoPosX = inimigoPosX + (dirX / distancia) * VELOCIDADE_INIMIGO * delta_tempo;
+        inimigoPosY = inimigoPosY + (dirY / distancia) * VELOCIDADE_INIMIGO * delta_tempo;
+    }
+    
+    // Aumenta pontuação com o tempo
+    pontuacao = pontuacao + 1;
+    
+    // Verifica se jogador venceu
+    se (pontuacao >= PONTUACAO_VITORIA) {
         escreverln("Pontuação: " + pontuacao);
+        fimDeJogo(verdadeiro);
+        retornar;
     }
-}
-
-// Verifica colisão entre jogador e inimigo
-funcao booleano verificarColisao() {
-    booleano colisaoX = (posX < inimigoPosX + TAMANHO_INIMIGO) e (posX + TAMANHO_JOGADOR > inimigoPosX);
-    booleano colisaoY = (posY < inimigoPosY + TAMANHO_INIMIGO) e (posY + TAMANHO_JOGADOR > inimigoPosY);
     
-    retornar colisaoX e colisaoY;
-}
-
-// Loop principal do jogo
-funcao loopJogo() {
-    enquanto (jogoAtivo) {
-        // Simula entrada do usuário
-        texto entrada = obterEntrada();
-        se (entrada == "a") {
-            moverJogador("esquerda");
-        } senao se (entrada == "d") {
-            moverJogador("direita");
-        } senao se (entrada == "q") {
-            jogoAtivo = falso;
-            escreverln("Jogo encerrado pelo usuário.");
-            retornar;
-        }
-        
-        // Atualiza posição do inimigo
-        moverInimigo();
-        
-        // Verifica colisões
-        se (verificarColisao()) {
-            escreverln("Colisão! Você perdeu.");
-            jogoAtivo = falso;
-            retornar;
-        }
-        
-        // Verifica vitória
-        se (pontuacao >= PONTUACAO_MAXIMA) {
-            escreverln("Parabéns! Você venceu com " + pontuacao + " pontos!");
-            jogoAtivo = falso;
-            retornar;
-        }
-        
-        // Verifica se o jogador está em perigo (inimigo próximo)
-        booleano jogadorEmPerigo = (abs(posX - inimigoPosX) < 100) e (inimigoPosY > ALTURA_TELA / 2);
-        
-        // Simula o tempo de frame
-        se (jogadorEmPerigo) {
-            escreverln("⚠️ CUIDADO! Inimigo próximo! ⚠️");
-        }
-        
-        escreverln("Jogador: (" + posX + "," + posY + ") | Inimigo: (" + inimigoPosX + "," + inimigoPosY + ")");
-    }
-}
-
-// Função para valor absoluto
-funcao inteiro abs(inteiro valor) {
-    se (valor < 0) {
-        retornar -valor;
-    }
-    retornar valor;
-}
-
-// Simula entrada do usuário
-funcao texto obterEntrada() {
-    // Na implementação real, isso seria uma função que obtém entrada do usuário
-    // Para simplificar, vamos alternar entre 'a' e 'd'
-    inteiro escolha = aleatorio(0, 3);
+    // Verifica colisão entre jogador e inimigo
+    dicionario jogador = criarRetangulo(posX, posY, 50, 50, "verde");
+    dicionario inimigo = criarRetangulo(inimigoPosX, inimigoPosY, 50, 50, "vermelho");
     
-    se (escolha == 0) {
-        retornar "a";
-    } senao se (escolha == 1) {
-        retornar "d";
+    se (verificarColisao(jogador, inimigo)) {
+        fimDeJogo(falso);
+        retornar;
+    }
+    
+    // Encerra o jogo se ESC for pressionado
+    se (teclaPressionada("ESC")) {
+        escreverln("Jogo encerrado pelo usuário.");
+        jogoAtivo = falso;
+        retornar;
+    }
+    
+    // Verifica se o inimigo está próximo
+    se (distancia < 200) {
+        alertaInimigo();
+    }
+}
+
+// Função principal de renderização da cena de jogo
+funcao renderizarJogo(dicionario jogo) {
+    // Cria e desenha o jogador
+    dicionario jogador = criarRetangulo(posX, posY, 50, 50, "verde");
+    desenharForma(jogador);
+    
+    // Cria e desenha o inimigo
+    dicionario inimigo = criarRetangulo(inimigoPosX, inimigoPosY, 50, 50, "vermelho");
+    desenharForma(inimigo);
+    
+    // Desenha a pontuação
+    desenharTexto("Pontuação: " + pontuacao, 20, 20);
+}
+
+// Função para lidar com o fim de jogo
+funcao fimDeJogo(booleano vitoria) {
+    jogoAtivo = falso;
+    
+    se (vitoria) {
+        escreverln("Parabéns! Você venceu com " + pontuacao + " pontos!");
     } senao {
-        retornar "";
+        escreverln("Colisão! Você perdeu.");
     }
 }
 
-// Função principal
-funcao principal() {
-    escreverln("=== Jogo Simples em NajaScript ===");
-    inicializarJogo();
-    loopJogo();
-    escreverln("Fim do jogo! Pontuação final: " + pontuacao);
+// Função para alertar que o inimigo está próximo
+funcao alertaInimigo() {
+    // Apenas em situações de debug ou para feedback ao jogador
+    escreverln("⚠️ CUIDADO! Inimigo próximo! ⚠️");
+    
+    // Debug: mostra posições
+    escreverln("Jogador: (" + posX + "," + posY + ") | Inimigo: (" + inimigoPosX + "," + inimigoPosY + ")");
 }
 
-// Chama a função principal
-principal(); 
+// Teste o jogo com algumas teclas simuladas
+funcao testarJogo() {
+    // Inicializa o jogo
+    inicializar();
+    
+    // Cria uma cena de jogo
+    dicionario cena_jogo = criarCena("jogo", atualizarJogo, renderizarJogo);
+    
+    // Define a cena atual
+    definirCenaAtual("jogo");
+    
+    // Simula algumas teclas pressionadas
+    atualizarTecla("D", verdadeiro);  // Move para a direita
+    
+    // Executa alguns frames do jogo
+    executarJogo();
+    
+    // Simula tecla para cima
+    atualizarTecla("D", falso);
+    atualizarTecla("W", verdadeiro);
+    
+    // Executa mais alguns frames
+    executarJogo();
+    
+    // Verifica a posição final do jogador
+    se (posX > 100) {
+        escreverln("O jogador se moveu para a direita corretamente!");
+    }
+    
+    se (posY < 300) {
+        escreverln("O jogador se moveu para cima corretamente!");
+    }
+}
+
+// Executa o jogo
+escreverln("=== Jogo Simples em NajaScript ===");
+testarJogo();
+escreverln("Fim do jogo! Pontuação final: " + pontuacao); 
