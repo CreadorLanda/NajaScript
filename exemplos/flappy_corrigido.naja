@@ -1,0 +1,116 @@
+// Flappy Bird - Versão corrigida
+import "NajaGame"
+
+// Inicializa o jogo
+initGame(800, 600, "Flappy Bird");
+
+// Carrega a imagem do pássaro
+int passaro = loadImage("Flappy_Bird_assets/images/bird.png");
+
+// Variáveis do jogo
+int passaroX = 150;
+int passaroY = 300;
+int velocidadeY = 0;
+int gravidade = 1;
+int forcaPulo = 10; // Usaremos valor positivo e invertemos a lógica
+
+// Obstáculos
+int canoX = 800;
+int canoLargura = 70;
+int aberturaY = 250;
+int aberturaAltura = 150;
+
+// Pontuação
+int pontuacao = 0;
+
+// Loop principal
+bool rodando = true;
+while (rodando) {
+    // Limpa a tela
+    clearScreen([135, 206, 235]);
+    
+    // Gravidade
+    velocidadeY = velocidadeY + gravidade;
+    passaroY = passaroY + velocidadeY;
+    
+    // Controle do pássaro - invertendo a lógica para evitar números negativos
+    if (isKeyPressed("SPACE")) {
+        velocidadeY = 0;
+        velocidadeY = 0; // Zera a velocidade primeiro
+        velocidadeY = velocidadeY + forcaPulo; // Adiciona força positiva
+        passaroY = passaroY - forcaPulo * 2; // Move para cima imediatamente
+    }
+    
+    // Limita a posição do pássaro
+    if (passaroY < 0) {
+        passaroY = 0;
+        velocidadeY = 0;
+    }
+    
+    if (passaroY > 550) {
+        passaroY = 550;
+        velocidadeY = 0;
+    }
+    
+    // Move o obstáculo
+    canoX = canoX - 3;
+    if (canoX < 0) {
+        canoX = 800;
+        pontuacao = pontuacao + 1;
+        
+        // Altera a posição da abertura
+        aberturaY = 100 + pontuacao * 20;
+        if (aberturaY > 350) {
+            aberturaY = 150;
+        }
+    }
+    
+    // Verifica colisão com os obstáculos
+    bool colisao = false;
+    
+    // Condições de colisão separadas para simplificar
+    bool passaroPosX = passaroX + 50 > canoX;
+    bool passaroNegX = passaroX < canoX + canoLargura;
+    
+    if (passaroPosX && passaroNegX) {
+        bool colisaoSuperior = passaroY < aberturaY;
+        bool colisaoInferior = passaroY + 35 > aberturaY + aberturaAltura;
+        
+        if (colisaoSuperior || colisaoInferior) {
+            colisao = true;
+        }
+    }
+    
+    // Se colidiu, reinicia
+    if (colisao) {
+        passaroY = 300;
+        velocidadeY = 0;
+        canoX = 800;
+        pontuacao = 0;
+    }
+    
+    // Desenha os obstáculos
+    drawRect(canoX, 0, canoLargura, aberturaY, [0, 128, 0]);
+    drawRect(canoX, aberturaY + aberturaAltura, canoLargura, 600 - aberturaY - aberturaAltura, [0, 128, 0]);
+    
+    // Desenha o pássaro
+    drawImage(passaro, passaroX, passaroY, 50, 35);
+    
+    // Desenha a pontuação
+    drawText("Pontuação: " + toString(pontuacao), 20, 20, [255, 255, 255]);
+    
+    // Instruções
+    drawText("ESPAÇO para pular", 20, 50, [255, 255, 255]);
+    drawText("ESC para sair", 20, 80, [255, 255, 255]);
+    
+    // Verifica saída
+    if (isKeyPressed("ESCAPE")) {
+        rodando = false;
+    }
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Finaliza o jogo
+quitGame(); 

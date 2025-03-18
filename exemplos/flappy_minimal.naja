@@ -1,0 +1,151 @@
+// Flappy Bird Minimal para NajaScript
+import "NajaGame"
+
+// Inicialização do jogo
+print("Inicializando Flappy Bird Minimal...");
+initGame(800, 600, "Flappy Bird Minimal");
+print("Jogo inicializado!");
+
+// Carrega recursos
+print("Carregando recursos...");
+int passaro = loadImage("assets/logoNajaGame.png");
+setIcon("assets/logoNajaGame.png");
+print("Recursos carregados!");
+
+// Configurações do jogo
+int passaroX = 150;
+int passaroY = 300;
+int tamanho = 50;
+int velocidadeY = 0;
+int gravidade = 1;
+int forcaPulo = 8;
+int pontuacao = 0;
+bool jogoAtivo = true;
+
+// Configurações de obstáculo
+int obstaculoX = 800;
+int obstaculoLargura = 70;
+int abertura = 200;
+int aberturaY = 300;
+
+// Lista de cores
+list corVerde = [0, 128, 0];
+list corAzul = [135, 206, 235];
+list corBranca = [255, 255, 255];
+list corVermelha = [255, 0, 0];
+list corPreta = [0, 0, 0];
+
+// Loop principal
+print("Iniciando o loop principal...");
+float tempoInicio = time();
+
+while (jogoAtivo) {
+    // Limpa a tela
+    clearScreen(corAzul);
+    
+    // Controle do pássaro
+    if (isKeyPressed("SPACE")) {
+        velocidadeY = 0;
+        velocidadeY = velocidadeY + 8;
+        passaroY = passaroY - 16;
+    }
+    
+    // Atualiza a posição do pássaro
+    velocidadeY = velocidadeY + gravidade;
+    passaroY = passaroY + velocidadeY;
+    
+    // Limites da tela
+    if (passaroY < 0) {
+        passaroY = 0;
+        velocidadeY = 0;
+    }
+    
+    if (passaroY > 550) {
+        passaroY = 550;
+        jogoAtivo = false;
+    }
+    
+    // Atualiza a posição do obstáculo
+    obstaculoX = obstaculoX - 5;
+    if (obstaculoX < 0) {
+        obstaculoX = 800;
+        pontuacao = pontuacao + 1;
+        // Randomiza a posição da abertura
+        int tempoInt = int(time() * 10);
+        aberturaY = 100 + tempoInt % 300;
+    }
+    
+    // Desenha o obstáculo (parte superior)
+    drawRect(obstaculoX, 0, obstaculoLargura, aberturaY, corVerde);
+    
+    // Variáveis temporárias para o obstáculo inferior
+    int inicioInferior = aberturaY + abertura;
+    int alturaInferior = 600 - inicioInferior;
+    
+    // Desenha o obstáculo (parte inferior)
+    drawRect(obstaculoX, inicioInferior, obstaculoLargura, alturaInferior, corVerde);
+    
+    // Verifica colisão
+    bool colisao = false;
+    
+    // Verifica se o pássaro está na área X do obstáculo
+    bool naAreaX = false;
+    if (passaroX + tamanho > obstaculoX) {
+        if (passaroX < obstaculoX + obstaculoLargura) {
+            naAreaX = true;
+        }
+    }
+    
+    // Se está na área X, verifica colisão Y
+    if (naAreaX) {
+        // Colisão superior
+        if (passaroY < aberturaY) {
+            colisao = true;
+        }
+        
+        // Colisão inferior
+        int basePessaro = passaroY + tamanho;
+        if (basePessaro > inicioInferior) {
+            colisao = true;
+        }
+    }
+    
+    // Se houve colisão, fim de jogo
+    if (colisao) {
+        jogoAtivo = false;
+    }
+    
+    // Desenha o pássaro
+    drawImage(passaro, passaroX, passaroY, tamanho, tamanho);
+    
+    // Desenha a pontuação
+    drawText("Pontuacao: " + toString(pontuacao), 20, 20, corBranca);
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Tela de Game Over
+clearScreen(corPreta);
+drawText("Game Over", 300, 250, 40, corVermelha);
+drawText("Pontuacao final: " + toString(pontuacao), 250, 320, 30, corBranca);
+updateWindow();
+
+// Espera alguns segundos antes de fechar
+float tempoFim = time();
+float esperaMaxima = tempoFim + 3;
+
+while (time() < esperaMaxima) {
+    if (isKeyPressed("ESCAPE")) {
+        break;
+    }
+    if (isKeyPressed("SPACE")) {
+        break;
+    }
+    updateWindow();
+}
+
+// Finaliza o jogo
+print("Finalizando o jogo...");
+quitGame();
+print("Jogo finalizado!"); 

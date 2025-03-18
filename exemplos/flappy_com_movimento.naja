@@ -1,0 +1,88 @@
+// Flappy Bird com movimento sem reatribuições
+import "NajaGame"
+
+// Inicializa o jogo
+initGame(800, 600, "Flappy Bird com Movimento");
+
+// Carrega a imagem do pássaro
+int passaro = loadImage("Flappy_Bird_assets/images/bird.png");
+
+// Posição inicial do pássaro e obstáculo
+int passaroX = 400;
+int passaroY = 300;
+int canoX = 800;
+int aberturaY = 250;
+
+// Controle de jogo
+bool executando = true;
+bool pulando = false;
+int contadorFrame = 0;
+int pontuacao = 0;
+
+// Cores
+int corCeuR = 135;
+int corCeuG = 206;
+int corCeuB = 235;
+int corVerdeR = 0;
+int corVerdeG = 128;
+int corVerdeB = 0;
+int corBrancoR = 255;
+int corBrancoG = 255;
+int corBrancoB = 255;
+
+// Loop principal
+while (executando) {
+    // Limpa a tela
+    clearScreen(corCeuR, corCeuG, corCeuB);
+    
+    // Verifica input do usuário
+    bool teclaEspaco = isKeyPressed("SPACE");
+    bool teclaCima = isKeyPressed("UP");
+    bool teclaEsc = isKeyPressed("ESCAPE");
+    
+    // Movimento vertical do pássaro (sem reatribuições)
+    if (teclaEspaco || teclaCima) {
+        // Quando o jogador pressiona espaço/cima, usamos uma posição fixa mais alta
+        drawImage(passaro, passaroX, passaroY - 5, 50, 35);
+        pulando = true;
+    } else {
+        // Quando não está pulando, usamos uma posição fixa mais baixa
+        if (pulando) {
+            drawImage(passaro, passaroX, passaroY - 3, 50, 35);
+            pulando = false;
+        } else {
+            drawImage(passaro, passaroX, passaroY, 50, 35);
+        }
+    }
+    
+    // Movimento horizontal do cano (sem reatribuições)
+    // Usamos o contadorFrame para simular o movimento do cano
+    int posicaoCanoDuranteFrame = canoX - (contadorFrame % 800);
+    
+    // Desenha os canos
+    drawRect(posicaoCanoDuranteFrame, 0, 70, aberturaY - 100, corVerdeR, corVerdeG, corVerdeB);
+    drawRect(posicaoCanoDuranteFrame, aberturaY + 100, 70, 600 - (aberturaY + 100), corVerdeR, corVerdeG, corVerdeB);
+    
+    // Incrementa contador
+    contadorFrame = contadorFrame + 1;
+    
+    // Calcula pontuação baseada no contador
+    if (contadorFrame > 0 && contadorFrame % 100 == 0) {
+        pontuacao = pontuacao + 1;
+    }
+    
+    // Exibe pontuação
+    drawText("Pontuação: " + pontuacao, 20, 20, corBrancoR, corBrancoG, corBrancoB);
+    drawText("Pule com ESPAÇO ou CIMA. ESC para sair", 20, 50, corBrancoR, corBrancoG, corBrancoB);
+    
+    // Verifica saída
+    if (teclaEsc) {
+        executando = false;
+    }
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Finaliza o jogo
+quitGame(); 

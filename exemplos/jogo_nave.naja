@@ -1,0 +1,66 @@
+// Jogo de Nave Espacial
+import "NajaGame"
+
+// Inicializa o jogo
+print("Inicializando o jogo...");
+initGame(800, 600, "Nave Espacial - NajaGame");
+print("Jogo inicializado!");
+
+// Carrega as imagens
+print("Carregando imagens...");
+int nave = loadImage("assets/logoNajaGame.png");  // Usando o logo como nave temporariamente
+print("Imagens carregadas!");
+
+// Define o ícone da janela
+print("Definindo o ícone da janela...");
+setIcon("assets/logoNajaGame.png");
+print("Ícone definido!");
+
+// Posição inicial da nave
+int nave_x = 400;
+int nave_y = 500;
+int pontos = 0;
+
+// Loop principal
+print("Entrando no loop principal...");
+float start_time = time();
+float tempo_total = 30;  // Executa por 30 segundos
+
+while (time() - start_time < tempo_total) {
+    // Limpa a tela - usando lista para cores
+    clearScreen([0, 0, 0]);
+    
+    // Verifica teclas pressionadas para mover a nave
+    if (isKeyPressed("LEFT")) {
+        nave_x = nave_x - 5;
+        if (nave_x < 0) {
+            nave_x = 0;
+        }
+    }
+    
+    if (isKeyPressed("RIGHT")) {
+        nave_x = nave_x + 5;
+        if (nave_x > 750) {
+            nave_x = 750;
+        }
+    }
+    
+    // Desenha a nave
+    drawImage(nave, nave_x, nave_y);
+    
+    // Mostra informações - usando lista para cores
+    drawText("Pontos: " + toString(pontos), 20, 20, [255, 255, 255]);
+    float tempo_restante = tempo_total - (time() - start_time);
+    drawText("Tempo: " + toString(tempo_restante), 20, 50, [255, 255, 255]);
+    
+    // Atualiza a janela
+    updateWindow();
+    
+    // Aumenta pontuação gradualmente
+    pontos = pontos + 1;
+}
+
+// Encerra o jogo
+print("Finalizando o jogo...");
+quitGame();
+print("Jogo finalizado!"); 

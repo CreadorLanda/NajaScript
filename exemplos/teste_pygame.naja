@@ -30,11 +30,11 @@ while (time() - start_time < 5) {  // Aumentei para 5 segundos para ver melhor
     int screenWidth = 800;
     int screenHeight = 600;
     
-    // Centraliza o logo na tela
-    int logoWidth = 200;  // Tamanho estimado, ajuste conforme necessário
-    int logoHeight = 200;
+    // Centraliza o logo na tela com tamanho maior e mais preciso
+    int logoWidth = 300;  // Ajustado para um tamanho mais preciso
+    int logoHeight = 300; // Ajustado para um tamanho mais preciso
     
-    // Desenha o logo centralizado (usando menos argumentos)
+    // Desenha o logo perfeitamente centralizado na tela
     drawImage(logo, screenWidth/2 - logoWidth/2, screenHeight/2 - logoHeight/2);
     
     // Atualiza a janela

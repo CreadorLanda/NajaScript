@@ -1,0 +1,44 @@
+// Demo básica NajaGame - Sem operações complexas
+import "NajaGame"
+
+// Inicializa o jogo
+print("Inicializando o jogo...");
+initGame(800, 600, "Demo Básica");
+print("Jogo inicializado!");
+
+// Carrega a imagem do logo
+print("Carregando o logo...");
+int logo = loadImage("assets/logoNajaGame.png");
+print("Logo carregado!");
+
+// Define o ícone da janela
+print("Definindo o ícone da janela...");
+setIcon("assets/logoNajaGame.png");
+print("Ícone definido!");
+
+// Loop principal - apenas mostra o logo
+print("Entrando no loop principal...");
+float start_time = time();
+
+// Posições fixas para o logo
+int x1 = 100;
+int y1 = 100;
+int x2 = 400;
+int y2 = 300;
+
+while (time() - start_time < 5) {  // Executa por 5 segundos
+    // Limpa a tela com cor preta
+    clearScreen(0, 0, 0);
+    
+    // Desenha o logo em posições fixas
+    drawImage(logo, x1, y1);
+    drawImage(logo, x2, y2);
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Encerra o jogo
+print("Finalizando o jogo...");
+quitGame();
+print("Jogo finalizado!"); 

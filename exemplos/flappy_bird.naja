@@ -1,0 +1,173 @@
+// Flappy Bird em NajaScript
+import "NajaGame"
+
+// Inicialização do jogo
+print("Inicializando Flappy Bird...");
+initGame(800, 600, "Flappy Bird - NajaScript");
+setIcon("assets/logoNajaGame.png");
+print("Jogo inicializado!");
+
+// Recursos
+print("Carregando recursos...");
+int passaro = loadImage("assets/logoNajaGame.png");
+int background = loadImage("assets/logoNajaGame.png");
+print("Recursos carregados!");
+
+// Configurações do jogo
+int larguraTela = 800;
+int alturaTela = 600;
+int gravidade = 1;
+int forcaPulo = -12;
+int velocidadeCanos = 3;
+int espacoEntreCanos = 200;
+int larguraCano = 70;
+bool jogoAtivo = true;
+int pontuacao = 0;
+
+// Configuração do pássaro
+int passaroX = 150;
+int passaroY = 300;
+int passaroTamanho = 50;
+int velocidadeY = 0;
+
+// Configurações dos canos
+// Listas para armazenar posições e alturas dos canos
+list canosX = list();
+list canosAlturaInferior = list();
+list canosAlturaSuperior = list();
+
+// Inicializa o primeiro conjunto de canos
+canosX.add(larguraTela);
+int alturaRandomSuperior = 100 + int(time() * 300) % 200;
+canosAlturaSuperior.add(alturaRandomSuperior);
+canosAlturaInferior.add(alturaTela - alturaRandomSuperior - espacoEntreCanos);
+
+// Funções do jogo
+fun atualizarPassaro() {
+    // Aplica a gravidade
+    velocidadeY = velocidadeY + gravidade;
+    
+    // Atualiza a posição Y do pássaro
+    passaroY = passaroY + velocidadeY;
+    
+    // Limita a posição do pássaro para não sair da tela
+    if (passaroY < 0) {
+        passaroY = 0;
+        velocidadeY = 0;
+    }
+    
+    if (passaroY > alturaTela - passaroTamanho) {
+        passaroY = alturaTela - passaroTamanho;
+        velocidadeY = 0;
+        jogoAtivo = false;  // Game over se tocar no chão
+    }
+}
+
+fun atualizarCanos() {
+    // Move todos os canos para a esquerda
+    for (int i = 0; i < canosX.length(); i = i + 1) {
+        canosX.replace(i, canosX.get(i) - velocidadeCanos);
+    }
+    
+    // Verifica se é necessário remover canos que já passaram
+    if (canosX.length() > 0 && canosX.get(0) < -larguraCano) {
+        canosX.remove(0);
+        canosAlturaSuperior.remove(0);
+        canosAlturaInferior.remove(0);
+        pontuacao = pontuacao + 1;
+    }
+    
+    // Adiciona novos canos quando necessário
+    if (canosX.length() == 0 || canosX.get(canosX.length() - 1) < larguraTela - 300) {
+        canosX.add(larguraTela);
+        int alturaRandom = 100 + int(time() * 100) % 300;
+        canosAlturaSuperior.add(alturaRandom);
+        canosAlturaInferior.add(alturaTela - alturaRandom - espacoEntreCanos);
+    }
+}
+
+fun verificarColisoes() {
+    // Verifica colisão com os canos
+    for (int i = 0; i < canosX.length(); i = i + 1) {
+        int canoX = canosX.get(i);
+        
+        // Se o pássaro está na região do cano no eixo X
+        if (passaroX + passaroTamanho > canoX && passaroX < canoX + larguraCano) {
+            // Verifica colisão com o cano superior
+            if (passaroY < canosAlturaSuperior.get(i)) {
+                jogoAtivo = false;
+            }
+            
+            // Verifica colisão com o cano inferior
+            int inicioCanoInferior = alturaTela - canosAlturaInferior.get(i);
+            if (passaroY + passaroTamanho > inicioCanoInferior) {
+                jogoAtivo = false;
+            }
+        }
+    }
+}
+
+fun desenharJogo() {
+    // Limpa a tela com cor de fundo
+    clearScreen([135, 206, 235]); // Azul céu
+    
+    // Desenha os canos
+    for (int i = 0; i < canosX.length(); i = i + 1) {
+        int canoX = canosX.get(i);
+        
+        // Cano superior
+        drawRect(canoX, 0, larguraCano, canosAlturaSuperior.get(i), [0, 128, 0]); // Verde
+        
+        // Cano inferior
+        int inicioCanoInferior = alturaTela - canosAlturaInferior.get(i);
+        drawRect(canoX, inicioCanoInferior, larguraCano, canosAlturaInferior.get(i), [0, 128, 0]); // Verde
+    }
+    
+    // Desenha o pássaro
+    drawImage(passaro, passaroX, passaroY, passaroTamanho, passaroTamanho);
+    
+    // Desenha a pontuação
+    drawText("Pontuação: " + toString(pontuacao), 20, 20, 24, [255, 255, 255]);
+}
+
+// Loop principal do jogo
+print("Iniciando loop do jogo...");
+while (jogoAtivo) {
+    // Processa entrada do jogador
+    if (isKeyPressed("SPACE")) {
+        velocidadeY = forcaPulo;
+    }
+    
+    // Se o jogador pressionar ESC, sai do jogo
+    if (isKeyPressed("ESCAPE")) {
+        jogoAtivo = false;
+    }
+    
+    // Atualiza o estado do jogo
+    atualizarPassaro();
+    atualizarCanos();
+    verificarColisoes();
+    
+    // Desenha o jogo
+    desenharJogo();
+    
+    // Atualiza a tela
+    updateWindow();
+}
+
+// Tela de Game Over
+clearScreen([0, 0, 0]);
+drawText("Game Over", larguraTela / 2 - 100, alturaTela / 2 - 50, 40, [255, 0, 0]);
+drawText("Pontuação final: " + toString(pontuacao), larguraTela / 2 - 120, alturaTela / 2 + 20, 30, [255, 255, 255]);
+updateWindow();
+
+// Espera um tempo antes de fechar
+float tempoFim = time();
+while (time() - tempoFim < 3) {
+    updateWindow();
+}
+
+// Finaliza o jogo
+print("Finalizando o jogo...");
+quitGame();
+print("Jogo finalizado!"); 

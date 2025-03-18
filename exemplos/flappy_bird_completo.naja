@@ -1,0 +1,226 @@
+// Jogo Flappy Bird completo em NajaScript
+import "NajaGame"
+
+// Inicializa o jogo
+initGame(800, 600, "Flappy Bird em NajaScript");
+
+// Cores
+list corCeu = [135, 206, 235];
+list corVerde = [0, 128, 0];
+list corBranco = [255, 255, 255];
+list corPreto = [0, 0, 0];
+list corVermelho = [255, 0, 0];
+
+// Carrega as imagens
+int passaro = loadImage("Flappy_Bird_assets/images/bird.png");
+int background = loadImage("Flappy_Bird_assets/images/background.png");
+int cano = loadImage("Flappy_Bird_assets/images/pipe-green.png");
+int base = loadImage("Flappy_Bird_assets/images/base.png");
+int gameover = loadImage("Flappy_Bird_assets/UI/gameover.png");
+int mensagemInicial = loadImage("Flappy_Bird_assets/UI/message.png");
+
+// Configurações do jogo
+int larguraTela = 800;
+int alturaTela = 600;
+int alturaChao = 100;
+int larguraPassaro = 50;
+int alturaPassaro = 35;
+int larguraCano = 70;
+int distanciaCanos = 300;
+int aberturaCanos = 150;
+int velocidadeJogo = 3;
+int gravidade = 1;
+bool jogoIniciado = false;
+bool gameOver = false;
+
+// Posição do pássaro
+int passaroX = 150;
+int passaroY = 300;
+int velocidadeY = 0;
+int forcaPulo = 0 - 10;
+
+// Configuração dos canos
+list canoPosX = [];
+list canoAlturaInferior = [];
+
+// Pontuação
+int pontuacao = 0;
+bool pontuacaoAdicionada = false;
+
+// Função para inicializar canos
+fun inicializarCanos() {
+    canoPosX = [];
+    canoAlturaInferior = [];
+    
+    // Cria 3 pares de canos iniciais
+    for (int i = 0; i < 3; i = i + 1) {
+        canoPosX.add(larguraTela + i * distanciaCanos);
+        // Altura aleatória para abertura dos canos
+        int alturaAbertura = 150 + int(time() * (i+1)) % 250;
+        canoAlturaInferior.add(alturaAbertura);
+    }
+}
+
+// Função para verificar colisão
+fun verificarColisao() {
+    // Colisão com o chão
+    if (passaroY + alturaPassaro > alturaTela - alturaChao) {
+        return true;
+    }
+    
+    // Colisão com o teto
+    if (passaroY < 0) {
+        return true;
+    }
+    
+    // Colisão com os canos
+    for (int i = 0; i < canoPosX.length(); i = i + 1) {
+        int canoX = canoPosX.get(i);
+        int aberturaY = canoAlturaInferior.get(i);
+        
+        // Verifica se o pássaro está na área do cano
+        if (passaroX + larguraPassaro > canoX && passaroX < canoX + larguraCano) {
+            // Verifica colisão com cano superior
+            if (passaroY < aberturaY - aberturaCanos) {
+                return true;
+            }
+            
+            // Verifica colisão com cano inferior
+            if (passaroY + alturaPassaro > aberturaY) {
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
+
+// Função para atualizar a posição dos canos
+fun atualizarCanos() {
+    for (int i = 0; i < canoPosX.length(); i = i + 1) {
+        // Move o cano para a esquerda
+        canoPosX.replace(i, canoPosX.get(i) - velocidadeJogo);
+        
+        // Verifica se o pássaro passou pelo cano
+        if (canoPosX.get(i) + larguraCano < passaroX && !pontuacaoAdicionada) {
+            pontuacao = pontuacao + 1;
+            pontuacaoAdicionada = true;
+        }
+        
+        // Se o cano saiu da tela, reposiciona-o
+        if (canoPosX.get(i) + larguraCano < 0) {
+            canoPosX.replace(i, canoPosX.get(i) + 3 * distanciaCanos);
+            
+            // Nova altura aleatória para o cano
+            int novaAltura = 150 + int(time() * 43) % 250;
+            canoAlturaInferior.replace(i, novaAltura);
+            
+            // Reseta a flag de pontuação
+            pontuacaoAdicionada = false;
+        }
+    }
+}
+
+// Função para desenhar os canos
+fun desenharCanos() {
+    for (int i = 0; i < canoPosX.length(); i = i + 1) {
+        int posX = canoPosX.get(i);
+        int aberturaY = canoAlturaInferior.get(i);
+        
+        // Desenha cano inferior (normal)
+        drawImage(cano, posX, aberturaY, larguraCano, alturaTela - aberturaY - alturaChao);
+        
+        // Desenha cano superior (invertido)
+        // Primeiro desenha um retângulo verde
+        drawRect(posX, 0, larguraCano, aberturaY - aberturaCanos, corVerde);
+        
+        // Depois desenha a imagem do cano invertida para a parte superior
+        drawImage(cano, posX, aberturaY - aberturaCanos - larguraCano, larguraCano, larguraCano);
+    }
+}
+
+// Inicializa os canos
+inicializarCanos();
+
+// Loop principal do jogo
+bool rodando = true;
+while (rodando) {
+    // Limpa a tela
+    clearScreen(corCeu);
+    
+    // Desenha o fundo
+    drawImage(background, 0, 0, larguraTela, alturaTela);
+    
+    if (!jogoIniciado && !gameOver) {
+        // Tela inicial
+        drawImage(mensagemInicial, 200, 100, 400, 200);
+        drawText("Pressione ESPAÇO para iniciar", 250, 350, corBranco);
+        
+        // Inicia o jogo quando o usuário pressiona espaço
+        if (isKeyPressed("SPACE")) {
+            jogoIniciado = true;
+            passaroY = 300;
+            velocidadeY = 0;
+            pontuacao = 0;
+            inicializarCanos();
+        }
+    }
+    else if (gameOver) {
+        // Tela de Game Over
+        drawImage(gameover, 250, 200, 300, 100);
+        drawText("Pontuação: " + toString(pontuacao), 350, 350, corBranco);
+        drawText("Pressione ESPAÇO para jogar novamente", 250, 400, corBranco);
+        
+        // Reinicia o jogo quando o usuário pressiona espaço
+        if (isKeyPressed("SPACE")) {
+            jogoIniciado = true;
+            gameOver = false;
+            passaroY = 300;
+            velocidadeY = 0;
+            pontuacao = 0;
+            inicializarCanos();
+        }
+    }
+    else {
+        // Jogo em andamento
+        
+        // Lógica do pulo
+        if (isKeyPressed("SPACE")) {
+            velocidadeY = forcaPulo;
+        }
+        
+        // Atualiza a posição do pássaro (gravidade)
+        velocidadeY = velocidadeY + gravidade;
+        passaroY = passaroY + velocidadeY;
+        
+        // Atualiza e desenha os canos
+        atualizarCanos();
+        desenharCanos();
+        
+        // Verifica colisão
+        if (verificarColisao()) {
+            gameOver = true;
+            jogoIniciado = false;
+        }
+        
+        // Exibe a pontuação
+        drawText("Pontuação: " + toString(pontuacao), 20, 20, corBranco);
+    }
+    
+    // Desenha o chão
+    drawImage(base, 0, alturaTela - alturaChao, larguraTela, alturaChao);
+    
+    // Desenha o pássaro
+    drawImage(passaro, passaroX, passaroY, larguraPassaro, alturaPassaro);
+    
+    // Verifica saída
+    if (isKeyPressed("ESCAPE")) {
+        rodando = false;
+    }
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Finaliza o jogo
+quitGame(); 

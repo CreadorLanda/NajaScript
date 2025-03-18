@@ -1,0 +1,73 @@
+// Flappy Bird Ultra Simples
+import "NajaGame"
+
+// Inicializa o jogo e janela
+initGame(800, 600, "Flappy Bird");
+
+// Carrega a imagem do pássaro
+int passaro = loadImage("Flappy_Bird_assets/images/bird.png");
+
+// Variáveis para a posição do pássaro
+int passaroX = 150;
+int passaroY = 300;
+
+// Variável para o cano/obstáculo
+int canoX = 800;
+
+// Loop principal
+bool rodando = true;
+while (rodando) {
+    // Limpa a tela com cor azul
+    clearScreen([135, 206, 235]);
+    
+    // Movimento do pássaro - com teclas direcionais em vez de física
+    if (isKeyPressed("UP")) {
+        int novaPosY = passaroY - 5;
+        passaroY = novaPosY;
+    }
+    
+    if (isKeyPressed("DOWN")) {
+        int novaPosY = passaroY + 5;
+        passaroY = novaPosY;
+    }
+    
+    // Movimento do cano
+    int novoCanoX = canoX - 3;
+    canoX = novoCanoX;
+    
+    // Reposiciona o cano quando sair da tela
+    if (canoX < 0) {
+        canoX = 800;
+    }
+    
+    // Limita a posição do pássaro
+    if (passaroY < 0) {
+        passaroY = 0;
+    }
+    
+    if (passaroY > 550) {
+        passaroY = 550;
+    }
+    
+    // Desenha os obstáculos
+    drawRect(canoX, 0, 70, 200, [0, 128, 0]);
+    drawRect(canoX, 350, 70, 250, [0, 128, 0]);
+    
+    // Desenha o pássaro
+    drawImage(passaro, passaroX, passaroY, 50, 35);
+    
+    // Instruções
+    drawText("Use as setas para mover o pássaro", 20, 20, [255, 255, 255]);
+    drawText("ESC para sair", 20, 50, [255, 255, 255]);
+    
+    // Verifica saída
+    if (isKeyPressed("ESCAPE")) {
+        rodando = false;
+    }
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Finaliza o jogo
+quitGame(); 

@@ -1,0 +1,79 @@
+// Jogo ultra simples para testar a funcionalidade básica
+import "NajaGame"
+
+// Inicialização
+initGame(800, 600, "Teste Simples");
+
+// Carrega recursos
+int logo = loadImage("assets/logoNajaGame.png");
+
+// Posições iniciais
+int posX = 100;
+int posY = 100;
+int velocidade = 5;
+
+// Cores pré-definidas
+list verde = [0, 255, 0];
+list azul = [0, 0, 255];
+list vermelho = [255, 0, 0];
+list branco = [255, 255, 255];
+list preto = [0, 0, 0];
+
+// Flag de jogo ativo
+bool jogando = true;
+
+// Loop principal bem simples
+while (jogando) {
+    // Limpa a tela
+    clearScreen(preto);
+    
+    // Movimentação
+    if (isKeyPressed("RIGHT")) {
+        posX = posX + velocidade;
+    }
+    
+    if (isKeyPressed("LEFT")) {
+        posX = posX - velocidade;
+    }
+    
+    if (isKeyPressed("UP")) {
+        posY = posY - velocidade;
+    }
+    
+    if (isKeyPressed("DOWN")) {
+        posY = posY + velocidade;
+    }
+    
+    // Limites da tela
+    if (posX < 0) {
+        posX = 0;
+    }
+    
+    if (posX > 750) {
+        posX = 750;
+    }
+    
+    if (posY < 0) {
+        posY = 0;
+    }
+    
+    if (posY > 550) {
+        posY = 550;
+    }
+    
+    // Verifica saída
+    if (isKeyPressed("ESCAPE")) {
+        jogando = false;
+    }
+    
+    // Desenha objetos
+    drawRect(300, 200, 100, 100, verde);
+    drawImage(logo, posX, posY);
+    drawText("Use as setas para mover", 20, 20, branco);
+    
+    // Atualiza
+    updateWindow();
+}
+
+// Finaliza
+quitGame(); 

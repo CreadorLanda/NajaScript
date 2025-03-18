@@ -1,0 +1,46 @@
+// Jogo Estático - Sem atribuições dentro do loop
+import "NajaGame"
+
+// Inicializa o jogo
+print("Inicializando o jogo...");
+initGame(800, 600, "Jogo Estático");
+print("Jogo inicializado!");
+
+// Carrega a imagem do logo
+print("Carregando o logo...");
+int logo = loadImage("assets/logoNajaGame.png");
+print("Logo carregado!");
+
+// Define o ícone da janela
+print("Definindo o ícone da janela...");
+setIcon("assets/logoNajaGame.png");
+print("Ícone definido!");
+
+// Posições fixas para os logos
+int logo1_x = 200;
+int logo1_y = 150;
+int logo2_x = 400;
+int logo2_y = 300;
+int logo3_x = 600;
+int logo3_y = 450;
+
+// Loop principal
+print("Entrando no loop principal...");
+float start_time = time();
+while (time() - start_time < 10) {  // Executa por 10 segundos
+    // Limpa a tela
+    clearScreen(0, 0, 0);
+    
+    // Desenha os logos em posições fixas
+    drawImage(logo, logo1_x, logo1_y);
+    drawImage(logo, logo2_x, logo2_y);
+    drawImage(logo, logo3_x, logo3_y);
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Encerra o jogo
+print("Finalizando o jogo...");
+quitGame();
+print("Jogo finalizado!"); 

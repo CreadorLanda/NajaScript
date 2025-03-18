@@ -1,0 +1,72 @@
+// Versão ultra simplificada de movimento do pássaro
+import "NajaGame"
+
+// Inicializa o jogo
+initGame(800, 600, "Movimento do Pássaro");
+
+// Carrega a imagem do pássaro
+int passaro = loadImage("Flappy_Bird_assets/images/bird.png");
+
+// Posição do pássaro
+int passaroX = 400;
+int passaroY = 300;
+int velocidade = 5;
+
+// Loop principal
+bool rodando = true;
+while (rodando) {
+    // Limpa a tela
+    clearScreen([135, 206, 235]);
+    
+    // Movimenta o pássaro com as setas
+    if (isKeyPressed("UP")) {
+        passaroY = passaroY - velocidade;
+    }
+    
+    if (isKeyPressed("DOWN")) {
+        passaroY = passaroY + velocidade;
+    }
+    
+    if (isKeyPressed("LEFT")) {
+        passaroX = passaroX - velocidade;
+    }
+    
+    if (isKeyPressed("RIGHT")) {
+        passaroX = passaroX + velocidade;
+    }
+    
+    // Limita as posições do pássaro na tela
+    if (passaroX < 0) {
+        passaroX = 0;
+    }
+    
+    if (passaroX > 750) {
+        passaroX = 750;
+    }
+    
+    if (passaroY < 0) {
+        passaroY = 0;
+    }
+    
+    if (passaroY > 550) {
+        passaroY = 550;
+    }
+    
+    // Desenha o pássaro
+    drawImage(passaro, passaroX, passaroY, 50, 35);
+    
+    // Instruções
+    drawText("Use as setas para mover o pássaro", 20, 20, [255, 255, 255]);
+    drawText("ESC para sair", 20, 50, [255, 255, 255]);
+    
+    // Verifica saída
+    if (isKeyPressed("ESCAPE")) {
+        rodando = false;
+    }
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Finaliza o jogo
+quitGame(); 

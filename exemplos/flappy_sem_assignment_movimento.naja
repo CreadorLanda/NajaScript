@@ -1,0 +1,66 @@
+// Flappy Bird - Versão Sem Assignment Com Movimento
+import "NajaGame"
+
+// Inicializa o jogo
+initGame(800, 600, "Flappy Bird - Movimento Sem Assignment");
+
+// Carrega a imagem do pássaro
+int passaro = loadImage("Flappy_Bird_assets/images/bird.png");
+
+// Posições fixas para o jogo
+int passaroX = 400;
+int passaroY = 300;
+int canoX = 800;
+int aberturaY = 250;
+
+// Controle de jogo - não vai usar assignment depois da inicialização
+bool executando = true;
+
+// Loop principal
+while (executando) {
+    // Limpa a tela
+    clearScreen(135, 206, 235);
+    
+    // Verifica input do usuário - estas variáveis são locais dentro do loop
+    bool teclaEspaco = isKeyPressed("SPACE");
+    bool teclaCima = isKeyPressed("UP");
+    bool teclaEsc = isKeyPressed("ESCAPE");
+    
+    // ---- Movimento dos canos sem assignment ----
+    // Obtém o tempo atual para sincronizar o movimento
+    int tempoAtual = int(time() * 10);
+    // Calcula a posição horizontal atual dos canos usando uma função senoidal
+    int canoAtualX = canoX - (tempoAtual % 850);  
+    
+    // ---- Movimento do pássaro sem assignment ----
+    // Efeito "gravidade" sem assignments - usando função senoidal do tempo
+    int efeito = int(sin(time()) * 20) + 15;
+    
+    // Desenha o pássaro com movimento, ajustando posição Y com base na entrada do usuário
+    if (teclaEspaco || teclaCima) {
+        // Posição mais alta quando pula
+        drawImage(passaro, passaroX, passaroY - 60 + efeito, 50, 35);
+    } else {
+        // Posição normal + efeito de gravidade
+        drawImage(passaro, passaroX, passaroY + efeito, 50, 35);
+    }
+    
+    // Desenha os canos (obstáculos) - com movimento
+    drawRect(canoAtualX, 0, 70, aberturaY - 100, 0, 128, 0);
+    drawRect(canoAtualX, aberturaY + 100, 70, 600 - (aberturaY + 100), 0, 128, 0);
+    
+    // Exibe instruções
+    drawText("Versão sem assignment com movimento", 20, 20, 255, 255, 255);
+    drawText("Pule com ESPAÇO ou CIMA. ESC para sair", 20, 50, 255, 255, 255);
+    
+    // Verifica saída
+    if (teclaEsc) {
+        executando = false;
+    }
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Finaliza o jogo
+quitGame(); 

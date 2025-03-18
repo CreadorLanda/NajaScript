@@ -286,8 +286,26 @@ class NajaBytecodeCompiler:
         # Compila o valor a ser atribuído
         instructions.extend(self.compile(node.value))
         
+        # Duplica o valor no topo da pilha para que possamos retorná-lo após a atribuição
+        instructions.append(Instruction(OpCode.DUP))
+        
         # Armazena o valor na variável
         instructions.append(Instruction(OpCode.STORE, node.name))
+        
+        # O valor duplicado permanece na pilha como resultado da expressão
+        return instructions
+
+    def compile_listliteral(self, node):
+        """Compila um literal de lista"""
+        instructions = []
+        
+        # Compila cada elemento da lista
+        for element in node.elements:
+            instructions.extend(self.compile(element))
+        
+        # Cria a lista com os elementos compilados
+        instructions.append(Instruction(OpCode.PUSH, len(node.elements)))
+        instructions.append(Instruction(OpCode.CALL, "list", len(node.elements)))
         
         return instructions
 
@@ -535,4 +553,12 @@ class BytecodeInterpreter:
         a = self.stack.pop()
         result = 1 if a <= b else 0
         print(f"Comparando {a} <= {b} = {result}")
-        self.stack.append(result) 
+        self.stack.append(result)
+
+    def execute_dup(self, instruction):
+        """Duplica o valor no topo da pilha"""
+        if not self.stack:
+            raise IndexError("Pilha vazia ao tentar duplicar o topo")
+        value = self.stack[-1]  # Obtém o valor do topo sem remover
+        self.stack.append(value)  # Adiciona uma cópia na pilha
+        return None 

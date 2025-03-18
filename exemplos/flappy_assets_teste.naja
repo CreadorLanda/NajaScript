@@ -1,0 +1,46 @@
+// Teste simplificado dos assets do Flappy Bird
+import "NajaGame"
+
+// Inicializa o jogo
+initGame(800, 600, "Teste de Assets do Flappy Bird");
+
+// Cores
+list corAzul = [135, 206, 235];
+list corBranco = [255, 255, 255];
+
+// Carrega as imagens
+int passaro = loadImage("Flappy_Bird_assets/images/bird.png");
+int background = loadImage("Flappy_Bird_assets/images/background.png");
+
+println("Assets do Flappy Bird carregados!");
+
+// Posições
+int passaroX = 150;
+int passaroY = 300;
+
+// Loop principal
+bool rodando = true;
+while (rodando) {
+    // Limpa a tela
+    clearScreen(corAzul);
+    
+    // Desenha o fundo
+    drawImage(background, 0, 0, 800, 600);
+    
+    // Desenha o pássaro
+    drawImage(passaro, passaroX, passaroY, 50, 35);
+    
+    // Texto informativo
+    drawText("Teste de assets do Flappy Bird", 20, 20, corBranco);
+    
+    // Verifica saída
+    if (isKeyPressed("ESCAPE")) {
+        rodando = false;
+    }
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Finaliza o jogo
+quitGame(); 

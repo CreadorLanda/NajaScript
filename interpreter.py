@@ -334,6 +334,19 @@ class Interpreter:
             return None
         self.environment.define("printChange", print_change_func)
     
+        def int_func(value):
+            """Converte um valor para inteiro"""
+            if isinstance(value, str):
+                try:
+                    return int(value)
+                except ValueError:
+                    return 0
+            elif isinstance(value, (int, float)):
+                return int(value)
+            return 0
+        
+        self.environment.define("int", int_func)  # Adicionando função int()
+    
     def _register_native_functions(self):
         """Registra funções nativas no ambiente"""
         # Funções de E/S
@@ -399,6 +412,8 @@ class Interpreter:
         if hasattr(self, method_name):
             return getattr(self, method_name)(expr)
         else:
+            # Adicionando mensagem de erro mais clara para depuração
+            print(f"Erro: Tipo de expressão '{expr_type}' não implementado.")
             raise Exception(f"Tipo de expressão não implementado: {expr_type}")
     
     def evaluate_Variable(self, expr):
@@ -467,14 +482,17 @@ class Interpreter:
     
     def evaluate_UnaryOperation(self, expr):
         """Avalia uma operação unária"""
-        operand = self.evaluate(expr.operand)
+        right = self.evaluate(expr.operand)
         
         if expr.operator == "-":
-            return -operand
-        elif expr.operator == "!" or expr.operator == "not":
-            return not self.is_truthy(operand)
-        else:
-            raise Exception(f"Operador unário não implementado: {expr.operator}")
+            if isinstance(right, (int, float)):
+                return -right
+            raise TypeError(f"Operador '-' não suportado para {type(right)}")
+        elif expr.operator == "!":
+            return not self.is_truthy(right)
+        
+        # Operador não suportado
+        raise ValueError(f"Operador unário não suportado: {expr.operator}")
     
     def evaluate_FunctionCall(self, expr):
         """Avalia uma chamada de função"""
@@ -565,7 +583,7 @@ class Interpreter:
         elif stmt.else_branch:
             return self.execute_block(stmt.else_branch, Environment(self.environment))
         
-        return None
+        return None 
     
     def execute_ImportStatement(self, stmt):
         """Executa uma instrução de importação"""
@@ -665,20 +683,35 @@ class Interpreter:
             raise Exception(f"Erro ao carregar módulo {module_name}: {str(e)}")
     
     def execute_WhileStatement(self, stmt):
-        """Executa uma declaração while"""
-        result = None
-        
-        try:
-            while self.is_truthy(self.evaluate(stmt.condition)):
-                try:
-                    result = self.execute_block(stmt.body, Environment(self.environment))
-                except ContinueException:
-                    continue
-                except BreakException:
-                    break
-        except Exception as e:
-            if not isinstance(e, (BreakException, ContinueException, ReturnException)):
-                raise e
-            
-        return result
+        """Executa uma instrução while"""
+        while self.is_truthy(self.evaluate(stmt.condition)):
+            try:
+                # Executa o corpo do loop em um novo ambiente
+                self.execute_block(stmt.body, self.environment)
+            except BreakException:
+                break
+            except ContinueException:
+                continue
+        return None
+    
+    def execute_Assignment(self, stmt):
+        """Executa uma atribuição"""
+        value = self.evaluate(stmt.value)
+        self.environment.assign(stmt.name, value)
+        return value
+    
+    def evaluate_ListLiteral(self, expr):
+        """Avalia um literal de lista"""
+        elements = []
+        for element in expr.elements:
+            elements.append(self.evaluate(element))
+        return NajaList(elements)
+    
+    # Adicionando método para avaliar atribuições diretamente como expressões
+    def evaluate_Assignment(self, expr):
+        """Avalia uma expressão de atribuição diretamente"""
+        value = self.evaluate(expr.value)
+        self.environment.assign(expr.name, value)
+        return value
+
     

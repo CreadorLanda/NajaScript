@@ -1,0 +1,57 @@
+// Jogo Final Simples - Apenas o básico que sabemos funcionar
+import "NajaGame"
+
+// Inicializa o jogo
+print("Inicializando o jogo...");
+initGame(800, 600, "Jogo Final Simples");
+print("Jogo inicializado!");
+
+// Carrega a imagem do logo
+print("Carregando o logo...");
+int logo = loadImage("assets/logoNajaGame.png");
+print("Logo carregado!");
+
+// Define o ícone da janela
+print("Definindo o ícone da janela...");
+setIcon("assets/logoNajaGame.png");
+print("Ícone definido!");
+
+// Posição inicial do logo
+int logo_x = 400;
+int logo_y = 300;
+
+// Loop principal
+print("Entrando no loop principal...");
+float start_time = time();
+while (time() - start_time < 10) {  // Executa por 10 segundos
+    // Limpa a tela
+    clearScreen(0, 0, 0);
+    
+    // Verifica teclas pressionadas para mover o logo
+    if (isKeyPressed("LEFT")) {
+        logo_x = logo_x - 5;
+    }
+    
+    if (isKeyPressed("RIGHT")) {
+        logo_x = logo_x + 5;
+    }
+    
+    if (isKeyPressed("UP")) {
+        logo_y = logo_y - 5;
+    }
+    
+    if (isKeyPressed("DOWN")) {
+        logo_y = logo_y + 5;
+    }
+    
+    // Desenha o logo na posição atual
+    drawImage(logo, logo_x, logo_y);
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Encerra o jogo
+print("Finalizando o jogo...");
+quitGame();
+print("Jogo finalizado!"); 

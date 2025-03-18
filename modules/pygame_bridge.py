@@ -9,6 +9,7 @@ import pygame
 import time
 import sys
 from interpreter import Function
+import random as py_random
 
 # Initialize Pygame
 pygame.init()
@@ -47,6 +48,20 @@ def init_game_wrapper(interpreter, args):
         game_state["screen"] = pygame.display.set_mode((width, height))
         pygame.display.set_caption(title)
         game_state["running"] = True
+        
+        # Define o ícone padrão como o logo do NajaScript
+        try:
+            # Tenta carregar o logo do NajaScript como ícone padrão
+            logo_path = "assets/logoNajaGame.png"
+            if pygame.image.get_extended():
+                icon = pygame.image.load(logo_path)
+                pygame.display.set_icon(icon)
+                print("Ícone padrão do NajaGame definido com sucesso!")
+            else:
+                print("Sistema não suporta imagens estendidas para ícones")
+        except Exception as e:
+            print(f"Aviso: Não foi possível definir o ícone padrão: {e}")
+        
         return True
     except Exception as e:
         print("ERRO ao inicializar o jogo:", e)
@@ -74,18 +89,84 @@ def update_window_wrapper(interpreter, args):
     return game_state["running"]
 
 def draw_rect_wrapper(interpreter, args):
-    """Wrapper for draw_rect that handles arguments correctly"""
-    print("DEBUG: draw_rect_wrapper chamado com:", args)  # Debug
-    x, y, width, height, color = args
-    global game_state
-    pygame.draw.rect(game_state["screen"], color, (x, y, width, height))
+    """Wrapper para a função drawRect"""
+    try:
+        print("DEBUG: draw_rect_wrapper argumentos:", args)
+        if len(args) >= 4:
+            x, y, width, height, *color_args = args
+            
+            if color_args:
+                if len(color_args) == 1:
+                    # Se for um único argumento (lista de cores ou valor de cinza)
+                    color = color_args[0]
+                    if hasattr(color, '_elements'):
+                        # Lista do NajaScript
+                        r, g, b = [int(e) for e in color._elements[:3]]
+                    elif isinstance(color, list):
+                        # Lista Python normal
+                        r, g, b = [int(e) for e in color[:3]]
+                    else:
+                        # Valor único (cinza)
+                        r = g = b = int(color)
+                elif len(color_args) >= 3:
+                    # Se forem argumentos separados r, g, b
+                    r, g, b = [int(e) for e in color_args[:3]]
+                else:
+                    # Padrão
+                    r, g, b = 255, 255, 255
+            else:
+                # Cor padrão: branco
+                r, g, b = 255, 255, 255
+                
+            # Confirma que temos uma superfície válida
+            surface = pygame.display.get_surface()
+            if not surface:
+                return None
+                
+            # Desenha o retângulo
+            pygame.draw.rect(surface, (r, g, b), (int(x), int(y), int(width), int(height)))
+            
+            return None
+        else:
+            return None
+    except Exception as e:
+        print(f"ERRO em drawRect: {e}")
+        return None
 
 def clear_screen_wrapper(interpreter, args):
-    """Wrapper for clear_screen that handles arguments correctly"""
-    print("DEBUG: clear_screen_wrapper chamado com:", args)  # Debug
-    color = args[0] if args else (0, 0, 0)
-    global game_state
-    game_state["screen"].fill(color)
+    """Wrapper para a função clearScreen"""
+    try:
+        print("DEBUG: clear_screen_wrapper argumentos:", args)
+        if len(args) == 1:
+            color = args[0]
+            if hasattr(color, '_elements'):
+                # Se for uma lista do NajaScript
+                r, g, b = [int(e) for e in color._elements[:3]]
+            elif isinstance(color, list):
+                # Lista Python normal
+                r, g, b = [int(e) for e in color[:3]]
+            else:
+                # Valor único (cinza)
+                r = g = b = int(color)
+        elif len(args) == 3:
+            # Se forem argumentos separados
+            r, g, b = [int(e) for e in args[:3]]
+        else:
+            # Padrão: preto
+            r, g, b = 0, 0, 0
+        
+        # Confirma que temos uma superfície válida
+        surface = pygame.display.get_surface()
+        if not surface:
+            return None
+            
+        # Limpa a tela
+        surface.fill((r, g, b))
+        
+        return None
+    except Exception as e:
+        print(f"ERRO em clearScreen: {e}")
+        return None
 
 def is_key_pressed_wrapper(interpreter, args):
     """Wrapper for is_key_pressed that handles arguments correctly"""
@@ -106,12 +187,64 @@ def is_mouse_pressed_wrapper(interpreter, args):
     return pygame.mouse.get_pressed()[button]
 
 def draw_text_wrapper(interpreter, args):
-    """Wrapper for draw_text that handles arguments correctly"""
-    print("DEBUG: draw_text_wrapper chamado com:", args)  # Debug
-    text, x, y, color = args
-    global game_state
-    text_surface = game_state["font"].render(str(text), True, color)
-    game_state["screen"].blit(text_surface, (x, y))
+    """Wrapper para a função drawText"""
+    try:
+        print("DEBUG: draw_text_wrapper argumentos:", args)
+        if len(args) == 4:
+            text, x, y, color = args
+            size = 20  # Tamanho padrão
+            
+            # Tratamento para diferentes tipos de cores
+            if hasattr(color, '_elements'):
+                # Lista do NajaScript
+                r, g, b = [int(e) for e in color._elements[:3]]
+            elif isinstance(color, list):
+                # Lista Python normal
+                r, g, b = [int(e) for e in color[:3]]
+            else:
+                # Valor único (cinza)
+                r = g = b = int(color)
+                
+        elif len(args) >= 5:
+            text, x, y, size, *color_args = args
+            
+            if len(color_args) == 1:
+                color = color_args[0]
+                if hasattr(color, '_elements'):
+                    # Lista do NajaScript
+                    r, g, b = [int(e) for e in color._elements[:3]]
+                elif isinstance(color, list):
+                    # Lista Python normal
+                    r, g, b = [int(e) for e in color[:3]]
+                else:
+                    # Valor único (cinza)
+                    r = g = b = int(color)
+            elif len(color_args) >= 3:
+                # Argumentos separados para R, G, B
+                r, g, b = [int(e) for e in color_args[:3]]
+            else:
+                raise ValueError("Argumentos de cor insuficientes")
+        else:
+            raise ValueError("Número insuficiente de argumentos para drawText")
+        
+        # Confirma que temos uma superfície válida
+        surface = pygame.display.get_surface()
+        if not surface:
+            return None
+            
+        # Cria uma fonte
+        font = pygame.font.SysFont(None, int(size))
+        
+        # Renderiza o texto
+        text_surface = font.render(str(text), True, (r, g, b))
+        
+        # Desenha na tela
+        surface.blit(text_surface, (int(x), int(y)))
+        
+        return None
+    except Exception as e:
+        print(f"ERRO em drawText: {e}")
+        return None
 
 def load_image_wrapper(interpreter, args):
     """Wrapper for load_image that handles arguments correctly"""
@@ -129,10 +262,33 @@ def load_image_wrapper(interpreter, args):
 def draw_image_wrapper(interpreter, args):
     """Wrapper for draw_image that handles arguments correctly"""
     print("DEBUG: draw_image_wrapper chamado com:", args)  # Debug
-    image, x, y = args
+    
+    if len(args) == 3:
+        # Formato básico: imagem, x, y
+        image, x, y = args
+        width = None
+        height = None
+    elif len(args) == 5:
+        # Formato com tamanho: imagem, x, y, largura, altura
+        image, x, y, width, height = args
+    else:
+        print("ERRO: Número inválido de argumentos para drawImage:", len(args))
+        return None
+    
     global game_state
     if image in game_state["images"]:
-        game_state["screen"].blit(game_state["images"][image], (x, y))
+        img = game_state["images"][image]
+        
+        # Se largura e altura foram especificadas, redimensiona a imagem
+        if width is not None and height is not None:
+            try:
+                img = pygame.transform.scale(img, (int(width), int(height)))
+            except Exception as e:
+                print(f"ERRO ao redimensionar imagem: {e}")
+        
+        game_state["screen"].blit(img, (int(x), int(y)))
+    else:
+        print(f"ERRO: Imagem não encontrada: {image}")
 
 def quit_game_wrapper(interpreter, args):
     """Wrapper for quit_game that handles arguments correctly"""
@@ -160,6 +316,18 @@ def set_icon_wrapper(interpreter, args):
     except Exception as e:
         print(f"ERRO ao definir ícone: {e}")
         return False
+
+def random_wrapper(args):
+    """Wrapper para a função random"""
+    try:
+        if len(args) >= 2:
+            min_val, max_val = args[:2]
+            return py_random.randint(int(min_val), int(max_val))
+        else:
+            return 0
+    except Exception as e:
+        print(f"ERRO em random: {e}")
+        return 0
 
 # Create Function objects for each wrapper
 class DummyDeclaration:
@@ -204,7 +372,8 @@ for name, wrapper in [
     ("drawImage", draw_image_wrapper),
     ("quitGame", quit_game_wrapper),
     ("time", time_wrapper),
-    ("setIcon", set_icon_wrapper)
+    ("setIcon", set_icon_wrapper),
+    ("random", random_wrapper)
 ]:
     naja_exports[name] = NajaGameFunction(name, wrapper)
 

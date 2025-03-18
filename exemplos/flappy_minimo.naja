@@ -1,0 +1,72 @@
+// Versão mínima do Flappy Bird
+import "NajaGame"
+
+// Inicializa o jogo
+initGame(800, 600, "Flappy Bird Mínimo");
+
+// Carrega a imagem do pássaro
+int passaro = loadImage("Flappy_Bird_assets/images/bird.png");
+
+// Variáveis do jogo
+int passaroX = 150;
+int passaroY = 300;
+int velocidadeY = 0;
+int gravidade = 1;
+int alturaPulo = 10; // Usaremos isso para calcular a velocidade de pulo
+
+// Obstáculos - usamos retângulos verdes simples
+int canoX = 800;
+int abertura = 200;
+
+// Loop principal
+bool rodando = true;
+while (rodando) {
+    // Limpa a tela com cor azul claro
+    clearScreen([135, 206, 235]);
+    
+    // Gravidade
+    velocidadeY = velocidadeY + gravidade;
+    passaroY = passaroY + velocidadeY;
+    
+    // Controle do pássaro
+    if (isKeyPressed("SPACE")) {
+        velocidadeY = 0;
+        velocidadeY = velocidadeY - alturaPulo;
+    }
+    
+    // Limita a posição do pássaro na tela
+    if (passaroY < 0) {
+        passaroY = 0;
+    }
+    if (passaroY > 550) {
+        passaroY = 550;
+    }
+    
+    // Atualiza posição do cano
+    canoX = canoX - 3;
+    if (canoX < 0 - 50) {
+        canoX = 800;
+    }
+    
+    // Desenha os canos (obstáculos)
+    drawRect(canoX, 0, 50, 200, [0, 200, 0]);
+    drawRect(canoX, 200 + abertura, 50, 600 - 200 - abertura, [0, 200, 0]);
+    
+    // Desenha o pássaro
+    drawImage(passaro, passaroX, passaroY, 50, 35);
+    
+    // Instruções
+    drawText("Aperte ESPAÇO para pular", 20, 20, [255, 255, 255]);
+    drawText("ESC para sair", 20, 50, [255, 255, 255]);
+    
+    // Verifica saída
+    if (isKeyPressed("ESCAPE")) {
+        rodando = false;
+    }
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Finaliza o jogo
+quitGame(); 

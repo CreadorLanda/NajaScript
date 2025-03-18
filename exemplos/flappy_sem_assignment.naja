@@ -1,0 +1,41 @@
+// Flappy Bird sem reatribuições (assignments)
+import "NajaGame"
+
+// Inicializa o jogo
+initGame(800, 600, "Flappy Bird Simples");
+
+// Carrega a imagem do pássaro
+int passaro = loadImage("Flappy_Bird_assets/images/bird.png");
+
+// Posição inicial do pássaro
+int passaroX = 400;
+int passaroY = 300;
+
+// Loop principal
+bool executando = true;
+while (executando) {
+    // Limpa a tela
+    clearScreen([135, 206, 235]);
+    
+    // Desenha o pássaro (posição fixa, sem movimento)
+    drawImage(passaro, passaroX, passaroY, 50, 35);
+    
+    // Desenha obstáculos fixos
+    drawRect(600, 0, 70, 200, [0, 128, 0]);
+    drawRect(600, 350, 70, 250, [0, 128, 0]);
+    
+    // Instruções
+    drawText("Versão sem reatribuições", 20, 20, [255, 255, 255]);
+    drawText("ESC para sair", 20, 50, [255, 255, 255]);
+    
+    // Verifica saída
+    if (isKeyPressed("ESCAPE")) {
+        executando = false;
+    }
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Finaliza o jogo
+quitGame(); 

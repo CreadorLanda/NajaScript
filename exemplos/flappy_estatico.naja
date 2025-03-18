@@ -1,0 +1,56 @@
+// Flappy Bird - Versão Estática Aprimorada
+import "NajaGame"
+
+// Inicialização do jogo
+initGame(800, 600, "Flappy Bird - Versão Estática")
+
+// Carregando a imagem do pássaro
+passaro = loadImage("Flappy_Bird_assets/images/bird.png")
+
+// Posições fixas
+passaroX = 150
+passaroY = 350
+canoLargura = 70
+
+// Cores
+corCeu = [135, 206, 235]
+corVerde = [0, 128, 0]
+corBranca = [255, 255, 255]
+corVermelha = [255, 0, 0]
+
+// Loop principal
+while (true) {
+    // Limpa a tela com a cor do céu
+    clearScreen(corCeu)
+    
+    // Verifica teclas
+    if (isKeyPressed("SPACE") || isKeyPressed("UP")) {
+        // Aqui você pode adicionar lógica para o pulo do pássaro
+        // Por exemplo, desenhar o pássaro em uma posição diferente
+        drawImage(passaro, passaroX, passaroY - 50, 50, 35)
+    } else {
+        drawImage(passaro, passaroX, passaroY, 50, 35)
+    }
+    
+    // Desenha os canos (obstáculos)
+    drawRect(400, 0, canoLargura, 200, corVerde)
+    drawRect(400, 400, canoLargura, 200, corVerde)
+    drawRect(600, 0, canoLargura, 300, corVerde)
+    drawRect(600, 400, canoLargura, 200, corVerde)
+    
+    // Desenha instruções
+    drawText("Pressione ESPAÇO ou SETA PARA CIMA para pular", 20, 20, corBranca)
+    drawText("Pressione ESC para sair", 20, 50, corBranca)
+    drawText("Versão Estática - Sem reatribuições", 20, 80, corVermelha)
+    
+    // Atualiza a janela
+    updateWindow()
+    
+    // Verifica se o jogador quer sair
+    if (isKeyPressed("ESCAPE")) {
+        break
+    }
+}
+
+// Finaliza o jogo
+quitGame(); 

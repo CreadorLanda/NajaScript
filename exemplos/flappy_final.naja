@@ -1,0 +1,79 @@
+// Flappy Bird - Versão Final
+import "NajaGame"
+
+// Inicializa o jogo
+initGame(800, 600, "Flappy Bird - Versão Final");
+
+// Carrega a imagem do pássaro
+int passaro = loadImage("Flappy_Bird_assets/images/bird.png");
+
+// Posição inicial do pássaro
+int passaroX = 400;
+int passaroY = 300;
+
+// Posição inicial do cano
+int canoX = 800;
+int aberturaY = 250;
+
+// Controle de jogo
+bool executando = true;
+int frameContador = 0;
+int deslocamentoCano = 0;
+
+// Loop principal
+while (executando) {
+    // Limpa a tela
+    clearScreen(135, 206, 235);
+    
+    // Verifica input do usuário
+    bool teclaEspaco = isKeyPressed("SPACE");
+    bool teclaCima = isKeyPressed("UP");
+    bool teclaEsc = isKeyPressed("ESCAPE");
+    
+    // Incrementa o contador de frames
+    frameContador = frameContador + 1;
+    
+    // Calcula o deslocamento do cano (se move da direita para a esquerda)
+    deslocamentoCano = frameContador * 3;
+    
+    // Quando o cano sai completamente da tela, reseta sua posição
+    if (deslocamentoCano > 900) {
+        frameContador = 0;
+        deslocamentoCano = 0;
+    }
+    
+    // Posição atual do cano (com movimento)
+    int canoAtualX = canoX - deslocamentoCano;
+    
+    // Aplica "gravidade" - faz o pássaro cair lentamente
+    int queda = frameContador % 30;
+    int passaroAtualY = passaroY + queda/5;
+    
+    // Desenha o pássaro dependendo da entrada do usuário
+    if (teclaEspaco || teclaCima) {
+        // Quando o jogador pressiona espaço/cima, mostra o pássaro mais alto
+        drawImage(passaro, passaroX, passaroAtualY - 40, 50, 35);
+    } else {
+        // Posição normal com gravidade
+        drawImage(passaro, passaroX, passaroAtualY, 50, 35);
+    }
+    
+    // Desenha os canos (obstáculos) - com movimento
+    drawRect(canoAtualX, 0, 70, aberturaY - 100, 0, 128, 0);
+    drawRect(canoAtualX, aberturaY + 100, 70, 600 - (aberturaY + 100), 0, 128, 0);
+    
+    // Exibe instruções
+    drawText("Versão Final com movimento", 20, 20, 255, 255, 255);
+    drawText("Pule com ESPAÇO ou CIMA. ESC para sair", 20, 50, 255, 255, 255);
+    
+    // Verifica saída
+    if (teclaEsc) {
+        executando = false;
+    }
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Finaliza o jogo
+quitGame(); 

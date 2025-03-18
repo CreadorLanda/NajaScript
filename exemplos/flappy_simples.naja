@@ -1,0 +1,132 @@
+// Flappy Bird Simplificado em NajaScript
+import "NajaGame"
+
+// Inicializa o jogo
+initGame(800, 600, "Flappy Bird Simples");
+
+// Cores como listas
+list corCeu = [135, 206, 235];
+list corVerde = [0, 128, 0];
+list corVermelho = [255, 0, 0];
+list corBranco = [255, 255, 255];
+list corPreto = [0, 0, 0];
+
+// Carrega as imagens
+int passaro = loadImage("Flappy_Bird_assets/images/bird.png");
+int background = loadImage("Flappy_Bird_assets/images/background.png");
+int base = loadImage("Flappy_Bird_assets/images/base.png");
+
+// Variáveis do jogo
+int passaroX = 150;
+int passaroY = 300;
+int velocidadeY = 0;
+int gravidade = 1;
+int forcaPulo = 0 - 12;  // Negativo para ir para cima
+int alturaChao = 100;
+
+// Obstáculos
+int obstaculoX = 800;
+int obstaculoLargura = 70;
+int aberturaY = 300;
+int aberturaAltura = 150;
+
+// Pontuação
+int pontuacao = 0;
+
+// Loop principal
+bool rodando = true;
+while (rodando) {
+    // Limpa a tela
+    clearScreen(corCeu);
+    
+    // Desenha o fundo
+    drawImage(background, 0, 0, 800, 600);
+    
+    // Aplica gravidade
+    velocidadeY = velocidadeY + gravidade;
+    passaroY = passaroY + velocidadeY;
+    
+    // Limita a posição do pássaro
+    if (passaroY > 500) {
+        passaroY = 500;
+        velocidadeY = 0;
+    }
+    
+    if (passaroY < 0) {
+        passaroY = 0;
+        velocidadeY = 0;
+    }
+    
+    // Controles
+    if (isKeyPressed("SPACE")) {
+        velocidadeY = forcaPulo;
+    }
+    
+    // Move o obstáculo
+    obstaculoX = obstaculoX - 5;
+    if (obstaculoX <= 0 - obstaculoLargura) {
+        obstaculoX = 800;
+        pontuacao = pontuacao + 1;
+        // Randomiza a posição da abertura
+        aberturaY = 100 + int(time() * 97) % 300;
+    }
+    
+    // Desenha os obstáculos (parte superior)
+    drawRect(obstaculoX, 0, obstaculoLargura, aberturaY, corVerde);
+    
+    // Desenha os obstáculos (parte inferior)
+    drawRect(obstaculoX, aberturaY + aberturaAltura, obstaculoLargura, 600 - (aberturaY + aberturaAltura) - alturaChao, corVerde);
+    
+    // Verifica colisão com os obstáculos
+    bool colisao = false;
+    
+    // Colisão com parte superior
+    if (passaroX + 50 > obstaculoX && passaroX < obstaculoX + obstaculoLargura && passaroY < aberturaY) {
+        colisao = true;
+    }
+    
+    // Colisão com parte inferior
+    if (passaroX + 50 > obstaculoX && passaroX < obstaculoX + obstaculoLargura && passaroY + 35 > aberturaY + aberturaAltura) {
+        colisao = true;
+    }
+    
+    // Verifica colisão com o chão
+    if (passaroY + 35 > 600 - alturaChao) {
+        colisao = true;
+    }
+    
+    // Se colidiu, reinicia o jogo
+    if (colisao) {
+        passaroY = 300;
+        velocidadeY = 0;
+        obstaculoX = 800;
+        pontuacao = 0;
+        
+        // Mostra mensagem
+        drawText("Você bateu! Tente novamente.", 300, 200, corVermelho);
+    }
+    
+    // Desenha a base
+    drawImage(base, 0, 600 - alturaChao, 800, alturaChao);
+    
+    // Desenha o pássaro
+    drawImage(passaro, passaroX, passaroY, 50, 35);
+    
+    // Mostra a pontuação
+    drawText("Pontuação: " + toString(pontuacao), 20, 20, corBranco);
+    
+    // Instruções
+    drawText("Pressione ESPAÇO para pular", 500, 20, corBranco);
+    drawText("Pressione ESC para sair", 500, 50, corBranco);
+    
+    // Verifica saída
+    if (isKeyPressed("ESCAPE")) {
+        rodando = false;
+    }
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Finaliza o jogo
+quitGame(); 

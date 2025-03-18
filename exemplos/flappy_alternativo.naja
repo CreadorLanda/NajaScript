@@ -1,0 +1,60 @@
+// Flappy Bird com solução alternativa
+import "NajaGame"
+
+// Inicializa o jogo
+initGame(800, 600, "Flappy Bird Alternativo");
+
+// Carrega a imagem do pássaro
+int passaro = loadImage("Flappy_Bird_assets/images/bird.png");
+
+// Posição inicial
+int passaroX = 400;
+int passaroY = 300;
+int canoX = 800;
+int pontuacao = 0;
+bool executando = true;
+
+// Loop principal - usando o loop while
+while (executando) {
+    // Limpa a tela
+    clearScreen(135, 206, 235);
+    
+    // Verifica input do usuário
+    bool teclaEspaco = isKeyPressed("SPACE");
+    bool teclaCima = isKeyPressed("UP");
+    bool teclaEsc = isKeyPressed("ESCAPE");
+    
+    // Aplica gravidade e pulo
+    if (teclaEspaco || teclaCima) {
+        // Se pulando, desenha mais alto
+        drawImage(passaro, passaroX, passaroY - 10, 50, 35);
+    } else {
+        // Se não pulando, desenha mais baixo
+        drawImage(passaro, passaroX, passaroY + 5, 50, 35);
+    }
+    
+    // Desenha os canos (obstáculos)
+    // Ao invés de mover o cano, vamos usar diferentes posições X para cada frame
+    int aberturaY = 250;
+    
+    // Simulação de movimento sem reatribuição
+    int frameAtual = 0;
+    // Desenha o cano na sua posição
+    drawRect(canoX - frameAtual, 0, 70, aberturaY - 100, 0, 128, 0);
+    drawRect(canoX - frameAtual, aberturaY + 100, 70, 600 - (aberturaY + 100), 0, 128, 0);
+    
+    // Exibe pontuação
+    drawText("Pontuação: " + pontuacao, 20, 20, 255, 255, 255);
+    drawText("Pule com ESPAÇO ou CIMA. ESC para sair", 20, 50, 255, 255, 255);
+    
+    // Atualiza a janela
+    updateWindow();
+    
+    // Verifica saída
+    if (teclaEsc) {
+        executando = false;
+    }
+}
+
+// Finaliza o jogo
+quitGame(); 

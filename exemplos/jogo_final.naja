@@ -1,0 +1,59 @@
+// Jogo Final Básico com NajaScript
+import "NajaGame"
+
+// Inicializa o jogo
+print("Inicializando o jogo...");
+initGame(800, 600, "Demonstração NajaGame");
+print("Jogo inicializado!");
+
+// Carrega a imagem do logo
+print("Carregando o logo...");
+int logo = loadImage("assets/logoNajaGame.png");
+print("Logo carregado com ID: " + toString(logo));
+
+// Define o ícone da janela
+print("Definindo o ícone da janela...");
+setIcon("assets/logoNajaGame.png");
+print("Ícone definido com sucesso!");
+
+// Loop principal - apenas mostra algumas imagens animadas
+print("Entrando no loop principal...");
+float start_time = time();
+while (time() - start_time < 10) {  // Executa por 10 segundos
+    // Limpa a tela com cor preta
+    clearScreen(0, 0, 0);
+    
+    // Calcula posições baseadas no tempo
+    float current_time = time() - start_time;
+    int pos1 = 100 + int(current_time * 50) % 600;
+    int pos2 = 600 - int(current_time * 30) % 500;
+    
+    // Desenha várias cópias do logo em diferentes posições e tamanhos
+    drawImage(logo, pos1, 100, 80, 80);
+    drawImage(logo, pos2, 200, 60, 60);
+    drawImage(logo, 400, pos1, 100, 100);
+    drawImage(logo, 200, pos2, 50, 50);
+    
+    // Exibe texto informativo
+    drawText("Demonstracao NajaGame", 300, 30, 20, 255, 255, 255);
+    drawText("Tempo: " + toString(int(10 - current_time)), 350, 60, 20, 255, 255, 255);
+    
+    // Atualiza a janela
+    updateWindow();
+}
+
+// Mensagem final
+clearScreen(0, 0, 0);
+drawText("Demonstracao Concluida!", 250, 300, 30, 255, 255, 255);
+updateWindow();
+
+// Aguarda 2 segundos antes de fechar
+float pause_time = time();
+while (time() - pause_time < 2) {
+    updateWindow();
+}
+
+// Encerra o jogo
+print("Finalizando a demonstração...");
+quitGame();
+print("Demonstração finalizada!"); 
