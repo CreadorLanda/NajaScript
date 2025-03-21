@@ -1,216 +1,87 @@
-# NajaScript
+# NajaScript Editor & Interpretador
 
-NajaScript é uma linguagem de programação interpretada baseada em Python e JavaScript. Esta implementação contém um interpretador básico para a linguagem.
+Este pacote inclui um editor moderno para a linguagem NajaScript com recursos avançados e interface amigável, além do interpretador para execução de scripts.
 
-## ✨ Características da Linguagem
+## Recursos principais
 
-### ⚡ Tipos de Dados
+- **Editor completo** com tema escuro e interface moderna
+  - Destacamento de sintaxe com cores distintas
+  - Sistema de abas para editar múltiplos arquivos
+  - Explorador de projetos para navegar facilmente
+  - Autocompletar para palavras-chave
+  - Execução integrada de scripts
 
-- `int` - Números inteiros
-- `float` - Números de ponto flutuante
-- `string` - Cadeias de caracteres
-- `bool` - Valores booleanos (`true`/`false`)
-- `dict` - Dicionários que permitem qualquer tipo de dado
-- `vecto` - Vetores imutáveis
-- `list` - Listas mutáveis
-- `null` - Valor nulo
-- `void` - Tipo para funções sem retorno
-- `flux` - Variáveis reativas que são reavaliadas automaticamente
-- `any` - Tipo dinâmico que pode representar qualquer valor
+- **Interpretador independente** para execução via linha de comando
+  - Execute scripts NajaScript diretamente do terminal
+  - Integração com o sistema operacional para associação de arquivos .naja
+  - Documentação e exemplos incluídos
 
-### 🔧 Operadores
+## Instalação
 
-- **Aritméticos:** `+`, `-`, `*`, `/`, `%`, `**` (potência)
-- **Comparativos:** `==`, `!=`, `<`, `>`, `<=`, `>=`
-- **Lógicos:** `&&`, `||`, `!`
-- **Ternário:** `cond ? valor_se_verdadeiro : valor_se_falso`
+### Opção 1: Instalador (recomendado)
 
-### 🌐 Estruturas de Controle
+1. Baixe o arquivo `NajaScriptEditor_Setup.exe`
+2. Execute o instalador e siga as instruções
+3. Durante a instalação, você pode optar por:
+   - Associar arquivos .naja ao interpretador
+   - Adicionar o interpretador ao PATH do sistema
+4. Após a instalação, o editor e o interpretador estarão disponíveis através do Menu Iniciar
 
-- Condicionais: `if`, `elif`, `else`, `switch`, `case`, `default`
-- Laços: `while`, `do-while`, `for`, `forin`
-- Controle de fluxo: `break`, `continue`
+### Opção 2: Versão portátil
 
-### 🌐 Funções
+1. Baixe os arquivos `NajaScriptEditor.exe` e `najascript.exe` da pasta `dist`
+2. Coloque-os em uma pasta junto com arquivos de exemplo (`.naja`)
+3. Execute os executáveis diretamente sem necessidade de instalação
 
-- Definição com `fun`
-- Funções com tipo de retorno
-- Funções recursivas
-- Funções de ordem superior
+## Usando o Editor
 
-### 📝 Funções Nativas
+1. Abra o NajaScript Editor
+2. Crie um novo arquivo ou abra um exemplo existente
+3. Escreva seu código NajaScript
+4. Salve o arquivo com a extensão `.naja`
+5. Execute o script usando o botão "Executar" ou a tecla F5
 
-- `print()`, `println()`
-- `input()`
-- `type()`
-- `add()`, `remove()`, `removeLast()`, `replace()`
-- `get()`, `length()`
-- `min()`, `max()`
-- `sort()`, `isEmpty()`, `count()`
-- `onChange()`: Registra callback para mudanças em variáveis
-- `printChange()`: Exibe mudanças em variáveis no console
-
-## 💪 Recursos Especiais
-
-### Flux: Variáveis Reativas
-
-As variáveis `flux` armazenam expressões, não valores, e são reavaliadas automaticamente sempre que as variáveis das quais dependem são alteradas.
-
-```javascript
-int a = 10;
-int b = 5;
-flux x = a + b;
-
-println(x);  // 15
-
-// Quando 'a' muda, 'x' é automaticamente recalculado
-a = 20;
-println(x);  // 25
-```
-
-### ⚡ Sistema de Eventos `onChange`
-
-Permite monitorar mudanças em variáveis através de callbacks:
-
-```javascript
-onChange("contador", printChange);
-contador = 5;  // "Variável 'contador' mudou: 0 -> 5"
-```
-
-Callbacks personalizados:
-
-```javascript
-fun apenasAumentos(string nome_var, any valor_antigo, any valor_novo) {
-    if (valor_novo > valor_antigo) {
-        println("AUMENTO em " + nome_var + ": " + valor_antigo + " -> " + valor_novo);
-    }
-}
-
-onChange("temperatura", apenasAumentos);
-```
-
-## 🔧 Como Usar
-
-### ⚡ Requisitos
-
-- Python 3.6 ou superior
-- Para JIT: Numba, llvmlite, numpy
-- Para AOT: llvmlite
-
-Instale as dependências:
+## Usando o Interpretador (linha de comando)
 
 ```bash
-pip install -r requirements.txt
+# Executar um script
+najascript caminho/para/script.naja
+
+# Obter ajuda
+najascript --help
+
+# Verificar a versão
+najascript --version
 ```
 
-### 📂 Execução
+## Exemplo de código
 
-#### Modo Interpretado
+```naja
+# Exemplo simples de NajaScript
+var mensagem = "Olá, mundo!"
+imprimir(mensagem)
 
-Para executar um programa NajaScript no modo interpretado padrão:
-
-```bash
-python najascript.py arquivo.naja
-```
-
-#### Modo JIT
-
-Para executar com otimização JIT (Just-In-Time):
-
-```bash
-python najascript.py arquivo.naja --jit
-```
-
-O compilador JIT otimiza funções que são chamadas frequentemente, melhorando o desempenho de loops e cálculos numéricos.
-
-#### Modo Compilado (AOT)
-
-Para compilar para um executável nativo:
-
-```bash
-python najascript.py arquivo.naja --compile --output programa
-```
-
-Opções adicionais:
-
-- `--optimize` ou `-O`: Ativa otimizações LLVM nível 3
-- `--target`: Especifica o target triple (ex: x86_64-pc-linux-gnu)
-
-### ✨ Arquitetura
-
-O sistema funciona em camadas:
-
-1. **Lexer**: Tokeniza o código fonte
-2. **Parser**: Constrói a AST (Abstract Syntax Tree)
-3. **Interpreter**: Interpreta a AST ou aciona compiladores
-   - **JIT Compiler**: Compila funções críticas usando Numba
-   - **AOT Compiler**: Gera código nativo via LLVM
-
-## 📚 Exemplos
-
-### Exemplo Básico
-
-```javascript
-int x = 10;
-int y = 5;
-println("Soma: " + (x + y));
-println("Subtração: " + (x - y));
-println("Multiplicação: " + (x * y));
-println("Divisão: " + (x / y));
-
-if (x > y) {
-    println("x é maior que y");
-} else {
-    println("y é maior ou igual a x");
+para (var i = 1; i <= 5; i = i + 1) {
+    imprimir("Contagem: " + i)
 }
-
-int contador = 0;
-while (contador < 5) {
-    println("Contador: " + contador);
-    contador = contador + 1;
-}
-
-fun saudacao(string nome) {
-    return "Olá, " + nome + "!";
-}
-println(saudacao("Mundo"));
 ```
 
-### Exemplo com Flux e `onChange`
+## Recursos adicionais
 
-```javascript
-int contador = 0;
-string mensagem = "Inicial";
-flux resultado = "Contador: " + contador + ", Mensagem: " + mensagem;
+- Documentação da linguagem NajaScript
+- Exemplos e tutoriais
+- Módulos e bibliotecas
 
-onChange("contador", printChange);
-println("Inicial: " + resultado);
+## Desenvolvimento
 
-contador = 5;
-println("Final: " + resultado);
-```
+O NajaScript Editor e o interpretador foram desenvolvidos usando Python. Para contribuir com o desenvolvimento:
 
-## 🤖 Implementação
+1. Clone o repositório
+2. Instale as dependências: `pip install -r requirements.txt`
+3. Execute `python executar_editor_melhorado.py` para testar o editor
+4. Execute `python najascript.py arquivo.naja` para testar o interpretador 
 
-O interpretador consiste em:
+## Licença
 
-- **Lexer**: Converte o código-fonte em tokens
-- **Parser**: Analisa os tokens e gera uma AST (Abstract Syntax Tree)
-- **Interpreter**: Percorre a AST e executa o código
-
-## 🚫 Limitações
-
-- Sem suporte para classes e objetos
-- Funções de ordem superior limitadas
-- Mensagens de erro podem ser aprimoradas
-- JIT funciona melhor para código numérico
-- AOT ainda não suporta todos os recursos da linguagem
-
-## 💚 Licença
-
-Este projeto é de código aberto. Modificações e distribuições são permitidas, desde que o nome do autor original seja mantido.
-
-## ✍️ Autor
-
-Este projeto foi desenvolvido por Alexandre Landa.
+Este projeto é licenciado sob a licença MIT.
 

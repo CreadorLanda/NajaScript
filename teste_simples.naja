@@ -1,3 +1,20 @@
+#!/usr/bin/env najascript
+
+# Exemplo simples para testar o interpretador
+println("Olá, mundo!");
+
+int x = 10;
+int y = 20;
+println("Soma: " + (x + y));
+
+list numeros = [1, 2, 3, 4, 5];
+println("Lista: " + numeros);
+println("Comprimento: " + numeros.length());
+
+dict pessoa = ["João", 30];
+println("Pessoa: " + pessoa);
+println("Nome: " + pessoa.get(0));
+
 println("Teste simples de NajaScript");
 string nome = input("Digite seu nome: ");
 println("Olá, " + nome);

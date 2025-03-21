@@ -200,15 +200,29 @@ class Function:
         # Cria um novo ambiente com o ambiente de definição como pai
         environment = Environment(self.environment)
         
+        # Garantir que arguments seja uma lista
+        if not isinstance(arguments, list):
+            arguments = [arguments]
+        
         # Define os parâmetros no novo ambiente
         for i, param in enumerate(self.declaration.parameters):
             if i < len(arguments):
-                # param pode ser uma tupla (tipo, nome)
-                param_name = param.name if hasattr(param, 'name') else param[1]
+                # param pode ser uma tupla (tipo, nome) ou um objeto Parameter
+                if hasattr(param, 'name'):
+                    param_name = param.name
+                elif isinstance(param, tuple) and len(param) > 1:
+                    param_name = param[1]
+                else:
+                    param_name = str(param)
                 environment.define(param_name, arguments[i])
             else:
                 # Parâmetro não fornecido, define como null
-                param_name = param.name if hasattr(param, 'name') else param[1]
+                if hasattr(param, 'name'):
+                    param_name = param.name
+                elif isinstance(param, tuple) and len(param) > 1:
+                    param_name = param[1]
+                else:
+                    param_name = str(param)
                 environment.define(param_name, None)
         
         # Executa o corpo da função no novo ambiente
@@ -232,24 +246,131 @@ class Function:
             return self(self.environment.interpreter, [var_name, old_value, new_value])
         return callback_wrapper
 
+class NajaModule:
+    """Representa um módulo NajaScript importado"""
+    def __init__(self, name, environment):
+        self.name = name
+        self.environment = environment
+        self.methods = {}
+        
+        # Mapeia as funções do ambiente para métodos do módulo
+        for name, func in environment.functions.items():
+            if not name.startswith("_"):  # Não exporta variáveis privadas
+                self.methods[name] = func
+        
+        # Mapeia também os valores do ambiente
+        for name, (value, _, _) in environment.values.items():
+            if not name.startswith("_") and name not in self.methods:  # Não exporta variáveis privadas
+                self.methods[name] = value
+    
+    def get_method(self, name):
+        """Recupera um método ou valor do módulo pelo nome"""
+        if name in self.methods:
+            return self.methods[name]
+        
+        # Fallback para verificar diretamente no ambiente
+        try:
+            return self.environment.get(name)
+        except RuntimeError:
+            raise Exception(f"Método ou atributo '{name}' não encontrado no módulo '{self.name}'")
+    
+    def __str__(self):
+        """Representação em string do módulo"""
+        return f"<módulo '{self.name}'>"
+
 class Interpreter:
     """Interpretador para NajaScript"""
     def __init__(self):
-        self.environment = Environment()
-        self.globals = self.environment
+        self.globals = Environment()
+        self.environment = self.globals
         self.locals = self.environment
         self.error = None
-        # Inicializar caminhos de módulos e módulos importados
-        self.imported_modules = {}
         self.module_paths = ['.', './modules']
+        self.jit_compiler = None
+        self.debug = False
+        self.source_map = {}
+        self.imported_modules = {}
         
-        # Registro de funções nativas
-        self._register_native_functions()
-        # Configurar builtins
+        # Inicializa as funções nativas
         self._setup_builtins()
+        self._register_native_functions()
     
+    def preprocess_source(self, source):
+        """Pré-processa o código fonte, traduzindo comandos em português para NajaScript"""
+        # Dicionário de tradução português -> NajaScript
+        traducoes = {
+            # Palavras-chave
+            r'\bfuncao\b': 'fun',
+            r'\bse\b': 'if',
+            r'\bsenao se\b': 'elif',
+            r'\bsenao\b': 'else',
+            r'\benquanto\b': 'while',
+            r'\bpara\b': 'for',
+            r'\bparacada\b': 'forin',
+            r'\bretornar\b': 'return',
+            r'\bverdadeiro\b': 'true',
+            r'\bfalso\b': 'false',
+            r'\bem\b': 'in',
+            r'\bnulo\b': 'null',
+            r'\bcontinuar\b': 'continue',
+            r'\bparar\b': 'break',
+            r'\bimportar\b': 'import',
+            
+            # Tipos
+            r'\binteiro\b': 'int',
+            r'\bdecimal\b': 'float',
+            r'\btexto\b': 'string',
+            r'\bbooleano\b': 'bool',
+            r'\blista\b': 'list',
+            r'\bdicionario\b': 'dict',
+            r'\bqualquer\b': 'any',
+            
+            # Funções
+            r'\bescrever\b': 'print',
+            r'\bescreverln\b': 'println',
+            r'\bcomprimento\b': 'length',
+            r'\bconverter_para_texto\b': 'toString',
+            r'\bconverter_para_inteiro\b': 'toInt',
+            r'\bconverter_para_decimal\b': 'toFloat',
+            
+            # Métodos
+            r'\badicionar\b': 'add',
+            r'\bremover\b': 'remove',
+            r'\bobter\b': 'get',
+            r'\badicionarUltimo\b': 'add',
+            r'\bremoverUltimo\b': 'removeLast',
+            r'\bsubstituir\b': 'replace'
+        }
+        
+        # Aplica as traduções
+        import re
+        resultado = source
+        
+        # Primeiro, aplicar substituições específicas que podem conflitar
+        # Por exemplo, "senao se" deve ser substituído antes de "senao"
+        expressoes_especificas = [
+            (r'\bsenao se\b', 'elif'),
+            (r'\badicionarUltimo\b', 'add'),
+            (r'\bremoverUltimo\b', 'removeLast'),
+            (r'\bconverter_para_texto\b', 'toString'),
+            (r'\bconverter_para_inteiro\b', 'toInt'),
+            (r'\bconverter_para_decimal\b', 'toFloat')
+        ]
+        
+        for padrao, substituto in expressoes_especificas:
+            resultado = re.sub(padrao, substituto, resultado)
+            # Remover esses padrões do dicionário principal
+            if padrao in traducoes:
+                del traducoes[padrao]
+        
+        # Depois, aplicar o restante das substituições
+        for padrao, substituto in traducoes.items():
+            resultado = re.sub(padrao, substituto, resultado)
+        
+        return resultado
+        
     def set_jit_compiler(self, jit_compiler):
-        """Define o compilador JIT a ser utilizado"""
+        """Define o compilador JIT para uso"""
         self.jit_compiler = jit_compiler
     
     def _setup_builtins(self):
@@ -379,12 +500,47 @@ class Interpreter:
                 statements = ast
             
             # Executa todas as statements
-            for statement in statements:
-                result = self.execute(statement)
-            
+            for i, statement in enumerate(statements):
+                try:
+                    statement_type = statement.__class__.__name__
+                    if self.debug:
+                        print(f"\nDEBUG: Executando statement {i}: {statement_type}")
+                        if hasattr(statement, '__dict__'):
+                            for key, value in statement.__dict__.items():
+                                if key == 'body' and hasattr(value, '__len__'):
+                                    print(f"DEBUG: {key}: [bloco com {len(value)} statements]")
+                                else:
+                                    print(f"DEBUG: {key}: {value}")
+                
+                    # Executa a statement
+                    result = self.execute(statement)
+                    
+                    if self.debug:
+                        print(f"DEBUG: Statement {i} ({statement_type}) executada com sucesso")
+                        if statement_type == "FunctionDeclaration":
+                            # Verifica se a função está disponível após definição
+                            function_name = statement.name
+                            try:
+                                func = self.environment.get(function_name)
+                                print(f"DEBUG: Verificação - função '{function_name}' disponível: {type(func)}")
+                                print(f"DEBUG: Ambiente atual: functions={list(self.environment.functions.keys())}")
+                            except Exception as e:
+                                print(f"DEBUG: Erro ao verificar função '{function_name}': {e}")
+                except Exception as e:
+                    if self.debug:
+                        print(f"DEBUG: Erro na statement {i} ({statement_type}): {e}")
+                        import traceback
+                        traceback.print_exc()
+                    raise
+        
         except Exception as e:
             self.error = str(e)
-            print(f"Erro durante a interpretação: {e}")
+            if self.debug:
+                print(f"DEBUG: Erro durante a interpretação: {e}")
+                import traceback
+                traceback.print_exc()
+            else:
+                print(f"Erro durante a interpretação: {e}")
         
         return result
     
@@ -406,6 +562,11 @@ class Interpreter:
         if expr is None:
             return None
         
+        # Adiciona verificação direta para strings
+        if isinstance(expr, str):
+            print(f"DEBUG: Recebido objeto string literal diretamente: '{expr}'")
+            return expr
+            
         expr_type = expr.__class__.__name__
         method_name = f"evaluate_{expr_type}"
         
@@ -413,12 +574,53 @@ class Interpreter:
             return getattr(self, method_name)(expr)
         else:
             # Adicionando mensagem de erro mais clara para depuração
-            print(f"Erro: Tipo de expressão '{expr_type}' não implementado.")
+            if self.debug:
+                print(f"Erro de depuração: Tipo de expressão '{expr_type}' não implementado.")
+                print(f"Expressão: {expr}")
+                print(f"Tipo Python: {type(expr)}")
+                print(f"Atributos: {dir(expr) if hasattr(expr, '__dict__') else 'N/A'}")
+                if isinstance(expr, str):
+                    print(f"Conteúdo da string: {expr}")
+            
+            # Mensagem de erro padrão
             raise Exception(f"Tipo de expressão não implementado: {expr_type}")
     
     def evaluate_Variable(self, expr):
         """Avalia uma variável"""
         return self.environment.get(expr.name)
+    
+    def evaluate_GetAttr(self, expr):
+        """Avalia uma expressão de acesso a atributo (obj.attr)"""
+        obj = self.evaluate(expr.object)
+        
+        # Verifica se é um módulo
+        if isinstance(obj, NajaModule):
+            return obj.get_method(expr.name)
+        
+        # Pode adicionar outros tipos de objetos que suportam acesso a atributos aqui
+        
+        raise Exception(f"Objeto do tipo {type(obj).__name__} não suporta acesso a atributos")
+    
+    def evaluate_ModuleMethodCall(self, expr):
+        """Avalia uma chamada de método de módulo (ModuleName.method())"""
+        module = self.evaluate(expr.module)
+        
+        # Verifica se é um módulo
+        if isinstance(module, NajaModule):
+            method = module.get_method(expr.method)
+            
+            # Avalia os argumentos
+            arguments = [self.evaluate(arg) for arg in expr.arguments]
+            
+            # Verifica se o método é chamável
+            if isinstance(method, Function):
+                return method(self, arguments)
+            elif callable(method) and not isinstance(method, (int, float, str, bool)):
+                return method(*arguments)
+            else:
+                raise Exception(f"'{expr.method}' no módulo '{module.name}' não é uma função chamável")
+        else:
+            raise Exception(f"Objeto do tipo {type(module).__name__} não é um módulo")
     
     def evaluate_StringLiteral(self, expr):
         """Avalia um literal de string"""
@@ -498,11 +700,23 @@ class Interpreter:
         """Avalia uma chamada de função"""
         # Avalia a função (pode ser um nome ou uma expressão)
         callee = None
-        if isinstance(expr.name, str):
-            # Função referenciada por nome
-            callee = self.environment.get(expr.name)
+        
+        function_name = None
+        if isinstance(expr.name, Variable):
+            # Função referenciada por nome via objeto Variable
+            function_name = expr.name.name
+        elif isinstance(expr.name, str):
+            # Função referenciada diretamente por string (como 'println')
+            function_name = expr.name
+        
+        # Se temos um nome de função, buscamos no ambiente
+        if function_name:
+            try:
+                callee = self.environment.get(function_name)
+            except Exception as e:
+                raise
         else:
-            # Função referenciada por expressão
+            # Função referenciada por expressão mais complexa
             callee = self.evaluate(expr.name)
         
         # Avalia os argumentos
@@ -510,19 +724,120 @@ class Interpreter:
         for arg in expr.arguments:
             arguments.append(self.evaluate(arg))
         
-        # Verifica se é uma função NajaGameFunction
-        if callee.__class__.__name__ == "NajaGameFunction":
+        # Verificações de tipo mais seguras
+        if hasattr(callee, '__class__') and callee.__class__.__name__ == "NajaGameFunction":
             return callee(self, arguments)
-        # Verifica se é uma função chamável
-        elif callable(callee):
-            # Função nativa do Python
+        # Se for um objeto Function, usa o método __call__ dele
+        elif isinstance(callee, Function):
+            return callee(self, arguments)
+        # Se for uma função nativa do Python (mas não um int ou outro tipo primitivo)
+        elif callable(callee) and not (isinstance(callee, (int, float, str, bool))):
             return callee(*arguments)
-        elif hasattr(callee, "__call__"):
-            # Função definida em NajaScript
-            return callee(self, arguments)
+        # Se for um objeto com método __call__, chama-o com argumentos
+        elif hasattr(callee, "__call__") and callable(getattr(callee, "__call__")):
+            # Tenta chamar o método __call__ diretamente
+            try:
+                return callee.__call__(self, arguments)
+            except TypeError:
+                # Se falhar, tenta chamar de outra forma
+                try:
+                    return callee(self, arguments)
+                except TypeError:
+                    try:
+                        return callee(*arguments)
+                    except Exception as e:
+                        raise Exception(f"Erro ao chamar função: {e}")
         else:
-            raise Exception(f"{expr.name} não é uma função")
+            name = function_name if function_name else (expr.name.name if isinstance(expr.name, Variable) else str(expr.name))
+            raise Exception(f"'{name}' não é uma função ou não é chamável")
     
+    def evaluate_MethodCall(self, expr):
+        """Avalia uma chamada de método em um objeto"""
+        # Avalia o objeto
+        obj = self.evaluate(expr.object)
+        
+        # Extrai o nome do método
+        method_name = expr.method
+        
+        # Avalia os argumentos
+        arguments = [self.evaluate(arg) for arg in expr.arguments]
+        
+        # Verifica se o objeto é um módulo
+        if isinstance(obj, NajaModule):
+            method = obj.get_method(method_name)
+            if method is None:
+                raise Exception(f"Método '{method_name}' não encontrado no módulo '{obj.name}'")
+            
+            # Verifica se o método é chamável
+            if isinstance(method, Function):
+                return method(self, arguments)
+            elif callable(method) and not isinstance(method, (int, float, str, bool)):
+                return method(*arguments)
+            else:
+                raise Exception(f"'{method_name}' no módulo '{obj.name}' não é uma função chamável")
+        
+        # Verifica se o objeto tem o método solicitado
+        elif isinstance(obj, NajaList):
+            if method_name == "length":
+                return obj.length()
+            elif method_name == "get":
+                if len(arguments) != 1:
+                    raise Exception(f"Método get() espera 1 argumento, recebeu {len(arguments)}")
+                return obj.get(arguments[0])
+            elif method_name == "add":
+                if len(arguments) != 1:
+                    raise Exception(f"Método add() espera 1 argumento, recebeu {len(arguments)}")
+                return obj.add(arguments[0])
+            elif method_name == "remove":
+                if len(arguments) != 1:
+                    raise Exception(f"Método remove() espera 1 argumento, recebeu {len(arguments)}")
+                return obj.remove(arguments[0])
+            elif method_name == "removeLast":
+                if len(arguments) != 0:
+                    raise Exception(f"Método removeLast() não espera argumentos, recebeu {len(arguments)}")
+                return obj.removeLast()
+            else:
+                raise Exception(f"Listas não possuem o método '{method_name}'")
+        elif isinstance(obj, NajaDict):
+            if method_name == "length":
+                return obj.length()
+            elif method_name == "get":
+                if len(arguments) != 1:
+                    raise Exception(f"Método get() espera 1 argumento, recebeu {len(arguments)}")
+                return obj.get(arguments[0])
+            elif method_name == "add":
+                if len(arguments) not in [1, 2]:
+                    raise Exception(f"Método add() espera 1 ou 2 argumentos, recebeu {len(arguments)}")
+                if len(arguments) == 1:
+                    return obj.add(arguments[0])
+                else:
+                    return obj.add(arguments[0], arguments[1])
+            elif method_name == "remove":
+                if len(arguments) != 1:
+                    raise Exception(f"Método remove() espera 1 argumento, recebeu {len(arguments)}")
+                return obj.remove(arguments[0])
+            else:
+                raise Exception(f"Dicionários não possuem o método '{method_name}'")
+        elif isinstance(obj, str):
+            if method_name == "length":
+                return len(obj)
+            elif method_name == "substring":
+                if len(arguments) not in [1, 2]:
+                    raise Exception(f"Método substring() espera 1 ou 2 argumentos, recebeu {len(arguments)}")
+                start = arguments[0]
+                if not isinstance(start, int):
+                    raise Exception(f"O índice inicial deve ser um número inteiro")
+                if len(arguments) == 1:
+                    return obj[start:]
+                end = arguments[1]
+                if not isinstance(end, int):
+                    raise Exception(f"O índice final deve ser um número inteiro")
+                return obj[start:end]
+            else:
+                raise Exception(f"Strings não possuem o método '{method_name}'")
+        else:
+            raise Exception(f"O objeto do tipo {type(obj).__name__} não suporta chamadas de método")
+
     def is_truthy(self, value):
         """Verifica se um valor é considerado verdadeiro"""
         if value is None:
@@ -670,10 +985,22 @@ class Interpreter:
                 # Registra o módulo como importado
                 self.imported_modules[module_name] = module_env
                 
-                # Exporta as definições do módulo para o ambiente atual
-                for name, value in module_env.values.items():
+                # Cria um objeto de módulo para acessos qualificados
+                module_obj = NajaModule(module_name, module_env)
+                
+                # Define o objeto de módulo no ambiente global
+                self.globals.define(module_name, module_obj)
+                
+                # Exporta as definições do módulo para o ambiente global para compatibilidade
+                for name, func in module_env.functions.items():
                     if not name.startswith("_"):  # Não exporta variáveis privadas
-                        self.globals.define(name, value)
+                        self.globals.define(name, func)
+                
+                # Também exporta os valores do ambiente
+                for name, (value, is_const, is_flux) in module_env.values.items():
+                    if not name.startswith("_"):  # Não exporta variáveis privadas
+                        if name not in self.globals.functions:  # Evita duplicatas
+                            self.globals.define(name, value, is_const, is_flux)
                 
                 return module_env
             finally:
@@ -707,6 +1034,13 @@ class Interpreter:
             elements.append(self.evaluate(element))
         return NajaList(elements)
     
+    def evaluate_DictLiteral(self, expr):
+        """Avalia um literal de dicionário"""
+        items = []
+        for item in expr.items:
+            items.append(self.evaluate(item))
+        return NajaDict(items)
+    
     # Adicionando método para avaliar atribuições diretamente como expressões
     def evaluate_Assignment(self, expr):
         """Avalia uma expressão de atribuição diretamente"""
@@ -714,4 +1048,60 @@ class Interpreter:
         self.environment.assign(expr.name, value)
         return value
 
-    
+    def execute_ForStatement(self, stmt):
+        """Executa uma instrução for"""
+        # Cria um novo ambiente para o loop
+        loop_env = Environment(self.environment)
+        
+        # Execute a inicialização (primeira parte do for)
+        prev_env = self.environment
+        self.environment = loop_env
+        
+        try:
+            # Execute a inicialização (primeira parte do for)
+            if isinstance(stmt.init, VarDeclaration):
+                # Se a inicialização for uma declaração de variável
+                self.execute_VarDeclaration(stmt.init)
+            else:
+                # Se a inicialização for uma expressão
+                self.evaluate(stmt.init)
+                
+            # Loop principal
+            while True:
+                # Verifica a condição
+                if not self.is_truthy(self.evaluate(stmt.condition)):
+                    break
+                
+                try:
+                    # Executa o corpo do loop
+                    self.execute_block(stmt.body, loop_env)
+                    
+                    # Executa a expressão de atualização (terceira parte do for)
+                    self.evaluate(stmt.update)
+                    
+                except BreakException:
+                    break
+                except ContinueException:
+                    # Continua com a próxima iteração, ainda executando a atualização
+                    self.evaluate(stmt.update)
+                    continue
+        finally:
+            # Restaura o ambiente original
+            self.environment = prev_env
+
+    def execute_FunctionDeclaration(self, stmt):
+        """Executa uma declaração de função"""
+        # Cria uma nova função e a armazena no ambiente atual
+        function = Function(stmt, self.environment)
+        
+        # Armazena a função no ambiente
+        self.environment.define(stmt.name, function)
+        
+        return None
+
+    def execute_ReturnStatement(self, stmt):
+        """Executa uma declaração de retorno"""
+        value = None
+        if stmt.value:
+            value = self.evaluate(stmt.value)
+        raise ReturnException(value)

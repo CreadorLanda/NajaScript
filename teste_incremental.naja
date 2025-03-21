@@ -1,0 +1,33 @@
+// Teste simples em NajaScript
+// Introdução básica à linguagem
+
+// Função principal
+fun main() {
+    println("=== Teste Básico NajaScript ===");
+    
+    // Saída básica
+    println("Olá, Mundo!");
+    
+    // Variáveis de diferentes tipos
+    int numero = 42;
+    int decimal = 3;  // Usando int em vez de float para simplificar
+    string texto = "Olá, NajaScript!";
+    bool ligado = true;
+    
+    println("\n--- Tipos de Variáveis ---");
+    println("Inteiro: " + numero);
+    println("Decimal: " + decimal);
+    println("Texto: " + texto);
+    
+    // Booleanos
+    println("\n--- Booleanos ---");
+    println("Valor booleano: " + ligado);
+    if (ligado) {
+        println("O valor é verdadeiro");
+    } else {
+        println("O valor é falso");
+    }
+}
+
+// Executar a função principal
+main(); 

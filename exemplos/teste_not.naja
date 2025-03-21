@@ -1,0 +1,25 @@
+// Exemplo simples para testar o operador NOT
+importar "NajaPt";
+
+funcao principal() {
+    // Valores para teste
+    booleano valor1 = verdadeiro;
+    booleano valor2 = falso;
+    
+    // Teste do operador NOT
+    escreverln("valor1 = " + valor1);
+    escreverln("valor2 = " + valor2);
+    escreverln("!valor1 = " + !valor1);
+    escreverln("!valor2 = " + !valor2);
+    
+    // Teste com expressões
+    booleano expressao1 = valor1 && valor2;  // true && false
+    booleano expressao2 = valor1 || valor2;  // true || false
+    
+    escreverln("expressao1 (valor1 && valor2) = " + expressao1);
+    escreverln("expressao2 (valor1 || valor2) = " + expressao2);
+    escreverln("!expressao1 = " + !expressao1);
+    escreverln("!expressao2 = " + !expressao2);
+}
+
+principal(); 

@@ -1,0 +1,127 @@
+// Teste simples de algoritmos e estruturas de dados
+
+// Função para encontrar o maior valor em uma lista
+fun encontrarMaior(lista) {
+    if (lista.length() == 0) {
+        println("Lista vazia");
+        return 0;
+    }
+    
+    int maior = lista.get(0);
+    
+    for (int i = 1; i < lista.length(); i = i + 1) {
+        if (lista.get(i) > maior) {
+            maior = lista.get(i);
+        }
+    }
+    
+    return maior;
+}
+
+// Função para calcular a soma dos números em uma lista
+fun somarLista(lista) {
+    int total = 0;
+    
+    for (int i = 0; i < lista.length(); i = i + 1) {
+        total = total + lista.get(i);
+    }
+    
+    return total;
+}
+
+// Função para verificar se um valor existe na lista
+fun existeNaLista(lista, valor) {
+    for (int i = 0; i < lista.length(); i = i + 1) {
+        if (lista.get(i) == valor) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+// Função para criar uma pilha simples
+fun criarPilha() {
+    dict pilha = {};
+    pilha.add("itens", list());
+    
+    pilha.add("empilhar", fun(item) {
+        pilha.get("itens").add(item);
+        return true;
+    });
+    
+    pilha.add("desempilhar", fun() {
+        if (pilha.get("itens").length() == 0) {
+            println("Pilha vazia");
+            return null;
+        }
+        return pilha.get("itens").removeLast();
+    });
+    
+    pilha.add("topo", fun() {
+        if (pilha.get("itens").length() == 0) {
+            return null;
+        }
+        int indice = pilha.get("itens").length() - 1;
+        return pilha.get("itens").get(indice);
+    });
+    
+    pilha.add("tamanho", fun() {
+        return pilha.get("itens").length();
+    });
+    
+    return pilha;
+}
+
+// Função principal
+fun main() {
+    println("=== Teste de Algoritmos e Estruturas de Dados ===");
+    
+    // Teste de operações com listas
+    println("\n1. Operações com Listas:");
+    
+    // Criar e exibir lista
+    numeros = list(15, 8, 42, 4, 16, 23);
+    println("Lista de números: " + numeros);
+    
+    // Encontrar o maior valor
+    println("Maior valor: " + encontrarMaior(numeros));
+    
+    // Somar os valores
+    println("Soma dos valores: " + somarLista(numeros));
+    
+    // Verificar existência de valores
+    println("O valor 16 existe na lista? " + existeNaLista(numeros, 16));
+    println("O valor 99 existe na lista? " + existeNaLista(numeros, 99));
+    
+    // Teste de pilha
+    println("\n2. Teste da Estrutura de Pilha:");
+    
+    // Criar uma pilha
+    pilha = criarPilha();
+    
+    // Empilhar valores
+    println("Empilhando: 10, 20, 30, 40, 50");
+    pilha.get("empilhar")(10);
+    pilha.get("empilhar")(20);
+    pilha.get("empilhar")(30);
+    pilha.get("empilhar")(40);
+    pilha.get("empilhar")(50);
+    
+    // Verificar o topo
+    println("Elemento no topo: " + pilha.get("topo")());
+    
+    // Desempilhar alguns valores
+    println("\nDesempilhando elementos:");
+    println("  Item: " + pilha.get("desempilhar")());
+    println("  Item: " + pilha.get("desempilhar")());
+    
+    // Verificar o novo topo
+    println("Novo elemento no topo: " + pilha.get("topo")());
+    println("Tamanho atual da pilha: " + pilha.get("tamanho")());
+    
+    println("\nTeste concluído com sucesso!");
+}
+
+// Executar o programa
+main(); 

@@ -1,0 +1,22 @@
+// Teste da nova funcionalidade de importação de módulos
+import "NumeroUtil";
+
+fun main() {
+    println("=== Teste de Importação de Módulos ===");
+    
+    // Acesso direto às funções do módulo (para compatibilidade)
+    int n1 = negativo(10);
+    println("Usando função diretamente - negativo(10): " + n1);
+    
+    // Acesso qualificado às funções do módulo (nova funcionalidade)
+    int n2 = NumeroUtil.negativo(5);
+    println("Usando módulo qualificado - NumeroUtil.negativo(5): " + n2);
+    
+    // Verificar se um número é negativo
+    println("Verificação direta - ehNegativo(n1): " + ehNegativo(n1));
+    println("Verificação qualificada - NumeroUtil.ehNegativo(n2): " + NumeroUtil.ehNegativo(n2));
+    
+    println("\n=== Teste concluído ===");
+}
+
+main(); 

@@ -1,0 +1,77 @@
+// NumeroUtil - Módulo de utilidades para operações com números
+// Fornece funções para facilitar o trabalho com números negativos
+
+/**
+ * Função para criar um número negativo
+ * @param n O número a ser negado
+ * @return O número negativo
+ */
+funcao negativo(n) {
+    retornar 0 - n;
+}
+
+/**
+ * Função para verificar se um número é negativo
+ * @param n O número a ser verificado
+ * @return verdadeiro se o número for negativo, falso caso contrário
+ */
+funcao ehNegativo(n) {
+    retornar n < 0;
+}
+
+/**
+ * Função para calcular o valor absoluto de um número
+ * @param n O número para calcular o valor absoluto
+ * @return O valor absoluto (sempre positivo)
+ */
+funcao valorAbsoluto(n) {
+    se (n < 0) {
+        retornar 0 - n;
+    }
+    retornar n;
+}
+
+/**
+ * Função para inverter o sinal de um número
+ * @param n O número para inverter o sinal
+ * @return O número com sinal invertido
+ */
+funcao inverterSinal(n) {
+    retornar 0 - n;
+}
+
+/**
+ * Função para verificar se n1 é menor que n2
+ * Útil para comparações quando um ou ambos números são negativos
+ * @param n1 O primeiro número
+ * @param n2 O segundo número
+ * @return verdadeiro se n1 for menor que n2, falso caso contrário
+ */
+funcao ehMenor(n1, n2) {
+    retornar n1 < n2;
+}
+
+/**
+ * Função para verificar se n1 é maior que n2
+ * Útil para comparações quando um ou ambos números são negativos
+ * @param n1 O primeiro número
+ * @param n2 O segundo número
+ * @return verdadeiro se n1 for maior que n2, falso caso contrário
+ */
+funcao ehMaior(n1, n2) {
+    retornar n1 > n2;
+}
+
+// Exemplo de como usar este módulo:
+//
+// importar "NumeroUtil";
+//
+// funcao principal() {
+//     inteiro n = negativo(5);  // Cria -5
+//     
+//     se (ehNegativo(n)) {
+//         // Faça algo com o número negativo
+//     }
+//     
+//     inteiro abs = valorAbsoluto(n);  // abs = 5
+// } 

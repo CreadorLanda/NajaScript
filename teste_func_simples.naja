@@ -1,0 +1,7 @@
+// Script simples para teste de função
+
+fun main() {
+    println("Teste de função simples");
+}
+
+main(); 

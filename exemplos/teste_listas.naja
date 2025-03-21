@@ -10,7 +10,7 @@ funcao principal() {
     escreverln(minhaLista);
     
     // Comprimento da lista
-    escreverln("Comprimento da lista: " + comprimento(minhaLista));
+    escreverln("Comprimento da lista: " + minhaLista.length());
     
     // Adicionar elemento
     minhaLista.adicionar(4);

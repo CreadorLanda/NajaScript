@@ -65,19 +65,15 @@ funcao exemploColecoes() {
     escreverln("Frutas após remover banana: " + frutas);
     
     # Dicionário
-    dicionario pessoa = {
-        nome: "João",
-        idade: 30,
-        cidade: "São Paulo"
-    };
+    dicionario pessoa = ["João", 30, "São Paulo"];
     
     escreverln("Pessoa: " + pessoa);
-    escreverln("Nome: " + pessoa.obter("nome"));
+    escreverln("Nome: " + pessoa.obter(0));
     
-    pessoa.adicionar("profissao", "Programador");
+    pessoa.adicionar("Programador");
     escreverln("Pessoa após adicionar profissão: " + pessoa);
     
-    pessoa.remover("cidade");
+    pessoa.remover(2);
     escreverln("Pessoa após remover cidade: " + pessoa);
 }
 

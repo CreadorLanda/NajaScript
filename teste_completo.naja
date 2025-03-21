@@ -1,0 +1,87 @@
+// Exemplo completo com várias funcionalidades da linguagem
+
+// Função para verificar se um número é primo
+fun ehPrimo(n) {
+    if (n <= 1) {
+        return false;
+    }
+    if (n <= 3) {
+        return true;
+    }
+    if (n % 2 == 0 || n % 3 == 0) {
+        return false;
+    }
+    
+    int i = 5;
+    while (i * i <= n) {
+        if (n % i == 0 || n % (i + 2) == 0) {
+            return false;
+        }
+        i = i + 6;
+    }
+    
+    return true;
+}
+
+// Função para encontrar todos os números primos até n
+fun encontrarPrimos(n) {
+    println("Números primos até " + n + ":");
+    
+    for (int i = 2; i <= n; i = i + 1) {
+        if (ehPrimo(i)) {
+            print(i + " ");
+        }
+    }
+    println("");  // Quebra de linha no final
+}
+
+// Função para calcular a soma de todos os primos até n
+fun somaPrimos(n) {
+    int soma = 0;
+    
+    for (int i = 2; i <= n; i = i + 1) {
+        if (ehPrimo(i)) {
+            soma = soma + i;
+        }
+    }
+    
+    return soma;
+}
+
+// Função principal
+fun main() {
+    println("Teste completo de funcionalidades NajaScript");
+    println("--------------------------------------------");
+    
+    // Testa a verificação de números primos
+    println("Verificação de números primos:");
+    println("7 é primo? " + ehPrimo(7));
+    println("10 é primo? " + ehPrimo(10));
+    println("13 é primo? " + ehPrimo(13));
+    println("");
+    
+    // Encontra todos os primos até 50
+    encontrarPrimos(50);
+    println("");
+    
+    // Calcula e exibe a soma dos primos até 100
+    int soma = somaPrimos(100);
+    println("Soma dos números primos até 100: " + soma);
+    
+    // Testa diferentes condicionais
+    println("\nTestando condicionais:");
+    int x = 42;
+    
+    if (x > 50) {
+        println("x é maior que 50");
+    } else {
+        if (x > 40) {
+            println("x é maior que 40 e menor ou igual a 50");
+        } else {
+            println("x é menor ou igual a 40");
+        }
+    }
+}
+
+// Chamada da função principal
+main(); 

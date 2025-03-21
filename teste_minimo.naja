@@ -1,0 +1,16 @@
+// Teste mínimo com variáveis
+fun main() {
+    println("Olá, mundo!");
+    
+    int numero = 42;
+    println("O número é: " + numero);
+    
+    bool condicao = true;
+    println("A condição é: " + condicao);
+    
+    // Usar any em vez de string
+    any texto = "Hello world";
+    println("O texto é: " + texto);
+}
+
+main(); 

@@ -1,0 +1,86 @@
+// Demonstração de aplicação usando o módulo Matematica
+// Cálculo de áreas e perímetros de formas geométricas
+import "Matematica";
+
+// Área e perímetro do círculo
+fun areaCirculo(raio) {
+    return Matematica.PI * Matematica.potencia(raio, 2);
+}
+
+fun perimetroCirculo(raio) {
+    return 2 * Matematica.PI * raio;
+}
+
+// Área e perímetro do retângulo
+fun areaRetangulo(base, altura) {
+    return base * altura;
+}
+
+fun perimetroRetangulo(base, altura) {
+    return 2 * (base + altura);
+}
+
+// Área e perímetro do triângulo
+fun areaTriangulo(base, altura) {
+    return (base * altura) / 2;
+}
+
+// Perímetro do triângulo com 3 lados conhecidos (Fórmula de Heron)
+fun perimetroTriangulo(a, b, c) {
+    return a + b + c;
+}
+
+// Área do triângulo usando a fórmula de Heron
+fun areaTrianguloHeron(a, b, c) {
+    float s = (a + b + c) / 2; // Semiperímetro
+    float area = Matematica.raizQuadrada(s * (s - a) * (s - b) * (s - c));
+    return area;
+}
+
+// Distância entre dois pontos no plano cartesiano
+fun distanciaPontos(x1, y1, x2, y2) {
+    float dx = x2 - x1;
+    float dy = y2 - y1;
+    return Matematica.raizQuadrada(Matematica.potencia(dx, 2) + Matematica.potencia(dy, 2));
+}
+
+fun main() {
+    println("=== Cálculos Geométricos com o Módulo Matematica ===");
+    
+    // Cálculos com círculo
+    float raio = 5;
+    println("\nCírculo com raio " + raio + ":");
+    println("Área = " + areaCirculo(raio));
+    println("Perímetro = " + perimetroCirculo(raio));
+    
+    // Cálculos com retângulo
+    float base = 4;
+    float altura = 6;
+    println("\nRetângulo com base " + base + " e altura " + altura + ":");
+    println("Área = " + areaRetangulo(base, altura));
+    println("Perímetro = " + perimetroRetangulo(base, altura));
+    
+    // Cálculos com triângulo
+    println("\nTriângulo com base " + base + " e altura " + altura + ":");
+    println("Área = " + areaTriangulo(base, altura));
+    
+    // Triângulo com 3 lados conhecidos
+    float lado1 = 3;
+    float lado2 = 4;
+    float lado3 = 5;
+    println("\nTriângulo com lados " + lado1 + ", " + lado2 + ", " + lado3 + ":");
+    println("Perímetro = " + perimetroTriangulo(lado1, lado2, lado3));
+    println("Área (Fórmula de Heron) = " + areaTrianguloHeron(lado1, lado2, lado3));
+    
+    // Cálculo de distância entre pontos
+    float x1 = 1;
+    float y1 = 2;
+    float x2 = 4;
+    float y2 = 6;
+    println("\nDistância entre os pontos (" + x1 + "," + y1 + ") e (" + x2 + "," + y2 + "):");
+    println("Distância = " + distanciaPontos(x1, y1, x2, y2));
+    
+    println("\n=== Cálculos concluídos ===");
+}
+
+main(); 

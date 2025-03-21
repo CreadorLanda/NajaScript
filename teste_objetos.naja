@@ -1,0 +1,103 @@
+// Exemplo com listas e dicionários
+
+// Função para criar e manipular uma lista
+fun manipularLista() {
+    println("Teste de lista:");
+    
+    // Criar uma lista vazia e adicionar elementos
+    list numeros = list();
+    numeros.add(10);
+    numeros.add(20);
+    numeros.add(30);
+    
+    println("Lista criada: " + numeros);
+    println("Tamanho da lista: " + numeros.length());
+    println("Primeiro elemento: " + numeros.get(0));
+    println("Último elemento: " + numeros.get(numeros.length() - 1));
+    
+    // Modificar um elemento - removemos e adicionamos novamente
+    println("Modificando o segundo elemento (índice 1):");
+    numeros.remove(1); // Remove o elemento no índice 1 (20)
+    
+    // Criar uma nova lista e adicionar os elementos na ordem desejada
+    list novaLista = list();
+    novaLista.add(numeros.get(0)); // Adiciona o 10
+    novaLista.add(25); // Adiciona o novo valor 25
+    novaLista.add(numeros.get(1)); // Adiciona o 30
+    
+    numeros = novaLista; // Atualiza a lista original
+    println("Lista após modificação: " + numeros);
+    
+    // Remover um elemento
+    int removido = numeros.remove(0);
+    println("Elemento removido: " + removido);
+    println("Lista após remoção: " + numeros);
+    
+    // Remover o último elemento
+    removido = numeros.removeLast();
+    println("Último elemento removido: " + removido);
+    println("Lista final: " + numeros);
+}
+
+// Função para criar e manipular um dicionário
+fun manipularDicionario() {
+    println("\nTeste de dicionário:");
+    
+    // Criar um dicionário
+    dict pessoa = {};
+    
+    // Adicionar chaves e valores
+    pessoa.add("nome", "João");
+    pessoa.add("idade", 30);
+    pessoa.add("cidade", "São Paulo");
+    
+    println("Dicionário criado: " + pessoa);
+    println("Nome: " + pessoa.get("nome"));
+    println("Idade: " + pessoa.get("idade"));
+    
+    // Modificar um valor
+    pessoa.remove("idade");
+    pessoa.add("idade", 31);
+    
+    println("Dicionário após modificação: " + pessoa);
+    
+    // Adicionar mais chaves
+    pessoa.add("profissão", "Programador");
+    println("Dicionário final: " + pessoa);
+}
+
+// Função principal
+fun main() {
+    println("Teste de Objetos em NajaScript");
+    println("------------------------------");
+    
+    // Testar funções
+    manipularLista();
+    manipularDicionario();
+    
+    // Testar combinação de objetos
+    println("\nCombinando listas e dicionários:");
+    
+    // Lista de dicionários
+    list pessoas = list();
+    
+    dict pessoa1 = {};
+    pessoa1.add("nome", "Ana");
+    pessoa1.add("idade", 25);
+    
+    dict pessoa2 = {};
+    pessoa2.add("nome", "Carlos");
+    pessoa2.add("idade", 32);
+    
+    pessoas.add(pessoa1);
+    pessoas.add(pessoa2);
+    
+    println("Lista de pessoas: " + pessoas);
+    dict primeiraPessoa = pessoas.get(0);
+    dict segundaPessoa = pessoas.get(1);
+    println("Nome da primeira pessoa: " + primeiraPessoa.get("nome"));
+    println("Idade da segunda pessoa: " + segundaPessoa.get("idade"));
+}
+
+// Chamada da função principal
+main(); 

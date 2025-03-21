@@ -1,0 +1,70 @@
+// Teste simplificado para o editor
+importar "NajaPt";
+
+// Declaração de variáveis globais
+inteiro MAX_ITENS = 100;
+texto VERSAO = "1.0.0";
+
+// Função para soma simples
+funcao somar(inteiro a, inteiro b) {
+    retornar a + b;
+}
+
+// Função para criar um dicionário de usuário
+funcao criarUsuario(texto nome, inteiro idade) {
+    dicionario usuario = {};
+    usuario.adicionar("nome", nome);
+    usuario.adicionar("idade", idade);
+    
+    retornar usuario;
+}
+
+// Função principal
+funcao principal() {
+    escreverln("=== NajaScript Editor Demo ===");
+    escreverln("Versão: " + VERSAO);
+    
+    // Demonstração de tipos básicos
+    escreverln("\n--- Tipos Básicos ---");
+    inteiro numero = 42;
+    texto mensagem = "Hello World!";
+    booleano flag = verdadeiro;
+    
+    escreverln("Inteiro: " + numero);
+    escreverln("Texto: " + mensagem);
+    escreverln("Booleano: " + flag);
+    
+    // Demonstração de funções
+    escreverln("\n--- Funções ---");
+    inteiro resultado = somar(10, 20);
+    escreverln("10 + 20 = " + resultado);
+    
+    // Demonstração de dicionários
+    escreverln("\n--- Dicionários ---");
+    dicionario usuario = criarUsuario("Maria", 25);
+    escreverln("Nome: " + usuario.obter("nome"));
+    escreverln("Idade: " + usuario.obter("idade"));
+    
+    // Demonstração de estruturas de controle
+    escreverln("\n--- Estruturas de Controle ---");
+    
+    escreverln("Loop FOR:");
+    para (inteiro i = 1; i <= 3; i = i + 1) {
+        escreverln("  Iteração " + i);
+    }
+    
+    escreverln("\nEstrutura IF-ELSE:");
+    inteiro idade = 18;
+    se (idade < 18) {
+        escreverln("  Menor de idade");
+    } elif (idade == 18) {
+        escreverln("  Exatamente 18 anos");
+    } senao {
+        escreverln("  Maior de idade");
+    }
+    
+    escreverln("\n=== Demo Concluída ===");
+}
+
+// Executar o programa
+principal(); 

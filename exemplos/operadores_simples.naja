@@ -7,12 +7,12 @@ funcao principal() {
     booleano b = falso;
     
     escreverln("a = verdadeiro, b = falso");
-    escreverln("a e b = " + (a e b));
-    escreverln("a ou b = " + (a ou b));
+    escreverln("a && b = " + (a && b));
+    escreverln("a || b = " + (a || b));
     
-    // Operador NOT - apenas verificando a sintaxe
-    booleano resultado = !b;  // usando o operador ! diretamente
-    escreverln("!b = " + resultado);
+    // Operador NOT - usando comparação com falso/verdadeiro
+    booleano resultado = (b == falso);  // Equivalente a !b
+    escreverln("Negação de b (b == falso): " + resultado);
 }
 
 principal(); 

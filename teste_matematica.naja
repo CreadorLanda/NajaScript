@@ -1,0 +1,58 @@
+// Teste do módulo Matematica
+import "Matematica";
+
+fun main() {
+    println("=== Demonstração do Módulo Matematica ===");
+    
+    // Acessando constantes
+    println("\nConstantes matemáticas:");
+    println("PI = " + Matematica.PI);
+    println("E = " + Matematica.E);
+    
+    // Calculando fatorial
+    int n = 5;
+    println("\nFatorial:");
+    println(n + "! = " + Matematica.fatorial(n));
+    
+    // Calculando potências
+    println("\nPotências:");
+    println("2^3 = " + Matematica.potencia(2, 3));
+    println("5^2 = " + Matematica.potencia(5, 2));
+    
+    // Calculando raiz quadrada
+    println("\nRaízes quadradas:");
+    println("Raiz de 9 = " + Matematica.raizQuadrada(9));
+    println("Raiz de 2 = " + Matematica.raizQuadrada(2));
+    
+    // Arredondamento
+    println("\nArredondamento:");
+    println("Arredondar 3.2 = " + Matematica.arredondar(3.2));
+    println("Arredondar 3.7 = " + Matematica.arredondar(3.7));
+    
+    // Máximo e mínimo
+    println("\nMáximo e mínimo:");
+    println("Máximo entre 10 e 5 = " + Matematica.max(10, 5));
+    println("Mínimo entre 10 e 5 = " + Matematica.min(10, 5));
+    
+    // Conversão de ângulos
+    println("\nConversão de ângulos:");
+    float angulo_graus = 90.0;
+    float angulo_rad = Matematica.grausParaRadianos(angulo_graus);
+    println(angulo_graus + " graus = " + angulo_rad + " radianos");
+    println(angulo_rad + " radianos = " + Matematica.radianosParaGraus(angulo_rad) + " graus");
+    
+    // Funções trigonométricas
+    println("\nFunções trigonométricas:");
+    // Testamos em ângulos conhecidos
+    println("seno(0) = " + Matematica.seno(0));
+    println("seno(PI/2) = " + Matematica.seno(Matematica.PI / 2));
+    println("seno(PI) = " + Matematica.seno(Matematica.PI));
+    
+    println("cosseno(0) = " + Matematica.cosseno(0));
+    println("cosseno(PI/2) = " + Matematica.cosseno(Matematica.PI / 2));
+    println("cosseno(PI) = " + Matematica.cosseno(Matematica.PI));
+    
+    println("\n=== Demonstração concluída ===");
+}
+
+main(); 

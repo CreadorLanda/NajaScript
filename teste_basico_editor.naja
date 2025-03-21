@@ -1,0 +1,43 @@
+// Teste de funcionalidades básicas para o editor
+// Este programa mostra apenas recursos confirmados do NajaScript
+
+// Função principal
+fun main() {
+    println("=== Editor NajaScript ===");
+    println("Testando funcionalidades básicas");
+    
+    // Variáveis simples
+    int numero = 42;
+    string texto = "Hello world";
+    bool condicao = true;
+    
+    // Exibindo valores
+    println("Número: " + numero);
+    println("Texto: " + texto);
+    
+    // Estruturas condicionais
+    if (condicao) {
+        println("Condição é verdadeira");
+    } else {
+        println("Condição é falsa");
+    }
+    
+    // Loop simples
+    println("\nContando até 5:");
+    for (int i = 1; i <= 5; i = i + 1) {
+        println("  Número: " + i);
+    }
+    
+    // Função auxiliar
+    println("\nResultado da soma: " + soma(10, 20));
+    
+    println("\nTeste concluído com sucesso!");
+}
+
+// Função auxiliar
+fun soma(int a, int b) {
+    return a + b;
+}
+
+// Executar função principal
+main(); 

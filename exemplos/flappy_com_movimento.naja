@@ -86,3 +86,4 @@ while (executando) {
 
 // Finaliza o jogo
 quitGame(); 
+

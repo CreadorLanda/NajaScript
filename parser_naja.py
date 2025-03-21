@@ -571,7 +571,8 @@ class Parser:
                           | IDENTIFIER
                           | '(' expression ')'
                           | function_call
-                          | IDENTIFIER '.' IDENTIFIER '(' arguments ')'  # Chamada de método
+                          | IDENTIFIER '.' IDENTIFIER  # Acesso a atributo (módulo.atributo)
+                          | IDENTIFIER '.' IDENTIFIER '(' arguments ')'  # Chamada de método (objeto.método() ou módulo.função())
         """
         token = self.current_token
         
@@ -580,20 +581,21 @@ class Parser:
             name = token.value if token.type == TokenType.IDENTIFIER else token.type.name.lower()
             self.eat(token.type)
             
-            # Verifica se é uma chamada de método (objeto.método())
+            # Verifica se é um acesso a atributo ou chamada de método (objeto.atributo ou objeto.método())
             if self.current_token.type == TokenType.DOT:
                 self.eat(TokenType.DOT)
                 
                 if self.current_token.type != TokenType.IDENTIFIER:
-                    self.error(f"Esperado nome de método após '.', mas encontrado {self.current_token.type}")
+                    self.error(f"Esperado nome de atributo ou método após '.', mas encontrado {self.current_token.type}")
                 
-                method_name = self.current_token.value
+                attr_or_method_name = self.current_token.value
                 self.eat(TokenType.IDENTIFIER)
                 
-                # Processamento dos argumentos do método
-                args = []
+                # Verifica se é uma chamada de método ou acesso a atributo
                 if self.current_token.type == TokenType.LPAREN:
+                    # Chamada de método: objeto.método() ou módulo.função()
                     self.eat(TokenType.LPAREN)
+                    args = []
                     
                     if self.current_token.type != TokenType.RPAREN:
                         args.append(self.expression())
@@ -603,8 +605,14 @@ class Parser:
                             args.append(self.expression())
                     
                     self.eat(TokenType.RPAREN)
-                
-                return MethodCall(Variable(name), method_name, args)
+                    
+                    # Se o nome for simples, é uma chamada de método regular
+                    # Se for um nome de módulo, é uma chamada de método de módulo
+                    # Simplesmente usamos a classe MethodCall para ambos os casos
+                    return MethodCall(Variable(name), attr_or_method_name, args)
+                else:
+                    # Acesso a atributo: objeto.atributo ou módulo.atributo
+                    return GetAttr(Variable(name), attr_or_method_name)
             
             # Verifica se é uma chamada de função
             elif self.current_token.type == TokenType.LPAREN:

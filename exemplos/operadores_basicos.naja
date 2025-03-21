@@ -2,11 +2,15 @@
 importar "NajaPt";
 
 funcao principal() {
+    escreverln("=== Teste de Operadores Básicos ===");
+    
     booleano a = verdadeiro;
     booleano b = verdadeiro;
     
+    escreverln("a = " + a + ", b = " + b);
+    
     // Apenas operador AND
-    se (a e b) {
+    se (a && b) {
         escreverln("Ambos são verdadeiros");
     } senao {
         escreverln("Pelo menos um é falso");

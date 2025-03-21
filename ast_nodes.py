@@ -55,10 +55,10 @@ class DoWhileStatement(Statement):
 
 class ForStatement(Statement):
     def __init__(self, init, condition, update, body):
-        self.init = init
-        self.condition = condition
-        self.update = update
-        self.body = body
+        self.init = init           # Inicialização (int i = 0)
+        self.condition = condition  # Condição (i < 5)
+        self.update = update        # Atualização (i = i + 1)
+        self.body = body            # Corpo do loop
 
 class ForInStatement(Statement):
     def __init__(self, item, iterable, body):
@@ -130,6 +130,17 @@ class MethodCall(Expression):
         self.method = method  # Nome do método
         self.arguments = arguments if arguments else []
 
+class GetAttr(Expression):
+    def __init__(self, object, name):
+        self.object = object  # Objeto do qual queremos acessar um atributo
+        self.name = name      # Nome do atributo
+
+class ModuleMethodCall(Expression):
+    def __init__(self, module, method, arguments=None):
+        self.module = module    # Módulo no qual o método é chamado
+        self.method = method    # Nome do método
+        self.arguments = arguments if arguments else []
+
 # Literais
 class Literal(Expression):
     """Classe base para todos os valores literais"""
@@ -160,4 +171,4 @@ class ListLiteral(Literal):
 
 class DictLiteral(Literal):
     def __init__(self, items=None):
-        self.items = items if items else [] 
+        self.items = items if items else []

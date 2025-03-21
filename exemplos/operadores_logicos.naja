@@ -10,58 +10,70 @@ funcao principal() {
     
     // Operador E (AND)
     escreverln("\nOperador 'e' (AND):");
-    se (a < b e b < c) {
+    se (a < b && b < c) {
         escreverln("  a < b e b < c: verdadeiro");
     } senao {
         escreverln("  a < b e b < c: falso");
     }
     
-    se (a > b e b < c) {
+    se (a > b && b < c) {
         escreverln("  a > b e b < c: verdadeiro");
     } senao {
         escreverln("  a > b e b < c: falso");
     }
     
-    // Operador OU (OR)
-    escreverln("\nOperador 'ou' (OR):");
-    se (a < b ou a > c) {
-        escreverln("  a < b ou a > c: verdadeiro");
+    se (a < b && b > c) {
+        escreverln("  a < b e b > c: verdadeiro");
     } senao {
-        escreverln("  a < b ou a > c: falso");
+        escreverln("  a < b e b > c: falso");
     }
     
-    se (a > b ou b > c) {
+    // Operador OU (OR)
+    escreverln("\nOperador 'ou' (OR):");
+    se (a < b || b < c) {
+        escreverln("  a < b ou b < c: verdadeiro");
+    } senao {
+        escreverln("  a < b ou b < c: falso");
+    }
+    
+    se (a > b || b < c) {
+        escreverln("  a > b ou b < c: verdadeiro");
+    } senao {
+        escreverln("  a > b ou b < c: falso");
+    }
+    
+    se (a > b || b > c) {
         escreverln("  a > b ou b > c: verdadeiro");
     } senao {
         escreverln("  a > b ou b > c: falso");
     }
     
     // Operador NÃO (NOT)
-    escreverln("\nOperador 'negação' (usando comparações inversas):");
-    se (a <= b) {  // Equivalente a !(a > b)
-        escreverln("  a <= b (negação de a > b): verdadeiro");
+    escreverln("\nOperador 'nao' (NOT):");
+    se (a >= b) {  // Equivalente a !(a < b)
+        escreverln("  !(a < b): verdadeiro");
     } senao {
-        escreverln("  a <= b (negação de a > b): falso");
+        escreverln("  !(a < b): falso");
     }
     
-    se (a >= b) {  // Equivalente a !(a < b)
-        escreverln("  a >= b (negação de a < b): verdadeiro");
+    se (a <= b) {  // Equivalente a !(a > b)
+        escreverln("  !(a > b): verdadeiro");
     } senao {
-        escreverln("  a >= b (negação de a < b): falso");
+        escreverln("  !(a > b): falso");
     }
     
     // Combinação de operadores
     escreverln("\nCombinação de operadores:");
-    se ((a < b ou b > c) e (a < c)) {
-        escreverln("  (a < b ou b > c) e (a < c): verdadeiro");
+    se ((a < b || b > c) && a < c) {
+        escreverln("  (a < b ou b > c) e a < c: verdadeiro");
     } senao {
-        escreverln("  (a < b ou b > c) e (a < c): falso");
+        escreverln("  (a < b ou b > c) e a < c: falso");
     }
     
-    se ((a <= b) e (b <= c)) {  // Equivalente a !(a > b) e !(b > c)
-        escreverln("  (a <= b) e (b <= c): verdadeiro");
+    se ((a > b && b < c) || a > c) {
+        escreverln("  (a > b e b < c) ou a > c: verdadeiro");
     } senao {
-        escreverln("  (a <= b) e (b <= c): falso");
+        escreverln("  (a > b e b < c) ou a > c: falso");
     }
     
     // Exemplo prático
@@ -71,7 +83,7 @@ funcao principal() {
     booleano temCarteiraTrabalho = verdadeiro;
     
     // Este é um comentário em português que não deve afetar o código
-    se ((idade >= 18 e idade <= 65) e (salario >= 1500.0) e temCarteiraTrabalho) {
+    se ((idade >= 18 && idade <= 65) && (salario >= 1500.0) && temCarteiraTrabalho) {
         escreverln("  Pessoa elegível para o empréstimo!");
     } senao {
         escreverln("  Pessoa não elegível para o empréstimo.");
@@ -82,7 +94,7 @@ funcao principal() {
        mesmo tendo palavras-chave como "se", "enquanto", etc.
     */
     idade = 17;
-    se ((idade >= 18 e idade <= 65) e (salario >= 1500.0) e temCarteiraTrabalho) {
+    se ((idade >= 18 && idade <= 65) && (salario >= 1500.0) && temCarteiraTrabalho) {
         escreverln("  Pessoa elegível para o empréstimo!");
     } senao {
         escreverln("  Pessoa não elegível para o empréstimo.");
@@ -90,3 +102,5 @@ funcao principal() {
 }
 
 principal(); 
+
+

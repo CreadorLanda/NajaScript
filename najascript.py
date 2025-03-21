@@ -12,6 +12,7 @@ try:
     from interpreter import Interpreter
     from naja_bytecode import NajaBytecodeCompiler, BytecodeInterpreter
     from naja_llvm import NajaLLVMGenerator
+    from ast_nodes import ImportStatement
     from llvmlite import binding as llvm
 except Exception as e:
     print(f"Erro ao importar módulos: {e}")
@@ -40,6 +41,7 @@ def main():
 
     # Criar o interpretador
     interpreter = Interpreter()
+    interpreter.debug = args.debug
     
     # Modo de depuração
     debug = args.debug
@@ -60,7 +62,9 @@ def main():
     
     # Carregar o módulo NajaPt se a flag --pt estiver presente
     if args.pt:
-        interpreter.import_module("NajaPt")
+        # Cria uma instrução de importação e executa
+        import_stmt = ImportStatement('"NajaPt"')
+        interpreter.execute_ImportStatement(import_stmt)
     
     if args.file:
         try:
@@ -78,19 +82,35 @@ def main():
             # Analisar e executar o código
             lexer = Lexer(source)
             parser = Parser(lexer)
-            ast = parser.parse()
-            
-            if debug:
-                print("\n--- AST gerada ---")
-                print(f"Tipo: {type(ast)}")
-                print(f"Statements: {len(ast.statements) if hasattr(ast, 'statements') else 'N/A'}")
-                print("------------------\n")
+            try:
+                ast = parser.parse()
                 
-            result = interpreter.interpret(ast)
-            
-            # Valor de retorno de script
-            if result is not None:
-                print(result)
+                if debug:
+                    print("\n--- AST gerada ---")
+                    print(f"Tipo: {type(ast)}")
+                    print(f"Statements: {len(ast.statements) if hasattr(ast, 'statements') else 'N/A'}")
+                    if hasattr(ast, 'statements'):
+                        for i, stmt in enumerate(ast.statements):
+                            print(f"Statement {i}: {type(stmt).__name__}")
+                    print("------------------\n")
+                
+                try:
+                    # Execução do código
+                    result = interpreter.interpret(ast)
+                    
+                    # Valor de retorno de script
+                    if result is not None:
+                        print(result)
+                except Exception as e:
+                    print(f"Erro durante a interpretação: {e}")
+                    if debug:
+                        print("\n--- Traceback detalhado ---")
+                        traceback.print_exc()
+                        print("---------------------------\n")
+            except Exception as e:
+                print(f"Erro durante a análise do código: {e}")
+                if debug:
+                    traceback.print_exc()
                 
         except FileNotFoundError:
             print(f"Erro: Arquivo '{args.file}' não encontrado.")
@@ -126,4 +146,4 @@ def main():
                 print(f"Erro: {e}")
 
 if __name__ == "__main__":
-    main() 
+    main()

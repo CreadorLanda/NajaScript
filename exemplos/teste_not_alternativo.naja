@@ -1,0 +1,36 @@
+// Exemplo para testar negação usando operadores inversos
+importar "NajaPt";
+
+funcao principal() {
+    // Valores para teste
+    inteiro a = 5;
+    inteiro b = 10;
+    
+    // Testando negação através de operadores de comparação inversos
+    escreverln("=== Testando Negação com Operadores Inversos ===");
+    escreverln("a = " + a + ", b = " + b);
+    
+    // Em vez de !(a < b), usamos a >= b
+    escreverln("a < b: " + (a < b));
+    escreverln("Negação (a >= b): " + (a >= b));
+    
+    // Em vez de !(a == b), usamos a != b
+    escreverln("a == b: " + (a == b));
+    escreverln("Negação (a != b): " + (a != b));
+    
+    // Testando com variáveis booleanas
+    booleano valor1 = verdadeiro;
+    booleano valor2 = falso;
+    
+    // Para negação de booleanos, usamos comparação com falso
+    escreverln("\nvalor1 = " + valor1);
+    escreverln("valor2 = " + valor2);
+    
+    // Negação de verdadeiro => comparar com falso
+    escreverln("Negação de valor1: " + (valor1 == falso));
+    
+    // Negação de falso => comparar com verdadeiro
+    escreverln("Negação de valor2: " + (valor2 == verdadeiro));
+}
+
+principal(); 

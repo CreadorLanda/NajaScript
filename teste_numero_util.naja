@@ -1,0 +1,43 @@
+// Teste do módulo NumeroUtil
+import "NumeroUtil";
+
+fun main() {
+    println("=== Teste do Módulo NumeroUtil ===");
+    
+    // Criar números negativos
+    int n1 = negativo(10);
+    int n2 = negativo(5);
+    int p1 = 15;
+    
+    println("Números de teste:");
+    println("n1 = " + n1);       // -10
+    println("n2 = " + n2);       // -5
+    println("p1 = " + p1);       // 15
+    
+    // Testar verificação de negativos
+    println("\nVerificação de números negativos:");
+    println("ehNegativo(n1): " + ehNegativo(n1));   // true
+    println("ehNegativo(p1): " + ehNegativo(p1));   // false
+    
+    // Testar valor absoluto
+    println("\nValor absoluto:");
+    println("valorAbsoluto(n1): " + valorAbsoluto(n1));   // 10
+    println("valorAbsoluto(p1): " + valorAbsoluto(p1));   // 15
+    
+    // Testar inversão de sinal
+    println("\nInversão de sinal:");
+    println("inverterSinal(n1): " + inverterSinal(n1));   // 10
+    println("inverterSinal(p1): " + inverterSinal(p1));   // -15
+    
+    // Operações aritméticas com números negativos
+    println("\nOperações aritméticas:");
+    println("n1 + n2 = " + (n1 + n2));             // -15
+    println("p1 + n1 = " + (p1 + n1));             // 5
+    println("n1 * n2 = " + (n1 * n2));             // 50
+    println("p1 * n1 = " + (p1 * n1));             // -150
+    println("p1 / n2 = " + (p1 / n2));             // -3
+    
+    println("\n=== Teste concluído ===");
+}
+
+main(); 

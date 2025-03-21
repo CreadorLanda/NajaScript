@@ -1,0 +1,42 @@
+// Teste de números negativos
+importar "NajaPt";
+
+funcao principal() {
+    escreverln("=== Teste de Números Negativos ===");
+    
+    // Tentar usar números negativos diretamente (método original que não funciona)
+    // inteiro n1 = -5;  // Esta linha causaria erro
+    
+    // Solução 1: Usar subtração para criar números negativos
+    inteiro a = 5;
+    inteiro n1 = 0 - a;  // Criar -5 através de subtração
+    
+    escreverln("Valor negativo (0 - 5): " + n1);
+    
+    // Solução 2: Usar função para gerar números negativos
+    inteiro n2 = negativo(10);
+    escreverln("Valor negativo (negativo(10)): " + n2);
+    
+    // Testes com operações aritméticas
+    escreverln("\nTestes com operações aritméticas:");
+    escreverln("5 + (0 - 3) = " + (5 + (0 - 3)));
+    escreverln("(0 - 5) * 2 = " + ((0 - 5) * 2));
+    escreverln("10 / (0 - 2) = " + (10 / (0 - 2)));
+    
+    // Testes com variáveis
+    inteiro b = 7;
+    inteiro c = 0 - b;
+    escreverln("\nTestes com variáveis:");
+    escreverln("b = " + b);
+    escreverln("c = 0 - b = " + c);
+    escreverln("b + c = " + (b + c)); // Deve resultar em 0
+    
+    escreverln("\n=== Teste concluído ===");
+}
+
+// Função auxiliar para criar números negativos
+funcao negativo(inteiro n) {
+    retornar 0 - n;
+}
+
+principal(); 

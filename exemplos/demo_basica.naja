@@ -42,3 +42,5 @@ while (time() - start_time < 5) {  // Executa por 5 segundos
 print("Finalizando o jogo...");
 quitGame();
 print("Jogo finalizado!"); 
+
+

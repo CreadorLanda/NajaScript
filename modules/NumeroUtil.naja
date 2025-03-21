@@ -1,0 +1,60 @@
+// NumeroUtil - Módulo simplificado
+
+// Função para criar um número negativo
+fun negativo(n) {
+    return 0 - n;
+}
+
+// Função para verificar se um número é negativo
+fun ehNegativo(n) {
+    return n < 0;
+}
+
+// Função para calcular o valor absoluto
+fun valorAbsoluto(n) {
+    if (n < 0) {
+        return 0 - n;
+    }
+    return n;
+}
+
+// Função para inverter o sinal
+fun inverterSinal(n) {
+    return 0 - n;
+}
+
+/**
+ * Função para verificar se n1 é menor que n2
+ * Útil para comparações quando um ou ambos números são negativos
+ * @param n1 O primeiro número
+ * @param n2 O segundo número
+ * @return verdadeiro se n1 for menor que n2, falso caso contrário
+ */
+fun ehMenor(n1, n2) {
+    return n1 < n2;
+}
+
+/**
+ * Função para verificar se n1 é maior que n2
+ * Útil para comparações quando um ou ambos números são negativos
+ * @param n1 O primeiro número
+ * @param n2 O segundo número
+ * @return verdadeiro se n1 for maior que n2, falso caso contrário
+ */
+fun ehMaior(n1, n2) {
+    return n1 > n2;
+}
+
+// Exemplo de como usar este módulo:
+//
+// import "NumeroUtil";
+//
+// fun main() {
+//     int n = negativo(5);  // Cria -5
+//     
+//     if (ehNegativo(n)) {
+//         // Faça algo com o número negativo
+//     }
+//     
+//     int abs = valorAbsoluto(n);  // abs = 5
+// } 

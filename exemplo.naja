@@ -1,105 +1,59 @@
-// Exemplo de programa NajaScript
-// Este programa demonstra várias características da linguagem
+# Exemplo de código NajaScript
+# Este arquivo demonstra recursos da linguagem NajaScript
 
-// Declaração de variáveis
-int idade = 25;
-float altura = 1.75;
-string nome = "João";
-bool ativo = true;
+# Variáveis e constantes
+var nome = "NajaScript"
+const versao = 1.0
+var ativo = verdadeiro
 
-// Saída de dados
-println("Informações pessoais:");
-println("Nome: " + nome);
-println("Idade: " + idade);
-println("Altura: " + altura + "m");
-println("Ativo: " + ativo);
-
-// Estruturas condicionais
-if (idade > 18) {
-    println("Maior de idade");
-} else {
-    println("Menor de idade");
+# Função que imprime uma saudação
+funcao saudar(nome) {
+    imprimir("Olá, " + nome + "!")
+    imprimir("Bem-vindo ao NajaScript versão " + versao)
 }
 
-// Operador ternário
-string status = idade > 30 ? "Experiente" : "Novato";
-println("Status: " + status);
-
-// Loops
-println("\nContagem regressiva:");
-int contador = 5;
-while (contador > 0) {
-    println(contador);
-    contador = contador - 1;
+# Estrutura condicional
+se (ativo) {
+    saudar(nome)
+} senao {
+    imprimir("O sistema está desativado")
 }
 
-println("\nTabuada do 2:");
-for (int i = 1; i <= 5; i = i + 1) {
-    println("2 x " + i + " = " + (2 * i));
+# Loop com repetir
+var contador = 0
+repetir {
+    imprimir("Contagem: " + contador)
+    contador = contador + 1
+} ate (contador >= 5)
+
+# Lista e iteração
+var frutas = ["maçã", "banana", "laranja", "uva"]
+imprimir("\nLista de frutas:")
+para (var i = 0; i < comprimento(frutas); i = i + 1) {
+    imprimir(i + ": " + frutas[i])
 }
 
-// Função
-fun soma(int a, int b) {
-    return a + b;
+# Dicionário
+var pessoa = {
+    "nome": "Maria",
+    "idade": 30,
+    "cidade": "São Paulo"
 }
 
-// Chamada de função
-int resultado = soma(5, 3);
-println("\nResultado da soma: " + resultado);
-
-// Listas
-list lista = list(1, 2, 3, 4, 5);
-println("\nLista original: " + lista);
-lista.add(6);
-println("Lista após adicionar: " + lista);
-lista.remove(0);
-println("Lista após remover o primeiro item: " + lista);
-
-// Vetores (imutáveis)
-vecto vetor = vecto(10, 20, 30, 40, 50);
-println("\nVetor: " + vetor);
-println("Primeiro elemento do vetor: " + vetor.get(0));
-
-// Dicionário
-dict pessoa = dict();
-pessoa.add("nome", nome);
-pessoa.add("idade", idade);
-pessoa.add("altura", altura);
-pessoa.add("ativo", ativo);
-println("\nDicionário: " + pessoa);
-
-// Switch
-println("\nVerificando números:");
-int numero = 3;
-switch (numero) {
-    case 1:
-        println("Número é 1");
-        break;
-    case 2:
-        println("Número é 2");
-        break;
-    case 3:
-        println("Número é 3");
-        break;
-    default:
-        println("Outro número");
+imprimir("\nInformações da pessoa:")
+var chaves = obterChaves(pessoa)
+para (var i = 0; i < comprimento(chaves); i = i + 1) {
+    var chave = chaves[i]
+    imprimir(chave + ": " + pessoa[chave])
 }
 
-// For-in loop
-println("\nPercorrendo lista com for-in:");
-forin (item in lista) {
-    println("Item: " + item);
+# Tratamento de exceções
+imprimir("\nTestando tratamento de exceções:")
+tente {
+    var x = 10 / 0  # Isso causará um erro
+    imprimir("Este texto não será exibido")
+} capture (erro) {
+    imprimir("Ocorreu um erro: " + erro)
 }
 
-// Função recursiva
-fun fatorial(int n) {
-    if (n <= 1) {
-        return 1;
-    }
-    return n * fatorial(n - 1);
-}
-
-println("\nFatorial de 5: " + fatorial(5));
-
-// Programa concluído
-println("\nPrograma concluído."); 
+imprimir("\nFim do programa!") 

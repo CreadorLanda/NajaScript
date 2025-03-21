@@ -1,0 +1,3 @@
+// Script simples para teste de variável
+int x = 10;
+println("O valor de x é: " + x); 

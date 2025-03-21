@@ -15,14 +15,15 @@ class Environment:
             # Não permite redefinir constantes
             raise RuntimeError(f"Não é possível redefinir a constante '{name}'")
         
-        # Se for uma função, armazena separadamente
-        if callable(value):
+        # Se for uma função, armazena tanto no values quanto em functions
+        if callable(value) and not isinstance(value, (int, float, str, bool, list, dict)):
             self.functions[name] = value
+            self.values[name] = (value, is_const, is_flux)
         else:
             self.values[name] = (value, is_const, is_flux)
             
-            if is_const:
-                self.constants.add(name)
+        if is_const:
+            self.constants.add(name)
     
     def get(self, name):
         """Obtém o valor de uma variável pelo nome"""

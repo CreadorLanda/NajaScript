@@ -224,3 +224,4 @@ while (rodando) {
 
 // Finaliza o jogo
 quitGame(); 
+

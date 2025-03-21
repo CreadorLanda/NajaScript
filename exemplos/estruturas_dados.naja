@@ -1,21 +1,20 @@
 // Demonstração completa de estruturas de dados e repetições em NajaScript
+// Esta versão usa a sintaxe em inglês (if, for, while) em vez de português
 importar "NajaPt";
 
 funcao principal() {
     escreverln("=== Demonstração de Estruturas de Dados e Repetições em NajaScript ===");
     
-    //===========================================================
-    // 1. ESTRUTURAS DE REPETIÇÃO
-    //===========================================================
+ 
     escreverln("\n1. ESTRUTURAS DE REPETIÇÃO:");
     
     // For tradicional
     escreverln("\n  1.1 Loop 'para' (for):");
     escreverln("  Contando de 1 a 5:");
     
-    para (inteiro i = 1; i <= 5; i = i + 1) {
+    for (inteiro i = 1; i <= 5; i = i + 1) {
         escrever("    " + i);
-        se (i < 5) escrever(", ");
+        if (i < 5) escrever(", ");
     }
     escreverln("");
     
@@ -24,9 +23,9 @@ funcao principal() {
     escreverln("  Contando de 5 a 1 (regressivo):");
     
     inteiro contador = 5;
-    enquanto (contador > 0) {
+    while (contador > 0) {
         escrever("    " + contador);
-        se (contador > 1) escrever(", ");
+        if (contador > 1) escrever(", ");
         contador = contador - 1;
     }
     escreverln("");
@@ -36,11 +35,11 @@ funcao principal() {
     escreverln("  Gerando números pares até 10:");
     
     inteiro num = 2;
-    fazer {
+    do {
         escrever("    " + num);
-        se (num < 10) escrever(", ");
+        if (num < 10) escrever(", ");
         num = num + 2;
-    } enquanto (num <= 10);
+    } while (num <= 10);
     escreverln("");
     
     // ForIn com lista
@@ -48,7 +47,7 @@ funcao principal() {
     lista frutas = lista("Maçã", "Banana", "Uva", "Morango", "Abacaxi");
     escreverln("  Frutas na lista:");
     
-    paracada (item em frutas) {
+    for (item in frutas) {
         escreverln("    - " + item);
     }
     
@@ -89,7 +88,7 @@ funcao principal() {
     
     // Comprimento da lista
     escreverln("  Comprimento da lista:");
-    escreverln("    A lista 'numeros' tem " + comprimento(numeros) + " elementos");
+    escreverln("    A lista 'numeros' tem " + numeros.length() + " elementos");
     
     // Verificar se a lista está vazia
     escreverln("  Verificação de lista vazia:");
@@ -185,14 +184,14 @@ funcao principal() {
     // Mostrar informações de todos os alunos
     escreverln("\n  5.1 Lista de alunos cadastrados:");
     
-    paracada (aluno em alunos) {
+    for (aluno in alunos) {
         escreverln("    Matrícula: " + aluno.obter("matricula"));
         escreverln("    Nome: " + aluno.obter("nome"));
         
         // Calcular média das notas
         lista notas = aluno.obter("notas");
         decimal soma = 0;
-        paracada (nota em notas) {
+        for (nota in notas) {
             soma = soma + nota;
         }
         decimal media = soma / comprimento(notas);
@@ -200,9 +199,9 @@ funcao principal() {
         escreverln("    Média: " + media);
         
         // Verificar situação com base na média
-        se (media >= 7.0) {
+        if (media >= 7.0) {
             escreverln("    Situação: Aprovado");
-        } senao {
+        } else {
             escreverln("    Situação: Reprovado");
         }
         escreverln("");
@@ -212,9 +211,9 @@ funcao principal() {
     escreverln("  5.2 Busca de aluno por matrícula (A003):");
     dicionario alunoBuscado = buscarAlunoPorMatricula(alunos, "A003");
     
-    se (alunoBuscado != nulo) {
+    if (alunoBuscado != nulo) {
         escreverln("    Aluno encontrado: " + alunoBuscado.obter("nome"));
-    } senao {
+    } else {
         escreverln("    Aluno não encontrado.");
     }
     
@@ -223,8 +222,8 @@ funcao principal() {
 
 // Função auxiliar para buscar um aluno por matrícula
 funcao buscarAlunoPorMatricula(lista alunos, texto matricula) {
-    paracada (aluno em alunos) {
-        se (aluno.obter("matricula") == matricula) {
+    for (aluno in alunos) {
+        if (aluno.obter("matricula") == matricula) {
             retornar aluno;
         }
     }

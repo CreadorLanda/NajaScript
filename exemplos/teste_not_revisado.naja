@@ -1,0 +1,37 @@
+// Teste simplificado do operador NOT
+importar "NajaPt";
+
+funcao principal() {
+    escreverln("=== Teste do operador de negação ===");
+    
+    // Testando com booleanos
+    booleano v = verdadeiro;
+    booleano f = falso;
+    
+    escreverln("v = " + v);
+    escreverln("f = " + f);
+    
+    // Negação usando comparação com falso/verdadeiro
+    booleano negacaoV = (v == falso);
+    booleano negacaoF = (f == falso);
+    
+    escreverln("Negação de v (v == falso): " + negacaoV);
+    escreverln("Negação de f (f == falso): " + negacaoF);
+    
+    // Testando em condicionais
+    se (v == falso) {
+        escreverln("v negado é verdadeiro");
+    } senao {
+        escreverln("v negado é falso");
+    }
+    
+    se (f == falso) {
+        escreverln("f negado é verdadeiro");
+    } senao {
+        escreverln("f negado é falso");
+    }
+    
+    escreverln("=== Teste concluído ===");
+}
+
+principal(); 

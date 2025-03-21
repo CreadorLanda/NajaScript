@@ -1,0 +1,25 @@
+// Teste de operadores básicos
+importar "NajaPt";
+
+funcao principal() {
+    escreverln("Olá, mundo!");
+    escreverln("Testando operadores básicos");
+    
+    // Variáveis
+    booleano a = verdadeiro;
+    booleano b = verdadeiro;
+    
+    // Teste de operadores
+    escreverln("a = " + a);
+    escreverln("b = " + b);
+    escreverln("a && b = " + (a && b));
+    
+    // Teste de condicional
+    se (a && b) {
+        escreverln("a && b é verdadeiro");
+    } senao {
+        escreverln("a && b é falso");
+    }
+}
+
+principal(); 

@@ -1,0 +1,26 @@
+// Teste simples de dicionários em NajaScript
+// Sem importar o módulo NajaPt para manter simples
+
+// Função principal
+fun main() {
+    println("=== Teste de Dicionários ===");
+    
+    // Criar um dicionário vazio
+    dict pessoa = {};
+    
+    // Adicionar elementos
+    pessoa.add("nome", "João");
+    pessoa.add("idade", 30);
+    pessoa.add("profissao", "Programador");
+    
+    // Exibir elementos
+    println("Nome: " + pessoa.get("nome"));
+    println("Idade: " + pessoa.get("idade"));
+    println("Profissão: " + pessoa.get("profissao"));
+    
+    // Verificar se funciona
+    println("\nTeste concluído!");
+}
+
+// Executar a função principal
+main(); 

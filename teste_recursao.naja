@@ -1,0 +1,24 @@
+// Script para testar função recursiva
+
+// Função para calcular o fatorial de um número
+fun fatorial(n) {
+    if (n <= 1) {
+        return 1;
+    }
+    return n * fatorial(n - 1);
+}
+
+// Função principal
+fun main() {
+    println("Teste de função recursiva - Fatorial");
+    
+    // Testa o fatorial com diferentes valores
+    println("Fatorial de 1: " + fatorial(1));
+    println("Fatorial de 3: " + fatorial(3));
+    println("Fatorial de 5: " + fatorial(5));
+    println("Fatorial de 7: " + fatorial(7));
+    println("Fatorial de 10: " + fatorial(10));
+}
+
+// Chamada da função principal
+main(); 

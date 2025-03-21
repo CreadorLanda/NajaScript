@@ -1,0 +1,98 @@
+// Teste completo de entrada e saída em NajaScript
+// Este programa demonstra várias formas de trabalhar com dados
+
+// Importa o módulo para suporte em português (opcional)
+import "NajaPt";
+
+// Função principal
+fun main() {
+    // Cabeçalho
+    println("=== Teste de Entrada e Saída em NajaScript ===");
+    
+    // ---- Saída básica ----
+    println("\n--- DEMONSTRAÇÃO DE SAÍDA ---");
+    
+    // 1. Print simples (sem quebra de linha)
+    print("Mensagem sem quebra de linha... ");
+    print("continuação na mesma linha!\n");
+    
+    // 2. Print com variáveis
+    string nome = "Ana";
+    int idade = 28;
+    println("Nome: " + nome + ", Idade: " + idade);
+    
+    // 3. Números e operações matemáticas
+    float altura = 1.75;
+    float peso = 68.5;
+    float imc = peso / (altura * altura);
+    println("Altura: " + altura + "m, Peso: " + peso + "kg");
+    println("IMC calculado: " + imc);
+    
+    // 4. Booleanos
+    bool tem_pet = true;
+    print("Tem animal de estimação? ");
+    if (tem_pet) {
+        println("Sim");
+    } else {
+        println("Não");
+    }
+    
+    // 5. Listas
+    list frutas = list();
+    frutas.add("Maçã");
+    frutas.add("Banana");
+    frutas.add("Laranja");
+    frutas.add("Uva");
+    
+    println("\nLista de frutas:");
+    for (int i = 0; i < frutas.length(); i = i + 1) {
+        println(" - " + frutas.get(i));
+    }
+    
+    // 6. Dicionários
+    dict pessoa = {};
+    pessoa.add("nome", "Carlos");
+    pessoa.add("idade", 32);
+    pessoa.add("profissao", "Engenheiro");
+    
+    println("\nInformações da pessoa:");
+    println(" - Nome: " + pessoa.get("nome"));
+    println(" - Idade: " + pessoa.get("idade"));
+    println(" - Profissão: " + pessoa.get("profissao"));
+    
+    // 7. Formatação personalizada
+    int dinheiro = 1500;
+    println("\nSaldo: R$ " + dinheiro + ",00");
+    
+    // 8. Manipulação de strings
+    string texto = "NajaScript é uma linguagem incrível!";
+    println("\nTexto original: " + texto);
+    
+    // ---- Demonstração de leitura (simulada) ----
+    println("\n--- DEMONSTRAÇÃO DE ENTRADA (SIMULADA) ---");
+    
+    // Como não temos entrada real, vamos simular algumas respostas
+    string resposta_simulada = "Maria Silva";
+    println("Digite seu nome completo: [simulado] " + resposta_simulada);
+    
+    int idade_simulada = 25;
+    println("Digite sua idade: [simulado] " + idade_simulada);
+    
+    println("\nDados recebidos:");
+    println("Nome: " + resposta_simulada);
+    println("Idade: " + idade_simulada);
+    
+    // ---- Demonstração de escrita em arquivo (simulada) ----
+    println("\n--- DEMONSTRAÇÃO DE ARQUIVOS (SIMULADA) ---");
+    println("Escrevendo dados em 'dados.txt'... [simulado]");
+    println("Dados gravados com sucesso! [simulado]");
+    
+    println("\nLendo dados de 'dados.txt'... [simulado]");
+    println("Conteúdo do arquivo: 'Nome: Maria Silva, Idade: 25' [simulado]");
+    
+    // Finalização
+    println("\n=== Teste de E/S Concluído ===");
+}
+
+// Executar a função principal
+main(); 

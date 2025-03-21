@@ -40,6 +40,7 @@ while (contador < 5) {
 
 // Teste de loop for
 println("\n=== Teste de Loop For ===");
+
 for (int i = 0; i < 5; i = i + 1) {
     println("i =", i);
 }

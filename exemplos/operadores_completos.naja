@@ -2,13 +2,12 @@
 importar "NajaPt";
 
 funcao principal() {
-    escreverln("=== Demonstração de Operadores em NajaScript ===");
-    
+escreverln("=== Demonstração de Operadoreem NajaScript ==="); 
     // Valores para teste
     inteiro a = 5;
     inteiro b = 10;
     inteiro c = 15;
-    booleano valorVerdadeiro = verdadeiro;
+    booleano valorVerdadeiro = verdadeiro
     booleano valorFalso = falso;
     
     // Operadores de comparação
