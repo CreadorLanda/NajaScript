@@ -1,0 +1,248 @@
+{
+  "Print": {
+    "prefix": "print",
+    "body": [
+      "print(${1:message});"
+    ],
+    "description": "Print a message to the console"
+  },
+  "Print Line": {
+    "prefix": "println",
+    "body": [
+      "println(${1:message});"
+    ],
+    "description": "Print a message to the console with line break"
+  },
+  "Input": {
+    "prefix": "input",
+    "body": [
+      "input(${1:prompt});"
+    ],
+    "description": "Get user input from console"
+  },
+  "Function": {
+    "prefix": "fun",
+    "body": [
+      "fun ${1:functionName}(${2:parameters}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Create a new function"
+  },
+  "Async Function": {
+    "prefix": "async fun",
+    "body": [
+      "async fun ${1:functionName}(${2:parameters}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Create a new async function"
+  },
+  "Class": {
+    "prefix": "class",
+    "body": [
+      "class ${1:ClassName} {",
+      "\tconstructor(${2:parameters}) {",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "Create a new class"
+  },
+  "Class with Inheritance": {
+    "prefix": "class ext",
+    "body": [
+      "class ${1:ClassName} extends ${2:ParentClass} {",
+      "\tconstructor(${3:parameters}) {",
+      "\t\tsuper(${4:parentArgs});",
+      "\t\t$0",
+      "\t}",
+      "}"
+    ],
+    "description": "Create a new class with inheritance"
+  },
+  "Interface": {
+    "prefix": "interface",
+    "body": [
+      "interface ${1:InterfaceName} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Create a new interface"
+  },
+  "Enum": {
+    "prefix": "enum",
+    "body": [
+      "enum ${1:EnumName} {",
+      "\t${2:VALUE1},",
+      "\t${3:VALUE2}",
+      "}"
+    ],
+    "description": "Create a new enum"
+  },
+  "If": {
+    "prefix": "if",
+    "body": [
+      "if (${1:condition}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Create an if conditional"
+  },
+  "If/Else": {
+    "prefix": "ifelse",
+    "body": [
+      "if (${1:condition}) {",
+      "\t$0",
+      "} else {",
+      "\t$1",
+      "}"
+    ],
+    "description": "Create an if/else conditional"
+  },
+  "If/Else If/Else": {
+    "prefix": "ifelseif",
+    "body": [
+      "if (${1:condition1}) {",
+      "\t$0",
+      "} else if (${2:condition2}) {",
+      "\t$1",
+      "} else {",
+      "\t$2",
+      "}"
+    ],
+    "description": "Create an if/else if/else conditional"
+  },
+  "While": {
+    "prefix": "while",
+    "body": [
+      "while (${1:condition}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Create a while loop"
+  },
+  "Do/While": {
+    "prefix": "dowhile",
+    "body": [
+      "do {",
+      "\t$0",
+      "} while (${1:condition});"
+    ],
+    "description": "Create a do/while loop"
+  },
+  "For": {
+    "prefix": "for",
+    "body": [
+      "for (${1:initialization}; ${2:condition}; ${3:increment}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Create a for loop"
+  },
+  "For In": {
+    "prefix": "forin",
+    "body": [
+      "forin (${1:item} in ${2:collection}) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Create a for each loop"
+  },
+  "Switch": {
+    "prefix": "switch",
+    "body": [
+      "switch (${1:expression}) {",
+      "\tcase ${2:value}:",
+      "\t\t$0",
+      "\t\tbreak;",
+      "\tdefault:",
+      "\t\t$1",
+      "\t\tbreak;",
+      "}"
+    ],
+    "description": "Create a switch/case structure"
+  },
+  "Try/Catch": {
+    "prefix": "trycatch",
+    "body": [
+      "try {",
+      "\t$0",
+      "} catch (${1:error}) {",
+      "\t$1",
+      "}"
+    ],
+    "description": "Create a try/catch structure"
+  },
+  "Try/Catch/Finally": {
+    "prefix": "trycatchfinally",
+    "body": [
+      "try {",
+      "\t$0",
+      "} catch (${1:error}) {",
+      "\t$1",
+      "} finally {",
+      "\t$2",
+      "}"
+    ],
+    "description": "Create a try/catch/finally structure"
+  },
+  "Vector": {
+    "prefix": "vector",
+    "body": [
+      "vector(${1:elements})"
+    ],
+    "description": "Create an immutable vector"
+  },
+  "List": {
+    "prefix": "list",
+    "body": [
+      "list(${1:elements})"
+    ],
+    "description": "Create a list"
+  },
+  "Dictionary": {
+    "prefix": "dict",
+    "body": [
+      "dict(${1:key}: ${2:value})"
+    ],
+    "description": "Create a dictionary"
+  },
+  "Module": {
+    "prefix": "module",
+    "body": [
+      "module ${1:moduleName} {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Create a new module"
+  },
+  "Import": {
+    "prefix": "import",
+    "body": [
+      "import '${1:path}';"
+    ],
+    "description": "Import a module"
+  },
+  "Import As": {
+    "prefix": "importas",
+    "body": [
+      "import ${1:module} as ${2:alias} from '${3:path}';"
+    ],
+    "description": "Import a module with alias"
+  },
+  "Export": {
+    "prefix": "export",
+    "body": [
+      "export ${1:item};"
+    ],
+    "description": "Export an item"
+  },
+  "Default Export": {
+    "prefix": "exportdefault",
+    "body": [
+      "export default ${1:item};"
+    ],
+    "description": "Export an item as default"
+  }
+} 

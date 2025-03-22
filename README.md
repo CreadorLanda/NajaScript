@@ -1,87 +1,110 @@
-# NajaScript Editor & Interpretador
+# NajaScript
 
-Este pacote inclui um editor moderno para a linguagem NajaScript com recursos avançados e interface amigável, além do interpretador para execução de scripts.
-
-## Recursos principais
-
-- **Editor completo** com tema escuro e interface moderna
-  - Destacamento de sintaxe com cores distintas
-  - Sistema de abas para editar múltiplos arquivos
-  - Explorador de projetos para navegar facilmente
-  - Autocompletar para palavras-chave
-  - Execução integrada de scripts
-
-- **Interpretador independente** para execução via linha de comando
-  - Execute scripts NajaScript diretamente do terminal
-  - Integração com o sistema operacional para associação de arquivos .naja
-  - Documentação e exemplos incluídos
+NajaScript é uma linguagem de programação moderna e fácil de aprender, com suporte a programação orientada a objetos, módulos e mais.
 
 ## Instalação
 
-### Opção 1: Instalador (recomendado)
+### Requisitos
+- Python 3.13 ou superior
+- Windows 10 ou superior
 
-1. Baixe o arquivo `NajaScriptEditor_Setup.exe`
-2. Execute o instalador e siga as instruções
-3. Durante a instalação, você pode optar por:
-   - Associar arquivos .naja ao interpretador
-   - Adicionar o interpretador ao PATH do sistema
-4. Após a instalação, o editor e o interpretador estarão disponíveis através do Menu Iniciar
+### Instalador
+1. Baixe o arquivo `NajaScript_Setup.exe` da pasta `Instalador`
+2. Execute o instalador
+3. Siga as instruções na tela
+4. O NajaScript será instalado com um atalho no menu Iniciar e na área de trabalho
 
-### Opção 2: Versão portátil
+### Instalação Manual
+1. Clone ou baixe este repositório
+2. Certifique-se de que o Python 3.13 está instalado
+3. Execute `naja.bat` para iniciar o REPL
 
-1. Baixe os arquivos `NajaScriptEditor.exe` e `najascript.exe` da pasta `dist`
-2. Coloque-os em uma pasta junto com arquivos de exemplo (`.naja`)
-3. Execute os executáveis diretamente sem necessidade de instalação
+## Uso
 
-## Usando o Editor
+### REPL (Read-Eval-Print Loop)
+O REPL do NajaScript permite que você execute código interativamente. Para iniciar:
 
-1. Abra o NajaScript Editor
-2. Crie um novo arquivo ou abra um exemplo existente
-3. Escreva seu código NajaScript
-4. Salve o arquivo com a extensão `.naja`
-5. Execute o script usando o botão "Executar" ou a tecla F5
+1. Abra o NajaScript pelo menu Iniciar ou área de trabalho
+2. Ou execute `naja.bat` na pasta do projeto
 
-## Usando o Interpretador (linha de comando)
+### Comandos do REPL
+- `sair()` - Encerra o REPL
+- `ajuda()` - Mostra os comandos disponíveis
+- `limpar()` - Limpa a tela
+- `historico()` - Mostra o histórico de comandos
+- `reset()` - Reseta o ambiente de execução
 
-```bash
-# Executar um script
-najascript caminho/para/script.naja
-
-# Obter ajuda
-najascript --help
-
-# Verificar a versão
-najascript --version
-```
-
-## Exemplo de código
+### Exemplos de Código
 
 ```naja
-# Exemplo simples de NajaScript
-var mensagem = "Olá, mundo!"
-imprimir(mensagem)
+// Variáveis
+int idade = 25;
+float altura = 1.75;
+string nome = "João";
 
-para (var i = 1; i <= 5; i = i + 1) {
-    imprimir("Contagem: " + i)
+// Funções
+fun calcularIMC(float peso, float altura) {
+    return peso / (altura * altura);
 }
+
+// Classes
+class Pessoa {
+    private string nome;
+    public int idade;
+    
+    constructor(string nome, int idade) {
+        this.nome = nome;
+        this.idade = idade;
+    }
+    
+    public fun getNome() {
+        return this.nome;
+    }
+}
+
+// Estruturas de Controle
+if (idade >= 18) {
+    print("Maior de idade");
+} else {
+    print("Menor de idade");
+}
+
+// Loops
+for (int i = 0; i < 5; i++) {
+    print(i);
+}
+
+// Listas e Dicionários
+list numeros = [1, 2, 3, 4, 5];
+dict pessoa = {
+    "nome": "Maria",
+    "idade": 30
+};
 ```
 
-## Recursos adicionais
+### Executando Arquivos
+Para executar um arquivo .naja:
 
-- Documentação da linguagem NajaScript
-- Exemplos e tutoriais
-- Módulos e bibliotecas
+```bash
+python najascript.py arquivo.naja
+```
 
-## Desenvolvimento
+## Recursos
 
-O NajaScript Editor e o interpretador foram desenvolvidos usando Python. Para contribuir com o desenvolvimento:
+- Sintaxe moderna e intuitiva
+- Suporte a programação orientada a objetos
+- Sistema de módulos
+- Tipagem estática opcional
+- Estruturas de dados nativas (listas, dicionários, vetores)
+- Tratamento de exceções
+- Suporte a programação assíncrona
+- REPL interativo
 
-1. Clone o repositório
-2. Instale as dependências: `pip install -r requirements.txt`
-3. Execute `python executar_editor_melhorado.py` para testar o editor
-4. Execute `python najascript.py arquivo.naja` para testar o interpretador 
+## Contribuindo
+
+Contribuições são bem-vindas! Por favor, leia o arquivo CONTRIBUTING.md para detalhes sobre nosso código de conduta e o processo para enviar pull requests.
 
 ## Licença
 
-Este projeto é licenciado sob a licença MIT.
+Este projeto está licenciado sob a licença MIT - veja o arquivo LICENSE para detalhes.
 

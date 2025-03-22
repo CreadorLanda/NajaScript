@@ -1,81 +1,72 @@
-#define MyAppName "NajaScript Editor"
-#define MyAppVersion "1.0"
-#define MyAppPublisher "NajaScript"
-#define MyAppURL "https://github.com/seu-usuario/najascript"
-#define MyAppExeName "NajaScriptEditor.exe"
-#define MyInterpreterExeName "najascript.exe"
+#define MyAppName "NajaScript"
+#define MyAppVersion "0.1"
+#define MyAppPublisher "NajaScript Team"
+#define MyAppExeName "naja_repl.py"
 
 [Setup]
-; NOTE: The value of AppId uniquely identifies this application.
-; Do not use the same AppId value in installers for other applications.
-AppId={{0BF56438-9F2D-4E8A-B3D2-0A84D754E328}
+AppId={{A1B2C3D4-E5F6-4747-8899-AABBCCDDEEFF}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
-AppPublisherURL={#MyAppURL}
-AppSupportURL={#MyAppURL}
-AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\{#MyAppName}
+DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
-OutputDir=.\Instalador
-OutputBaseFilename=NajaScriptEditor_Setup
-SetupIconFile=icon.ico
+AllowNoIcons=yes
+OutputDir=Instalador
+OutputBaseFilename=NajaScript_Setup
 Compression=lzma
 SolidCompression=yes
-PrivilegesRequired=admin
-ChangesEnvironment=yes
+WizardStyle=modern
 
 [Languages]
 Name: "brazilianportuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
-Name: "associatenaja"; Description: "Associar arquivos .naja ao interpretador"; GroupDescription: "Associações de arquivo"
-Name: "addtopath"; Description: "Adicionar o interpretador ao PATH do sistema"; GroupDescription: "Opções avançadas"
 
 [Files]
-Source: "dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "dist\{#MyInterpreterExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "exemplo.naja"; DestDir: "{app}"; Flags: ignoreversion
-Source: "icon.ico"; DestDir: "{app}"; Flags: ignoreversion
-; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+Source: "naja_repl.py"; DestDir: "{app}"; Flags: ignoreversion
+Source: "najascript.py"; DestDir: "{app}"; Flags: ignoreversion
+Source: "lexer.py"; DestDir: "{app}"; Flags: ignoreversion
+Source: "parser_naja.py"; DestDir: "{app}"; Flags: ignoreversion
+Source: "interpreter.py"; DestDir: "{app}"; Flags: ignoreversion
+Source: "ast_nodes.py"; DestDir: "{app}"; Flags: ignoreversion
+Source: "naja_bytecode.py"; DestDir: "{app}"; Flags: ignoreversion
+Source: "environment.py"; DestDir: "{app}"; Flags: ignoreversion
+Source: "modules\*"; DestDir: "{app}\modules"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "requirements.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "post_install.py"; DestDir: "{app}"; Flags: ignoreversion
+Source: "naja.bat"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\icon.ico"
-Name: "{group}\Interpretador NajaScript"; Filename: "{app}\{#MyInterpreterExeName}"; IconFilename: "{app}\icon.ico"; Parameters: "--help"
-Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; IconFilename: "{app}\icon.ico"
-
-[Registry]
-Root: HKCR; Subkey: ".naja"; ValueType: string; ValueName: ""; ValueData: "NajaScriptFile"; Tasks: associatenaja; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "NajaScriptFile"; ValueType: string; ValueName: ""; ValueData: "Arquivo NajaScript"; Tasks: associatenaja; Flags: uninsdeletekey
-Root: HKCR; Subkey: "NajaScriptFile\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\icon.ico,0"; Tasks: associatenaja
-Root: HKCR; Subkey: "NajaScriptFile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyInterpreterExeName}"" ""%1"""; Tasks: associatenaja
-Root: HKCR; Subkey: "NajaScriptFile\shell\edit"; ValueType: string; ValueName: ""; ValueData: "Editar com NajaScript Editor"; Tasks: associatenaja
-Root: HKCR; Subkey: "NajaScriptFile\shell\edit\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExeName}"" ""%1"""; Tasks: associatenaja
+Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\naja.bat"; WorkingDir: "{app}"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\naja.bat"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{sys}\cmd.exe"; Parameters: "/c python -m venv ""{app}\venv"""; Description: "Criando ambiente virtual"; Flags: runhidden
+Filename: "{app}\venv\Scripts\python.exe"; Parameters: """{app}\post_install.py"""; Description: "Configurando ambiente"; Flags: runhidden
+Filename: "{app}\naja.bat"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [Code]
-procedure CurStepChanged(CurStep: TSetupStep);
+function InitializeSetup(): Boolean;
 var
-  Path, NewPath: String;
-  AppDir: String;
+  PythonPath: String;
 begin
-  if CurStep = ssPostInstall then
+  Result := True;
+  
+  // Verifica se o Python está instalado
+  if RegQueryStringValue(HKEY_LOCAL_MACHINE,
+    'SOFTWARE\Python\PythonCore\3.13\InstallPath',
+    '', PythonPath) then
   begin
-    if IsTaskSelected('addtopath') then
-    begin
-      AppDir := ExpandConstant('{app}');
-      RegQueryStringValue(HKLM, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment', 'Path', Path);
-      NewPath := Path;
-      if Pos(AppDir, NewPath) = 0 then
-      begin
-        if Copy(NewPath, Length(NewPath), 1) <> ';' then
-          NewPath := NewPath + ';';
-        NewPath := NewPath + AppDir;
-        RegWriteStringValue(HKLM, 'SYSTEM\CurrentControlSet\Control\Session Manager\Environment', 'Path', NewPath);
-      end;
-    end;
+    Result := True;
+  end
+  else
+  begin
+    MsgBox('Python 3.13 não está instalado. Por favor, instale o Python 3.13 antes de continuar.',
+      mbError, MB_OK);
+    Result := False;
   end;
-end; 
+end;
+
+[UninstallDelete]
+Type: filesandordirs; Name: "{app}" 

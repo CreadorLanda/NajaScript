@@ -1,12 +1,34 @@
-// Teste simples sem importações
-print("Olá, mundo!");
+// Teste simples da linguagem NajaScript
 
-// Variáveis
-int x = 10;
-int y = 20;
-int soma = x + y;
+// Variáveis básicas
+int idade = 25;
+float altura = 1.75;
+string nome = "João";
 
-// Imprime o resultado
-print("A soma de " + toString(x) + " e " + toString(y) + " é " + toString(soma));
+// Função simples
+fun calcularIMC(float peso, float altura) {
+    return peso / (altura * altura);
+}
+
+// Função principal
+fun main() {
+    // Teste de print
+    print("=== Teste Simples NajaScript ===");
+    
+    // Exibir informações
+    print("Nome: " + nome);
+    print("Idade: " + idade);
+    print("Altura: " + altura);
+    
+    // Calcular IMC
+    float peso = 70.0;
+    float imc = calcularIMC(peso, altura);
+    print("IMC: " + imc);
+    
+    print("=== Teste Concluído ===");
+}
+
+// Executar o programa
+main();
 
 

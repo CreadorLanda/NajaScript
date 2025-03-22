@@ -1,119 +1,158 @@
-// Teste completo de NajaScript em português
-importar "NajaPt";
+// Teste completo da linguagem NajaScript
+// Este arquivo testa todas as funcionalidades principais
 
-// Declaração de variáveis
-inteiro idade = 25;
-decimal altura = 1.75;
-texto nome = "João";
-booleano ativo = verdadeiro;
+// 1. Imports e Módulos
+import 'math';
+import 'string' as str;
 
-// Função para calcular IMC
-funcao calcularIMC(peso, altura) {
-    retornar peso / (altura * altura);
+// 2. Tipos e Variáveis
+int idade = 25;
+float altura = 1.75;
+string nome = "João";
+bool ativo = true;
+dict pessoa = {
+    "nome": "Maria",
+    "idade": 30
+};
+list numeros = [1, 2, 3, 4, 5];
+vector cores = ["vermelho", "azul", "verde"];
+
+// 3. Funções
+fun calcularIMC(float peso, float altura) {
+    return peso / (altura * altura);
 }
 
-// Função para classificar IMC
-funcao classificarIMC(imc) {
-    se (imc < 18.5) {
-        retornar "Abaixo do peso";
-    } senao {
-        se (imc < 25) {
-            retornar "Peso normal";
-        } senao {
-            se (imc < 30) {
-                retornar "Sobrepeso";
-            } senao {
-                retornar "Obesidade";
-            }
-        }
+async fun buscarDados(string url) {
+    // Simulação de chamada assíncrona
+    await delay(1000);
+    return {"status": "ok", "data": "dados"};
+}
+
+// 4. Classes
+class Pessoa {
+    private string nome;
+    public int idade;
+    protected float altura;
+
+    constructor(string nome, int idade, float altura) {
+        this.nome = nome;
+        this.idade = idade;
+        this.altura = altura;
+    }
+
+    public fun getNome() {
+        return this.nome;
     }
 }
 
-// Função principal
-funcao principal() {
-    escreverln("=== Teste Completo NajaScript em Português ===");
-    
-    // Exibir informações iniciais
-    escreverln("\nInformações da pessoa:");
-    escreverln("Nome: " + nome);
-    escreverln("Idade: " + idade + " anos");
-    escreverln("Altura: " + altura + " metros");
-    escreverln("Ativo: " + ativo);
-    
-    // Calcular e classificar IMC
-    decimal peso = 70.5;
-    
-    // Calcular IMC diretamente
-    decimal imc = peso / (altura * altura);
-    
-    // Classificar IMC
-    texto classificacao = "";
-    se (imc < 18.5) {
-        classificacao = "Abaixo do peso";
-    } senao {
-        se (imc < 25) {
-            classificacao = "Peso normal";
-        } senao {
-            se (imc < 30) {
-                classificacao = "Sobrepeso";
-            } senao {
-                classificacao = "Obesidade";
-            }
-        }
-    }
-    
-    escreverln("\nCálculo de IMC:");
-    escreverln("Peso: " + peso + " kg");
-    escreverln("IMC: " + imc);
-    escreverln("Classificação: " + classificacao);
-    
-    // Demonstração de estruturas de controle
-    escreverln("\nContagem regressiva:");
-    para (inteiro i = 5; i > 0; i = i - 1) {
-        escreverln("  " + i);
-    }
-    
-    // Demonstração de lista
-    escreverln("\nLista de frutas:");
-    lista frutas = lista();
-    frutas.adicionar("maçã");
-    frutas.adicionar("banana");
-    frutas.adicionar("laranja");
-    
-    inteiro i = 0;
-    enquanto (i < 3) {
-        escreverln("  - " + frutas.obter(i));
-        i = i + 1;
-    }
-    
-    // Adicionar elemento à lista
-    frutas.adicionar("uva");
-    escreverln("\nLista após adicionar uva:");
-    
-    i = 0;
-    enquanto (i < 4) {
-        escreverln("  - " + frutas.obter(i));
-        i = i + 1;
-    }
-    
-    // Demonstração de dicionário
-    escreverln("\nDicionário de pessoa:");
-    dicionario pessoa = {};
-    pessoa.adicionar("nome", nome);
-    pessoa.adicionar("idade", idade);
-    pessoa.adicionar("altura", altura);
-    pessoa.adicionar("ativo", ativo);
-    
-    escreverln("  Nome: " + pessoa.obter("nome"));
-    escreverln("  Idade: " + pessoa.obter("idade"));
-    
-    // Adicionar elemento ao dicionário
-    pessoa.adicionar("peso", peso);
-    escreverln("\nDicionário após adicionar peso:");
-    escreverln("  Peso: " + pessoa.obter("peso"));
-    
-    escreverln("\n=== Teste Concluído com Sucesso! ===");
+// 5. Interface
+interface Animal {
+    fun fazerSom();
+    fun mover();
 }
 
-// Chamar a função principal
-principal(); 
+// 6. Enum
+enum TipoUsuario {
+    ADMIN,
+    USUARIO,
+    CONVIDADO
+}
+
+// 7. Estruturas de Controle
+fun verificarIdade(int idade) {
+    if (idade >= 18) {
+        print("Maior de idade");
+    } else if (idade >= 12) {
+        print("Adolescente");
+    } else {
+        print("Criança");
+    }
+}
+
+// 8. Loops
+fun imprimirNumeros() {
+    // For
+    for (int i = 0; i < 5; i++) {
+        print(i);
+    }
+
+    // While
+    int contador = 0;
+    while (contador < 3) {
+        print(contador);
+        contador++;
+    }
+
+    // Do/While
+    do {
+        print("Executando...");
+    } while (false);
+
+    // For In
+    forin (numero in numeros) {
+        print(numero);
+    }
+}
+
+// 9. Switch/Case
+fun verificarTipo(TipoUsuario tipo) {
+    switch (tipo) {
+        case ADMIN:
+            print("Acesso total");
+            break;
+        case USUARIO:
+            print("Acesso limitado");
+            break;
+        case CONVIDADO:
+            print("Acesso básico");
+            break;
+        default:
+            print("Tipo desconhecido");
+            break;
+    }
+}
+
+// 10. Try/Catch
+fun dividir(int a, int b) {
+    try {
+        return a / b;
+    } catch (error) {
+        print("Erro na divisão: " + error);
+        return 0;
+    } finally {
+        print("Operação finalizada");
+    }
+}
+
+// 11. Função Principal
+fun main() {
+    // Teste de entrada/saída
+    string nome = input("Digite seu nome: ");
+    println("Olá, " + nome + "!");
+
+    // Teste de funções
+    float imc = calcularIMC(70.0, 1.75);
+    print("IMC: " + imc);
+
+    // Teste de classes
+    Pessoa pessoa = new Pessoa("Ana", 25, 1.65);
+    print(pessoa.getNome());
+
+    // Teste de estruturas de controle
+    verificarIdade(20);
+    imprimirNumeros();
+    verificarTipo(TipoUsuario.ADMIN);
+
+    // Teste de tratamento de erros
+    int resultado = dividir(10, 0);
+
+    // Teste de funções assíncronas
+    async fun testarAsync() {
+        dict dados = await buscarDados("https://api.exemplo.com");
+        print(dados);
+    }
+    testarAsync();
+}
+
+// Executar o programa
+main(); 

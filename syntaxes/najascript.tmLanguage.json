@@ -1,0 +1,77 @@
+{
+  "name": "NajaScript",
+  "scopeName": "source.najascript",
+  "patterns": [
+    {
+      "name": "comment.line.double-slash",
+      "match": "//.*$"
+    },
+    {
+      "name": "comment.block",
+      "begin": "/\\*",
+      "end": "\\*/"
+    },
+    {
+      "name": "string.quoted.double",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape",
+          "match": "\\\\."
+        }
+      ]
+    },
+    {
+      "name": "string.quoted.single",
+      "begin": "'",
+      "end": "'",
+      "patterns": [
+        {
+          "name": "constant.character.escape",
+          "match": "\\\\."
+        }
+      ]
+    },
+    {
+      "name": "constant.numeric",
+      "match": "\\b\\d+(\\.\\d+)?\\b"
+    },
+    {
+      "name": "keyword.control",
+      "match": "\\b(if|else|elif|for|forin|while|do|switch|case|default|break|continue|return|import|from|as)\\b"
+    },
+    {
+      "name": "keyword.operator",
+      "match": "\\b(and|or|not|in|is|isnot|instanceof|typeof)\\b"
+    },
+    {
+      "name": "keyword.other",
+      "match": "\\b(true|false|null|this|super|const|fun|class|constructor|extends|implements|interface|enum|module|export|default|async|await|yield|defer|try|catch|finally|throw|raise|assert|debugger|with|using)\\b"
+    },
+    {
+      "name": "storage.type",
+      "match": "\\b(int|float|string|bool|dict|void|any|flux|vecto|list|type|number|object|array|map|set|symbol|regexp|date|error|function|undefined|nan|infinity)\\b"
+    },
+    {
+      "name": "storage.modifier",
+      "match": "\\b(public|private|protected|static|final|abstract|virtual|override|sealed|readonly|volatile|transient|synchronized|native|strictfp)\\b"
+    },
+    {
+      "name": "variable.other",
+      "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+    },
+    {
+      "name": "support.function",
+      "match": "\\b(print|println|input|parseInt|parseFloat|toString|toFixed|toPrecision|toExponential|charAt|charCodeAt|indexOf|lastIndexOf|substring|substr|slice|split|join|replace|replaceAll|trim|toLowerCase|toUpperCase|concat|push|pop|shift|unshift|splice|sort|reverse|map|filter|reduce|forEach|every|some|find|findIndex|includes|keys|values|entries|has|add|delete|clear|size|get|set|hasOwnProperty|isPrototypeOf|propertyIsEnumerable|toLocaleString|valueOf)\\b"
+    },
+    {
+      "name": "support.constant",
+      "match": "\\b(PI|E|LN2|LN10|LOG2E|LOG10E|SQRT1_2|SQRT2|MAX_VALUE|MIN_VALUE|MAX_SAFE_INTEGER|MIN_SAFE_INTEGER|EPSILON|POSITIVE_INFINITY|NEGATIVE_INFINITY)\\b"
+    },
+    {
+      "name": "support.class",
+      "match": "\\b(Object|Array|String|Number|Boolean|Symbol|Function|Date|RegExp|Error|EvalError|RangeError|ReferenceError|SyntaxError|TypeError|URIError|Math|JSON|Promise|Proxy|Reflect|Map|Set|WeakMap|WeakSet|Int8Array|Uint8Array|Uint8ClampedArray|Int16Array|Uint16Array|Int32Array|Uint32Array|Float32Array|Float64Array|BigInt64Array|BigUint64Array|DataView|ArrayBuffer)\\b"
+    }
+  ]
+} 
