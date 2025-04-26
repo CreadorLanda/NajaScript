@@ -1,0 +1,33 @@
+// Test program for the package manager
+
+// Import the MathUtils package
+import "MathUtils";
+
+fun main() {
+    println("=== Testing MathUtils Package ===");
+    
+    // Display package info
+    println(MathUtils.info());
+    
+    // Test basic operations
+    println("\nBasic Operations:");
+    println("5 + 3 = " + MathUtils.add(5, 3));
+    println("10 - 4 = " + MathUtils.subtract(10, 4));
+    println("6 * 7 = " + MathUtils.multiply(6, 7));
+    println("10 / 3 = " + MathUtils.divide(10, 3));
+    
+    // Test advanced operations
+    println("\nAdvanced Operations:");
+    println("2^8 = " + MathUtils.power(2, 8));
+    println("5! = " + MathUtils.factorial(5));
+    
+    // Test constants
+    println("\nMathematical Constants:");
+    println("PI = " + MathUtils.PI);
+    println("E = " + MathUtils.E);
+    
+    println("\n=== Test Complete ===");
+}
+
+// Run the main function
+main(); 

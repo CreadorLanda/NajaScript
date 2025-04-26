@@ -1,0 +1,26 @@
+// Exemplo simplificado para testar atribuições a this.propriedade
+
+class Pessoa {
+    string nome;
+    
+    constructor(string nome) {
+        this.nome = nome;
+    }
+    
+    public void saudacao() {
+        println("Olá, meu nome é " + this.nome);
+    }
+}
+
+// Programa principal
+fun main() {
+    println("=== Teste Simples ===");
+    
+    Pessoa pessoa = new Pessoa("João");
+    pessoa.saudacao();
+    
+    println("=== Fim do teste ===");
+}
+
+// Executar o programa
+main(); 

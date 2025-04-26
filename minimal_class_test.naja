@@ -1,0 +1,26 @@
+// Minimal class test
+
+class Pessoa {
+    public string nome;
+    public int idade;
+    
+    constructor(string n, int i) {
+        this.nome = n;
+        this.idade = i;
+    }
+}
+
+fun main() {
+    println("=== Teste de classe ===");
+    
+    // Criando uma instância
+    Pessoa pessoa = new Pessoa("João", 30);
+    
+    // Acessando atributos
+    println("Nome: " + pessoa.nome);
+    println("Idade: " + pessoa.idade);
+    
+    println("Teste concluído!");
+}
+
+main(); 

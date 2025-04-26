@@ -1,0 +1,663 @@
+int       // Números inteiros
+float     // Números de ponto flutuante
+string    // Texto
+bool      // Valores booleanos (true/false)
+null      // Valor nulo
+void      // Tipo para funções sem retorno
+any       // Tipo genérico (qualquer valor)
+var       // Tipo com inferência automática
+
+list      // Lista mutável
+vecto     // Vetor imutável
+dict      // Dicionário (objeto)
+set       // Conjunto
+map       // Mapa (chave-valor)
+tuple     // Tupla imutável
+
+if        // Condicional
+else      // Alternativa
+elif      // Condição alternativa
+for       // Loop com contador
+forin     // Loop em coleção
+while     // Loop condicional
+do        // Loop do-while
+break     // Encerra loop
+continue  // Pula para próxima iteração
+switch    // Estrutura de múltiplas condições
+case      // Caso do switch
+default   // Caso padrão do switch
+match     // Pattern matching
+when      // Condição em pattern matching
+
+if        // Condicional
+else      // Alternativa
+elif      // Condição alternativa
+for       // Loop com contador
+forin     // Loop em coleção
+while     // Loop condicional
+do        // Loop do-while
+break     // Encerra loop
+continue  // Pula para próxima iteração
+switch    // Estrutura de múltiplas condições
+case      // Caso do switch
+default   // Caso padrão do switch
+match     // Pattern matching
+when      // Condição em pattern matching
+fun       // Define função
+return    // Retorna valor da função
+const     // Define constante
+
+class        // Define classe
+extends      // Herança
+implements   // Implementação de interface
+interface    // Define interface
+constructor  // Construtor de classe
+public       // Acesso público
+private      // Acesso privado
+protected    // Acesso protegido
+static       // Membro estático
+this         // Referência ao objeto atual
+super        // Referência à classe pai
+new          // Cria instância
+
+try       // Bloco de tentativa
+catch     // Captura de exceção
+finally   // Execução garantida
+throw     // Lança exceção
+
+async     // Define função assíncrona
+await     // Aguarda resultado assíncrono
+
+flux      // Define variável reativa
+
+
+import    // Importação de módulo
+importar  // Alias em português para import
+
+generic   // Para tipos genéricos
+
+true      // Valor booleano verdadeiro
+false     // Valor booleano falso
+
++         // Adição
+-         // Subtração
+*         // Multiplicação
+/         // Divisão
+%         // Módulo
+**        // Potência (ou ^)
+
+=         // Atribuição simples
++=        // Adição e atribuição
+-=        // Subtração e atribuição
+*=        // Multiplicação e atribuição
+/=        // Divisão e atribuição
+%=        // Módulo e atribuição
+**=       // Potência e atribuição (ou ^=)
+
+==        // Igualdade
+!=        // Diferença
+<         // Menor que
+>         // Maior que
+<=        // Menor ou igual
+>=        // Maior ou igual
+
+&&        // E lógico (também aceita 'and')
+||        // OU lógico (também aceita 'or')
+!         // Negação (também aceita 'not')
+
+?:        // Operador ternário
+...       // Operador spread/rest
+@         // Decorador
+->        // Seta (para functions/match)
+
+(...)     // Parênteses para agrupamento e chamadas
+{...}     // Chaves para blocos e objetos
+[...]     // Colchetes para listas
+;         // Ponto e vírgula para finalizar statements
+:         // Dois pontos para rotulação e cast
+,         // Vírgula para separar elementos
+.         // Ponto para acesso a membros
+
+// Comentário de linha única
+/* Comentário 
+   de múltiplas 
+   linhas */
+# Comentário de linha única (estilo Python)
+
+
+// Declaração simples
+int x;
+string nome = "Naja";
+float preco = 10.5;
+bool ativo = true;
+
+// Constantes
+const float PI = 3.14159;
+
+// Múltiplas declarações
+int a = 1, b = 2, c = 3;
+
+// Cascata
+int a = b = c = 0;
+
+// Com inferência de tipo
+var valor = 42;
+
+// Expressões aritméticas
+resultado = a + b * (c - d) / 2;
+potencia = base ** expoente;
+
+// Expressões de comparação
+if (x > 10 && y < 20) {
+    // código
+}
+
+// Expressão ternária
+resultado = condicao ? valorVerdadeiro : valorFalso;
+
+// Operações de atribuição composta
+soma += 5;      // Equivalente a: soma = soma + 5
+contador *= 2;  // Equivalente a: contador = contador * 
+
+
+if (condicao) {
+    // código se verdadeiro
+} elif (outraCondicao) {
+    // código se outra condição for verdadeira
+} else {
+    // código se falso
+}
+
+
+switch (valor) {
+    case 1:
+        // código para valor 1
+        break;
+    case 2:
+        // código para valor 2
+        break;
+    default:
+        // código para outros valores
+}
+
+
+match (valor) {
+    10 => println("Valor é 10");
+    > 20 => println("Valor maior que 20");
+    "texto" => println("Valor é texto");
+    objeto when objeto.tipo == "especial" => {
+        // Bloco de código para match condicional 
+    };
+    _ => println("Padrão default");
+}
+
+
+// For tradicional
+for (int i = 0; i < 10; i = i + 1) {
+    // código de repetição
+}
+
+// For-in (para coleções)
+forin (item in colecao) {
+    // código para cada item
+}
+
+
+// While
+while (condicao) {
+    // código de repetição
+}
+
+// Do-While
+do {
+    // código executado pelo menos uma vez
+} while (condicao);
+
+
+
+while (true) {
+    if (condicaoDeParada) {
+        break;  // Sai do loop
+    }
+    
+    if (condicaoDePulo) {
+        continue; // Pula para próxima iteração
+    }
+}
+
+
+
+// Função simples
+fun saudacao() {
+    println("Olá mundo!");
+}
+
+// Função com parâmetros
+fun soma(int a, int b) {
+    return a + b;
+}
+
+// Função com tipo de retorno explícito
+fun multiplica(int a, int b) : int {
+    return a * b;
+}
+
+// Função com valor padrão para parâmetro
+fun configura(string nome, bool ativo = true) {
+    // código
+}
+
+// Função assíncrona
+async fun buscarDados() {
+    // código assíncrono
+    await asyncSleep(1000);
+    return "Dados";
+}
+
+// Função com generics
+fun <T> processar(T item) {
+    // código genérico
+}
+
+
+
+// Chamada simples
+saudacao();
+
+// Com argumentos
+int resultado = soma(5, 3);
+
+// Chamada assíncrona
+string dados = await buscarDados();
+
+
+
+
+// Declaração básica de classe
+class Animal {
+    // Propriedades
+    private string nome;
+    protected int idade;
+    public bool ativo = true;
+    
+    // Construtor
+    constructor(string nome, int idade) {
+        this.nome = nome;
+        this.idade = idade;
+    }
+    
+    // Métodos
+    public void emitirSom() {
+        println("Som genérico");
+    }
+    
+    // Método com retorno
+    public string getNome() {
+        return this.nome;
+    }
+    
+    // Método estático
+    public static Animal criar(string nome) {
+        return new Animal(nome, 0);
+    }
+}
+
+
+// Classe derivada
+class Cachorro extends Animal {
+    private string raca;
+    
+    constructor(string nome, int idade, string raca) {
+        super(nome, idade);  // Chama construtor da classe base
+        this.raca = raca;
+    }
+    
+    // Sobrescrita de método
+    public void emitirSom() {
+        println("Au au!");
+    }
+}
+
+
+// Definição de interface
+interface Nadador {
+    void nadar();
+    bool podeNadar();
+}
+
+// Implementação de interface
+class Peixe implements Nadador {
+    public void nadar() {
+        println("Nadando...");
+    }
+    
+    public bool podeNadar() {
+        return true;
+    }
+}
+
+
+// Criar instância
+Animal animal = new Animal("Rex", 3);
+
+// Chamar métodos
+animal.emitirSom();
+string nome = animal.getNome();
+
+// Usar método estático
+Animal novo = Animal.criar("Bidu");
+
+
+
+
+
+class Caixa<T> {
+    private T conteudo;
+    
+    constructor(T item) {
+        this.conteudo = item;
+    }
+    
+    public T getConteudo() {
+        return this.conteudo;
+    }
+}
+
+// Uso
+Caixa<string> caixaTexto = new Caixa<string>("mensagem");
+
+
+
+try {
+    // Código que pode gerar erro
+    throw "Ocorreu um erro";
+} catch (erro) {
+    // Tratamento do erro
+    println("Erro: " + erro);
+} finally {
+    // Código que sempre executa
+    println("Finalizando");
+}
+
+// Variáveis reativas
+int a = 10;
+int b = 5;
+flux resultado = a + b;   // Inicialmente 15
+
+// Quando mudar 'a' ou 'b', 'resultado' é recalculado automaticamente
+a = 20;  // resultado agora é 25
+
+// Observando mudanças
+onChange("a", function(nome, valorAntigo, valorNovo) {
+    println(nome + " mudou de " + valorAntigo + " para " + valorNovo);
+});
+
+
+// Importar módulo
+import "Math";
+import "NajaPt";
+import "NajaGame";
+
+// Uso
+Math.sin(30);
+
+
+// Uso de decoradores em funções
+@log
+@validar
+fun transferir(conta, valor) {
+    // código
+}
+
+// Decoradores em classes
+@entidade
+@singleton
+class Usuario {
+    // código
+}
+
+
+// Após importar NajaPt
+importar "NajaPt";
+
+// Tipos
+inteiro numero = 42;
+decimal valor = 3.14;
+texto nome = "NajaScript";
+booleano ativo = verdadeiro;
+
+// Estruturas
+se (ativo) {
+    escreverln("Ativo!");
+} senao {
+    escreverln("Inativo!");
+}
+
+para (inteiro i = 0; i < 10; i = i + 1) {
+    // código
+}
+
+enquanto (condicao) {
+    // código
+}
+
+// Funções
+funcao soma(inteiro a, inteiro b) {
+    retornar a + b;
+}
+
+// Após importar NajaGame
+import "NajaGame";
+
+// Inicializar jogo
+initGame(800, 600, "Meu Jogo");
+
+// Criar loop de jogo
+while (updateWindow()) {
+    clearScreen(0, 0, 0);  // Limpa tela com cor preta
+    
+    // Verifica input
+    if (isKeyPressed("SPACE")) {
+        // Ação quando espaço é pressionado
+    }
+    
+    // Desenha elementos
+    drawRect(100, 100, 50, 50, 255, 0, 0);  // Retângulo vermelho
+    drawText("Pontuação: 100", 10, 10, 255, 255, 255);  // Texto branco
+}
+
+// Finaliza jogo
+quitGame();
+
+
+
+
+// Criação
+list numeros = [1, 2, 3];
+list nomes = [];
+
+// Métodos
+numeros.add(4);           // Adiciona item
+numeros.remove(0);        // Remove por índice
+numeros.removeLast();     // Remove último item
+numeros.get(1);           // Obtém item por índice
+numeros.length();         // Obtém comprimento
+numeros.isEmpty();        // Verifica se está vazia
+numeros.count(2);         // Conta ocorrências de um item
+
+
+
+// Criação
+dict pessoa = {"nome": "João", "idade": 30};
+dict vazio = {};
+
+// Métodos
+pessoa.add("cidade", "São Paulo");  // Adiciona par chave-valor 
+pessoa.remove("idade");             // Remove par chave-valor
+pessoa.get("nome");                 // Obtém valor pela chave
+pessoa.length();                    // Número de pares
+pessoa.isEmpty();                   // Verifica se está vazio
+
+
+// Criação
+vecto v = vecto(1, 2, 3);
+
+// Métodos
+v.get(0);      // Obtém elemento
+v.length();    // Tamanho do vetor
+
+
+// Criação
+set numeros = set();
+numeros.add(1);
+numeros.add(2);
+
+// Métodos
+numeros.has(1);                  // Verifica existência
+numeros.remove(2);               // Remove elemento
+numeros.size();                  // Tamanho do conjunto
+numeros.clear();                 // Remove todos elementos
+numeros.union(outroConjunto);    // União
+numeros.intersection(outroConjunto);  // Interseção
+numeros.difference(outroConjunto);    // Diferença
+
+
+// Criação
+map mapa = map();
+
+
+
+
+
+# NajaScript - Documentação da Sintaxe
+
+## Sumário
+1. [Tipos de Dados e Palavras-chave](#1-tipos-de-dados-e-palavras-chave)
+2. [Operadores e Delimitadores](#2-operadores-e-delimitadores)
+3. [Estrutura da Linguagem](#3-estrutura-da-linguagem)
+4. [Estruturas de Dados Nativas](#4-estruturas-de-dados-nativas)
+5. [Funções Integradas](#5-funções-integradas)
+6. [Módulos Incluídos](#6-módulos-incluídos)
+
+## 1. Tipos de Dados e Palavras-chave
+
+### Tipos Primitivos
+- `int` - números inteiros
+- `float` - números de ponto flutuante
+- `string` - texto
+- `bool` - valores booleanos (true/false)
+- `null` - valor nulo
+- `void` - tipo para funções sem retorno
+- `any` - tipo genérico (qualquer valor)
+- `var` - tipo com inferência automática
+
+### Coleções e Estruturas de Dados
+- `list` - lista mutável
+- `vecto` - vetor imutável
+- `dict` - dicionário (objeto)
+- `set` - conjunto
+- `map` - mapa (chave-valor)
+- `tuple` - tupla imutável
+
+### Estruturas de Controle
+- `if`, `else`, `elif` - condicionais
+- `for` - loop com contador
+- `forin` - loop em coleção
+- `while` - loop condicional
+- `do` - loop do-while
+- `break` - encerra loop
+- `continue` - pula para próxima iteração
+- `switch`, `case`, `default` - estrutura de múltiplas condições
+- `match`, `when` - pattern matching
+
+### Funções
+- `fun` - define função
+- `return` - retorna valor da função
+- `const` - define constante
+
+### Programação Orientada a Objetos
+- `class` - define classe
+- `extends` - herança
+- `implements` - implementação de interface
+- `interface` - define interface
+- `constructor` - construtor de classe
+- `public`, `private`, `protected` - modificadores de acesso
+- `static` - membro estático
+- `this` - referência ao objeto atual
+- `super` - referência à classe pai
+- `new` - cria instância
+
+### Tratamento de Exceções
+- `try` - bloco de tentativa
+- `catch` - captura de exceção
+- `finally` - execução garantida
+- `throw` - lança exceção
+
+### Programação Assíncrona
+- `async` - define função assíncrona
+- `await` - aguarda resultado assíncrono
+
+### Reatividade
+- `flux` - define variável reativa
+
+### Importação
+- `import` - importação de módulo
+- `importar` - alias em português para import
+
+### Generics
+- `generic` - para tipos genéricos
+
+### Literais
+- `true` - valor booleano verdadeiro
+- `false` - valor booleano falso
+
+## 2. Operadores e Delimitadores
+
+### Operadores Aritméticos
+- `+` - adição
+- `-` - subtração
+- `*` - multiplicação
+- `/` - divisão
+- `%` - módulo
+- `**` - potência (ou `^`)
+
+### Operadores de Atribuição
+- `=` - atribuição simples
+- `+=` - adição e atribuição
+- `-=` - subtração e atribuição
+- `*=` - multiplicação e atribuição
+- `/=` - divisão e atribuição
+- `%=` - módulo e atribuição
+- `**=` - potência e atribuição (ou `^=`)
+
+### Operadores de Comparação
+- `==` - igualdade
+- `!=` - diferença
+- `<` - menor que
+- `>` - maior que
+- `<=` - menor ou igual
+- `>=` - maior ou igual
+
+### Operadores Lógicos
+- `&&` - E lógico (também aceita 'and')
+- `||` - OU lógico (também aceita 'or')
+- `!` - negação (também aceita 'not')
+
+### Outros Operadores
+- `?:` - operador ternário
+- `...` - operador spread/rest
+- `@` - decorador
+- `->` - seta (para functions/match)
+
+### Delimitadores
+- `(...)` - parênteses para agrupamento e chamadas
+- `{...}` - chaves para blocos e objetos
+- `[...]` - colchetes para listas
+- `;` - ponto e vírgula para finalizar statements
+- `:` - dois pontos para rotulação e cast
+- `,` - vírgula para separar elementos
+- `.` - ponto para acesso a membros
+
+## 3. Estrutura da Linguagem 
+
+### Comentários

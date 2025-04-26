@@ -1,16 +1,20 @@
-// Teste mínimo com variáveis
+// Teste mínimo de classe em NajaScript
+
+class Teste {
+    public int valor;
+    
+    constructor(int v) {
+        this.valor = v;
+    }
+    
+    public int getValor() {
+        return this.valor;
+    }
+}
+
 fun main() {
-    println("Olá, mundo!");
-    
-    int numero = 42;
-    println("O número é: " + numero);
-    
-    bool condicao = true;
-    println("A condição é: " + condicao);
-    
-    // Usar any em vez de string
-    any texto = "Hello world";
-    println("O texto é: " + texto);
+    Teste t = new Teste(42);
+    println(t.getValor());
 }
 
 main(); 

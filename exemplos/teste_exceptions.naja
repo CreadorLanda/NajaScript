@@ -1,0 +1,105 @@
+// Exemplo de tratamento de exceções em NajaScript
+
+// Função que lança uma exceção
+fun dividir(int a, int b) {
+    if (b == 0) {
+        throw "Divisão por zero não permitida";
+    }
+    return a / b;
+}
+
+// Função para demonstrar tratamento de exceções
+fun exemploTryCatch() {
+    println("=== Exemplo de Try-Catch ===");
+    
+    // Exemplo 1: Capturando exceção específica
+    try {
+        int resultado = dividir(10, 0);
+        println("Resultado: " + resultado);  // Esta linha não será executada
+    } catch (error e) {
+        println("Erro capturado: " + e);
+    }
+    
+    // Exemplo 2: Try-Catch-Finally
+    try {
+        println("Tentando divisão");
+        int resultado = dividir(10, 2);
+        println("Resultado: " + resultado);
+    } catch (error e) {
+        println("Erro: " + e);
+    } finally {
+        println("Este bloco sempre é executado");
+    }
+    
+    // Exemplo 3: Múltiplos catch
+    try {
+        string texto = null;
+        println("Comprimento: " + texto.length());
+    } catch (NullPointerException e) {
+        println("Erro de ponteiro nulo: " + e);
+    } catch (error e) {
+        println("Outro erro: " + e);
+    }
+    
+    println("Fim do exemplo Try-Catch");
+}
+
+// Função assíncrona que lança exceção
+async fun operacaoAssincronaComErro() {
+    await asyncSleep(1000);  // Pausa por 1 segundo
+    throw "Erro em operação assíncrona";
+}
+
+// Exemplo de tratamento de exceções em código assíncrono
+async fun exemploTryCatchAsync() {
+    println("=== Exemplo de Try-Catch Assíncrono ===");
+    
+    try {
+        await operacaoAssincronaComErro();
+    } catch (error e) {
+        println("Erro assíncrono capturado: " + e);
+    }
+    
+    println("Fim do exemplo assíncrono");
+}
+
+// Exemplo de função que usa a abordagem funcional para tratamento de erros
+fun exemploFuncional() {
+    println("=== Exemplo de Tratamento Funcional ===");
+    
+    // Usando a função tryCatch para tratamento funcional de erros
+    int resultado = tryCatch(
+        // Função try
+        () => {
+            return dividir(10, 0);
+        },
+        // Função catch
+        (error) => {
+            println("Erro funcional: " + error);
+            return -1;  // Valor de fallback
+        },
+        // Função finally (opcional)
+        () => {
+            println("Limpeza no estilo funcional");
+        }
+    );
+    
+    println("Resultado funcional: " + resultado);
+}
+
+// Programa principal
+fun main() {
+    println("Demonstração de tratamento de exceções em NajaScript");
+    
+    exemploTryCatch();
+    
+    // Execute o exemplo assíncrono
+    await exemploTryCatchAsync();
+    
+    exemploFuncional();
+    
+    println("Programa concluído com sucesso");
+}
+
+// Executar o programa
+main(); 

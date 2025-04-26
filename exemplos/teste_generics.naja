@@ -1,0 +1,152 @@
+// Exemplo de uso de Generics em NajaScript
+
+// Função genérica que aceita qualquer tipo
+fun<T> imprimir(T valor) {
+    println("Valor: " + valor);
+}
+
+// Classe genérica para armazenar um par de valores
+class Par<T, U> {
+    private T primeiro;
+    private U segundo;
+    
+    constructor(T primeiro, U segundo) {
+        this.primeiro = primeiro;
+        this.segundo = segundo;
+    }
+    
+    public T getPrimeiro() {
+        return this.primeiro;
+    }
+    
+    public U getSegundo() {
+        return this.segundo;
+    }
+    
+    public void setPrimeiro(T valor) {
+        this.primeiro = valor;
+    }
+    
+    public void setSegundo(U valor) {
+        this.segundo = valor;
+    }
+    
+    public string toString() {
+        return "(" + this.primeiro + ", " + this.segundo + ")";
+    }
+}
+
+// Implementação genérica de uma pilha
+class Pilha<T> {
+    private list elementos = list();
+    
+    public void empilhar(T elemento) {
+        this.elementos.add(elemento);
+    }
+    
+    public T desempilhar() {
+        if (this.estaVazia()) {
+            throw "A pilha está vazia";
+        }
+        return this.elementos.removeLast();
+    }
+    
+    public T topo() {
+        if (this.estaVazia()) {
+            throw "A pilha está vazia";
+        }
+        return this.elementos.get(this.elementos.length() - 1);
+    }
+    
+    public bool estaVazia() {
+        return this.elementos.length() == 0;
+    }
+    
+    public int tamanho() {
+        return this.elementos.length();
+    }
+}
+
+// Interface genérica
+interface Comparavel<T> {
+    int comparar(T outro);
+}
+
+// Classe que implementa a interface genérica
+class Pessoa implements Comparavel<Pessoa> {
+    private string nome;
+    private int idade;
+    
+    constructor(string nome, int idade) {
+        this.nome = nome;
+        this.idade = idade;
+    }
+    
+    public string getNome() {
+        return this.nome;
+    }
+    
+    public int getIdade() {
+        return this.idade;
+    }
+    
+    // Implementação do método da interface
+    public int comparar(Pessoa outra) {
+        if (this.idade < outra.idade) return -1;
+        if (this.idade > outra.idade) return 1;
+        return 0;
+    }
+    
+    public string toString() {
+        return this.nome + " (" + this.idade + ")";
+    }
+}
+
+// Função genérica com restrição de tipo
+// (na prática, isto seria implementado com um mecanismo de restrição)
+fun<T extends Comparavel<T>> encontrarMaior(T a, T b) {
+    if (a.comparar(b) >= 0) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+// Programa principal
+fun main() {
+    println("=== Demonstração de Generics em NajaScript ===");
+    
+    // Chamando função genérica com diferentes tipos
+    imprimir<int>(42);
+    imprimir<string>("Olá Mundo");
+    imprimir<bool>(true);
+    
+    // Usando a classe genérica Par
+    Par<int, string> par1 = new Par<int, string>(1, "um");
+    println("Par1: " + par1);
+    
+    Par<string, bool> par2 = new Par<string, bool>("teste", true);
+    println("Par2: " + par2);
+    
+    // Usando a pilha genérica
+    Pilha<int> pilhaNumeros = new Pilha<int>();
+    pilhaNumeros.empilhar(1);
+    pilhaNumeros.empilhar(2);
+    pilhaNumeros.empilhar(3);
+    
+    println("Topo da pilha: " + pilhaNumeros.topo());
+    println("Desempilhando: " + pilhaNumeros.desempilhar());
+    println("Novo topo: " + pilhaNumeros.topo());
+    
+    // Usando a interface genérica
+    Pessoa p1 = new Pessoa("Alice", 30);
+    Pessoa p2 = new Pessoa("Bob", 25);
+    
+    Pessoa maisVelha = encontrarMaior<Pessoa>(p1, p2);
+    println("A pessoa mais velha é: " + maisVelha);
+    
+    println("=== Fim da demonstração ===");
+}
+
+// Executar o programa
+main(); 

@@ -1,0 +1,182 @@
+{
+  "Função": {
+    "prefix": "funcao",
+    "body": [
+      "funcao ${1:nomeFuncao}(${2:parametros}) {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Declaração de função"
+  },
+  "Classe": {
+    "prefix": "classe",
+    "body": [
+      "classe ${1:NomeClasse} {",
+      "\tconstrutor(${2:parametros}) {",
+      "\t\t${3}",
+      "\t}",
+      "\t",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Declaração de classe"
+  },
+  "Interface": {
+    "prefix": "interface",
+    "body": [
+      "interface ${1:NomeInterface} {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Declaração de interface"
+  },
+  "Se": {
+    "prefix": "se",
+    "body": [
+      "se (${1:condicao}) {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Estrutura condicional 'se'"
+  },
+  "Se Senao": {
+    "prefix": "sesenao",
+    "body": [
+      "se (${1:condicao}) {",
+      "\t${2}",
+      "} senao {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Estrutura condicional 'se senao'"
+  },
+  "Ternário": {
+    "prefix": "ternario",
+    "body": [
+      "${1:condicao} ? ${2:valorSeVerdadeiro} : ${3:valorSeFalso}"
+    ],
+    "description": "Operador ternário"
+  },
+  "Enquanto": {
+    "prefix": "enquanto",
+    "body": [
+      "enquanto (${1:condicao}) {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Loop 'enquanto'"
+  },
+  "Para": {
+    "prefix": "para",
+    "body": [
+      "para (let ${1:i} = ${2:0}; ${1:i} < ${3:limite}; ${1:i}++) {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Loop 'para'"
+  },
+  "Para Em": {
+    "prefix": "paraem",
+    "body": [
+      "para (let ${1:elemento} em ${2:objeto}) {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Loop 'para em'"
+  },
+  "Importar": {
+    "prefix": "importar",
+    "body": [
+      "importar { ${2:nomes} } de '${1:modulo}';"
+    ],
+    "description": "Importação de módulo"
+  },
+  "Tentar Pegar": {
+    "prefix": "tentar",
+    "body": [
+      "tentar {",
+      "\t${1}",
+      "} pegar (${2:erro}) {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Bloco try-catch"
+  },
+  "Tentar Pegar Finalmente": {
+    "prefix": "tentarfinalmente",
+    "body": [
+      "tentar {",
+      "\t${1}",
+      "} pegar (${2:erro}) {",
+      "\t${3}",
+      "} finalmente {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Bloco try-catch-finally"
+  },
+  "Construtor": {
+    "prefix": "construtor",
+    "body": [
+      "construtor(${1:parametros}) {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Construtor de classe"
+  },
+  "Método": {
+    "prefix": "metodo",
+    "body": [
+      "${1:nomeMetodo}(${2:parametros}) {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Método de classe"
+  },
+  "Função Flecha": {
+    "prefix": "flecha",
+    "body": [
+      "(${1:parametros}) => ${2:{",
+      "\t${0}",
+      "}}"
+    ],
+    "description": "Função flecha (arrow function)"
+  },
+  "Console.log": {
+    "prefix": "imprima",
+    "body": [
+      "imprima(${0});"
+    ],
+    "description": "Imprimir no console"
+  },
+  "Variável": {
+    "prefix": "let",
+    "body": [
+      "let ${1:nome} = ${0:valor};"
+    ],
+    "description": "Declaração de variável"
+  },
+  "Constante": {
+    "prefix": "const",
+    "body": [
+      "const ${1:nome} = ${0:valor};"
+    ],
+    "description": "Declaração de constante"
+  },
+  "Async Função": {
+    "prefix": "asyncfuncao",
+    "body": [
+      "async funcao ${1:nome}(${2:parametros}) {",
+      "\t${0}",
+      "}"
+    ],
+    "description": "Função assíncrona"
+  },
+  "Await": {
+    "prefix": "aguarde",
+    "body": [
+      "aguarde ${0:promessa};"
+    ],
+    "description": "Expressão await"
+  }
+} 

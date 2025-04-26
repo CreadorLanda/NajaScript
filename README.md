@@ -1,110 +1,66 @@
 # NajaScript
 
-NajaScript é uma linguagem de programação moderna e fácil de aprender, com suporte a programação orientada a objetos, módulos e mais.
+NajaScript is an educational programming language designed to be accessible and easy to learn.
 
-## Instalação
+![NajaScript Logo](assets/NajaScript_logo.png)
 
-### Requisitos
-- Python 3.13 ou superior
-- Windows 10 ou superior
+## Installation
 
-### Instalador
-1. Baixe o arquivo `NajaScript_Setup.exe` da pasta `Instalador`
-2. Execute o instalador
-3. Siga as instruções na tela
-4. O NajaScript será instalado com um atalho no menu Iniciar e na área de trabalho
+### Windows
 
-### Instalação Manual
-1. Clone ou baixe este repositório
-2. Certifique-se de que o Python 3.13 está instalado
-3. Execute `naja.bat` para iniciar o REPL
+1. Download the latest installer from the [releases page](https://github.com/najascript/najascript/releases)
+2. Run the installer and follow the instructions
+3. After installation, you can run NajaScript from the Start Menu or command line with `najascript`
 
-## Uso
+### Linux
 
-### REPL (Read-Eval-Print Loop)
-O REPL do NajaScript permite que você execute código interativamente. Para iniciar:
+#### Debian/Ubuntu based distributions
 
-1. Abra o NajaScript pelo menu Iniciar ou área de trabalho
-2. Ou execute `naja.bat` na pasta do projeto
+1. Download the .deb package from the [releases page](https://github.com/najascript/najascript/releases)
+2. Install with: `sudo dpkg -i najascript_1.0.0_all.deb`
+3. Run NajaScript from the terminal with `najascript`
 
-### Comandos do REPL
-- `sair()` - Encerra o REPL
-- `ajuda()` - Mostra os comandos disponíveis
-- `limpar()` - Limpa a tela
-- `historico()` - Mostra o histórico de comandos
-- `reset()` - Reseta o ambiente de execução
+#### Other distributions
 
-### Exemplos de Código
+1. Download the tarball from the [releases page](https://github.com/najascript/najascript/releases)
+2. Extract it with: `tar -xzf najascript-1.0.0.tar.gz`
+3. Run NajaScript from the extracted directory with `./najascript`
 
-```naja
-// Variáveis
-int idade = 25;
-float altura = 1.75;
-string nome = "João";
+## Building from source
 
-// Funções
-fun calcularIMC(float peso, float altura) {
-    return peso / (altura * altura);
-}
+### Requirements
 
-// Classes
-class Pessoa {
-    private string nome;
-    public int idade;
-    
-    constructor(string nome, int idade) {
-        this.nome = nome;
-        this.idade = idade;
-    }
-    
-    public fun getNome() {
-        return this.nome;
-    }
-}
+- Python 3.7 or newer
+- PyInstaller (for creating executables)
+- llvmlite
 
-// Estruturas de Controle
-if (idade >= 18) {
-    print("Maior de idade");
-} else {
-    print("Menor de idade");
-}
+### Windows build
 
-// Loops
-for (int i = 0; i < 5; i++) {
-    print(i);
-}
+1. Install Inno Setup from [jrsoftware.org](https://jrsoftware.org/isdl.php)
+2. Run `python build_installers.py`
 
-// Listas e Dicionários
-list numeros = [1, 2, 3, 4, 5];
-dict pessoa = {
-    "nome": "Maria",
-    "idade": 30
-};
-```
+### Linux build
 
-### Executando Arquivos
-Para executar um arquivo .naja:
+1. Install FPM: `sudo apt-get install ruby ruby-dev && sudo gem install fpm` (Debian/Ubuntu)
+2. Run `python build_installers.py`
+
+## Usage
 
 ```bash
-python najascript.py arquivo.naja
+# Run a NajaScript file
+najascript your_script.naja
+
+# Run with debug information
+najascript --debug your_script.naja
+
+# Enable Portuguese language features
+najascript --pt your_script.naja
+
+# Interactive mode
+najascript
 ```
 
-## Recursos
+## License
 
-- Sintaxe moderna e intuitiva
-- Suporte a programação orientada a objetos
-- Sistema de módulos
-- Tipagem estática opcional
-- Estruturas de dados nativas (listas, dicionários, vetores)
-- Tratamento de exceções
-- Suporte a programação assíncrona
-- REPL interativo
-
-## Contribuindo
-
-Contribuições são bem-vindas! Por favor, leia o arquivo CONTRIBUTING.md para detalhes sobre nosso código de conduta e o processo para enviar pull requests.
-
-## Licença
-
-Este projeto está licenciado sob a licença MIT - veja o arquivo LICENSE para detalhes.
+MIT License - see LICENSE file for details.
 

@@ -1,0 +1,51 @@
+# NajaPt - Módulo de tradução para NajaScript em português
+# Este arquivo é carregado quando se importa "NajaPt"
+
+# NOTA: Este arquivo serve apenas como documentação,
+# a implementação real é feita internamente no interpretador.
+
+# Mapeamento de palavras-chave em português para NajaScript
+# se -> if
+# senao -> else
+# para -> for
+# enquanto -> while
+# funcao -> fun
+# retornar -> return
+# verdadeiro -> true
+# falso -> false
+# em -> in
+# paracada -> forin
+# nulo -> null
+# continuar -> continue
+# parar -> break
+
+# Mapeamento de tipos
+# inteiro -> int
+# decimal -> float
+# texto -> string
+# booleano -> bool
+# lista -> list
+# dicionario -> dict
+# qualquer -> any
+
+# Mapeamento de funções
+# escrever -> print
+# escreverln -> println
+# comprimento -> length
+# converter_para_texto -> toString
+# converter_para_inteiro -> toInt
+# converter_para_decimal -> toFloat
+
+# Mapeamento de métodos
+# adicionar -> add
+# remover -> remove
+# obter -> get
+# adicionarUltimo -> add
+# removerUltimo -> removeLast
+# substituir -> replace
+
+# Esta função é interna e não deve ser chamada diretamente
+fun __traduzir_pt_para_naja(texto) {
+    # Implementação interna no interpretador
+    return texto;
+} 

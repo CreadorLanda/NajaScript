@@ -1,0 +1,74 @@
+// Exemplo de código NajaScript para testar a extensão VSCode
+
+// Importação de módulo
+importar "Sistema";
+
+// Declaração de classe
+classe Pessoa {
+    // Propriedades
+    private string nome;
+    private int idade;
+    
+    // Construtor
+    constructor(string nome, int idade) {
+        this.nome = nome;
+        this.idade = idade;
+    }
+    
+    // Métodos
+    public string getNome() {
+        return this.nome;
+    }
+    
+    public int getIdade() {
+        return this.idade;
+    }
+    
+    public void cumprimentar() {
+        print("Olá, meu nome é " + this.nome + " e tenho " + this.idade + " anos.");
+    }
+}
+
+// Função principal
+fun main() {
+    // Criando objeto usando a sintaxe "new"
+    Pessoa pessoa = new Pessoa("João", 30);
+    
+    // Chamando métodos
+    pessoa.cumprimentar();
+    
+    // Estruturas de controle
+    if (pessoa.getIdade() > 18) {
+        print("É maior de idade");
+    } else {
+        print("É menor de idade");
+    }
+    
+    // Loop
+    for (int i = 0; i < 5; i++) {
+        print("Contagem: " + i);
+    }
+    
+    // Array e loop forin
+    int[] numeros = [1, 2, 3, 4, 5];
+    for (int num in numeros) {
+        print("Número: " + num);
+    }
+    
+    // Expressão ternária
+    string status = pessoa.getIdade() > 65 ? "Idoso" : "Adulto";
+    print("Status: " + status);
+    
+    // Tratamento de exceções
+    try {
+        // Simulação de erro
+        int resultado = 10 / 0;
+    } catch (Exception e) {
+        print("Erro capturado: Divisão por zero");
+    } finally {
+        print("Finalizado o tratamento de exceção");
+    }
+}
+
+// Chamada da função principal
+main(); 

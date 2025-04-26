@@ -1,0 +1,5 @@
+// MathUtils module
+
+export fun info() {
+    return "Package MathUtils version 1.0.0";
+}

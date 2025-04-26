@@ -4,10 +4,61 @@
 from ast_nodes import *
 import os
 import re
-from lexer import Lexer
+from lexer import Lexer, TokenType
 from parser_naja import Parser
-from environment import Environment
 import sys
+import importlib.util
+import inspect
+import types
+import asyncio
+import traceback
+
+class ExportedValue:
+    """Wrapper para valores primitivos exportados"""
+    def __init__(self, value):
+        self.value = value
+        self.exported = True
+    
+    def __str__(self):
+        return str(self.value)
+    
+    def __repr__(self):
+        return repr(self.value)
+    
+    def __eq__(self, other):
+        if isinstance(other, ExportedValue):
+            return self.value == other.value
+        return self.value == other
+    
+    # Reenviar operações para o valor interno
+    def __add__(self, other):
+        if isinstance(other, ExportedValue):
+            return self.value + other.value
+        return self.value + other
+    
+    def __sub__(self, other):
+        if isinstance(other, ExportedValue):
+            return self.value - other.value
+        return self.value - other
+    
+    def __mul__(self, other):
+        if isinstance(other, ExportedValue):
+            return self.value * other.value
+        return self.value * other
+    
+    def __truediv__(self, other):
+        if isinstance(other, ExportedValue):
+            return self.value / other.value
+        return self.value / other
+    
+    def __int__(self):
+        return int(self.value)
+    
+    def __float__(self):
+        return float(self.value)
+    
+    def __bool__(self):
+        return bool(self.value)
 
 # Primeiro, adiciono uma classe para representar o valor flux
 class FluxValue:
@@ -42,6 +93,9 @@ class FluxValue:
         
     def __repr__(self):
         return self.__str__()
+
+# Now import Environment after FluxValue is defined
+from environment import Environment
 
 class BreakException(Exception):
     """Exceção lançada quando um comando break é encontrado"""
@@ -178,6 +232,243 @@ class NajaDict:
     def __repr__(self):
         return self.__str__()
 
+class NajaSet:
+    """Implementação de um conjunto em NajaScript"""
+    def __init__(self, elements=None):
+        self._elements = set(elements) if elements else set()
+    
+    def add(self, value):
+        """Adiciona um valor ao conjunto"""
+        self._elements.add(value)
+        return value
+    
+    def remove(self, value):
+        """Remove um valor do conjunto"""
+        if value in self._elements:
+            self._elements.remove(value)
+            return value
+        raise Exception(f"Valor {value} não encontrado no conjunto")
+    
+    def has(self, value):
+        """Verifica se um valor está no conjunto"""
+        return value in self._elements
+    
+    def clear(self):
+        """Remove todos os elementos do conjunto"""
+        self._elements.clear()
+        return None
+    
+    def size(self):
+        """Retorna o número de elementos no conjunto"""
+        return len(self._elements)
+    
+    def union(self, other_set):
+        """Retorna a união deste conjunto com outro"""
+        if not isinstance(other_set, (NajaSet, set)):
+            raise Exception("União só pode ser feita com outro conjunto")
+        
+        elements = other_set._elements if isinstance(other_set, NajaSet) else other_set
+        return NajaSet(self._elements.union(elements))
+    
+    def intersection(self, other_set):
+        """Retorna a interseção deste conjunto com outro"""
+        if not isinstance(other_set, (NajaSet, set)):
+            raise Exception("Interseção só pode ser feita com outro conjunto")
+        
+        elements = other_set._elements if isinstance(other_set, NajaSet) else other_set
+        return NajaSet(self._elements.intersection(elements))
+    
+    def difference(self, other_set):
+        """Retorna a diferença deste conjunto com outro"""
+        if not isinstance(other_set, (NajaSet, set)):
+            raise Exception("Diferença só pode ser feita com outro conjunto")
+        
+        elements = other_set._elements if isinstance(other_set, NajaSet) else other_set
+        return NajaSet(self._elements.difference(elements))
+    
+    def __str__(self):
+        elements_str = ", ".join(str(e) for e in self._elements)
+        return f"set({elements_str})"
+    
+    def __repr__(self):
+        return self.__str__()
+
+class NajaMap:
+    """Implementação de um mapa em NajaScript"""
+    def __init__(self, items=None):
+        self._map = {}
+        if items:
+            for k, v in items:
+                self._map[k] = v
+    
+    def set(self, key, value):
+        """Define um valor para uma chave"""
+        self._map[key] = value
+        return value
+    
+    def get(self, key):
+        """Obtém o valor associado a uma chave"""
+        if key in self._map:
+            return self._map[key]
+        raise Exception(f"Chave {key} não encontrada no mapa")
+    
+    def has(self, key):
+        """Verifica se uma chave está no mapa"""
+        return key in self._map
+    
+    def delete(self, key):
+        """Remove uma entrada do mapa"""
+        if key in self._map:
+            value = self._map[key]
+            del self._map[key]
+            return value
+        raise Exception(f"Chave {key} não encontrada no mapa")
+    
+    def clear(self):
+        """Remove todas as entradas do mapa"""
+        self._map.clear()
+        return None
+    
+    def size(self):
+        """Retorna o número de entradas no mapa"""
+        return len(self._map)
+    
+    def keys(self):
+        """Retorna uma lista com as chaves do mapa"""
+        return NajaList(self._map.keys())
+    
+    def values(self):
+        """Retorna uma lista com os valores do mapa"""
+        return NajaList(self._map.values())
+    
+    def entries(self):
+        """Retorna uma lista de pares chave-valor"""
+        return NajaList([NajaTuple([k, v]) for k, v in self._map.items()])
+    
+    def __str__(self):
+        items = []
+        for k, v in self._map.items():
+            items.append(f"{k} => {v}")
+        return f"map({', '.join(items)})"
+    
+    def __repr__(self):
+        return self.__str__()
+
+class NajaTuple:
+    """Implementação de uma tupla imutável em NajaScript"""
+    def __init__(self, elements=None):
+        self._elements = tuple(elements) if elements else tuple()
+    
+    def get(self, index):
+        """Obtém o elemento no índice especificado"""
+        if 0 <= index < len(self._elements):
+            return self._elements[index]
+        raise Exception(f"Índice {index} fora dos limites da tupla")
+    
+    def length(self):
+        """Retorna o número de elementos na tupla"""
+        return len(self._elements)
+    
+    def __str__(self):
+        elements_str = ", ".join(str(e) for e in self._elements)
+        return f"tuple({elements_str})"
+    
+    def __repr__(self):
+        return self.__str__()
+
+class NajaObject:
+    """Representa um objeto de uma classe definida pelo usuário"""
+    def __init__(self, class_name):
+        self._class_name = class_name
+        self._properties = {}         # {name: value}
+        self._property_access = {}    # {name: access_modifier}
+        self._methods = {}            # {name: Function}
+        self._method_access = {}      # {name: access_modifier}
+    
+    def _define_property(self, name, value, access_modifier="public"):
+        """Define uma propriedade no objeto com um modificador de acesso"""
+        self._properties[name] = value
+        self._property_access[name] = access_modifier
+    
+    def _define_method(self, name, method, access_modifier="public"):
+        """Define um método no objeto com um modificador de acesso"""
+        self._methods[name] = method
+        self._method_access[name] = access_modifier
+    
+    def _get_property(self, name, accessing_class=None):
+        """Obtém uma propriedade do objeto respeitando o controle de acesso"""
+        if name in self._properties:
+            # Verifica se o acesso é permitido
+            if accessing_class is None or self._is_access_allowed(name, self._property_access.get(name, "public"), accessing_class):
+                return self._properties[name]
+            else:
+                raise Exception(f"Acesso negado: Propriedade '{name}' é {self._property_access.get(name)} em '{self._class_name}'")
+        raise Exception(f"Propriedade '{name}' não encontrada no objeto '{self._class_name}'")
+    
+    def _set_property(self, name, value, accessing_class=None):
+        """Define o valor de uma propriedade respeitando o controle de acesso"""
+        if name in self._properties:
+            # Verifica se o acesso é permitido
+            if accessing_class is None or self._is_access_allowed(name, self._property_access.get(name, "public"), accessing_class):
+                self._properties[name] = value
+                return value
+            else:
+                raise Exception(f"Acesso negado: Propriedade '{name}' é {self._property_access.get(name)} em '{self._class_name}'")
+        
+        # Se a propriedade não existe, a criamos (desde que estejamos dentro de um método da classe)
+        if accessing_class == self._class_name:
+            self._define_property(name, value, "public")
+            return value
+            
+        raise Exception(f"Propriedade '{name}' não encontrada no objeto '{self._class_name}'")
+    
+    def _call_method(self, name, interpreter, arguments, accessing_class=None):
+        """Chama um método do objeto respeitando o controle de acesso"""
+        if name in self._methods:
+            # Verifica se o acesso é permitido
+            if accessing_class is None or self._is_access_allowed(name, self._method_access.get(name, "public"), accessing_class):
+                method = self._methods[name]
+                
+                # Configura o ambiente do método com 'this'
+                method_env = Environment(method.environment)
+                method_env.define("this", self)
+                method.environment = method_env
+                
+                return method(interpreter, arguments)
+            else:
+                raise Exception(f"Acesso negado: Método '{name}' é {self._method_access.get(name)} em '{self._class_name}'")
+        
+        raise Exception(f"Método '{name}' não encontrado no objeto '{self._class_name}'")
+    
+    def _is_access_allowed(self, member_name, access_modifier, accessing_class):
+        """Verifica se o acesso a um membro é permitido com base no modificador de acesso"""
+        if access_modifier == "public":
+            return True
+        elif access_modifier == "protected":
+            # Protected pode ser acessado pela própria classe ou subclasses
+            if accessing_class == self._class_name:
+                return True
+                
+            # TODO: Verificar se accessing_class é subclasse de this._class_name
+            # Esta lógica depende de como as definições de classe estão armazenadas
+            
+            return False
+        elif access_modifier == "private":
+            # Private só pode ser acessado pela própria classe
+            return accessing_class == self._class_name
+        
+        # Por padrão, considerar como public
+        return True
+    
+    def __str__(self):
+        """Representação de string do objeto"""
+        properties = []
+        for name, value in self._properties.items():
+            if self._property_access.get(name) == "public":
+                properties.append(f"{name}: {value}")
+        
+        return f"{self._class_name}{{{', '.join(properties)}}}"
+
 class Function:
     """Representação de uma função em NajaScript"""
     def __init__(self, declaration, environment):
@@ -248,31 +539,86 @@ class Function:
 
 class NajaModule:
     """Representa um módulo NajaScript importado"""
-    def __init__(self, name, environment):
+    def __init__(self, name, environment, debug=False):
         self.name = name
         self.environment = environment
         self.methods = {}
+        self.exports = {}  # Dicionário para armazenar apenas os símbolos exportados
+        self.export_count = 0  # Para depuração
+        self.debug = debug
         
         # Mapeia as funções do ambiente para métodos do módulo
-        for name, func in environment.functions.items():
-            if not name.startswith("_"):  # Não exporta variáveis privadas
-                self.methods[name] = func
-        
-        # Mapeia também os valores do ambiente
-        for name, (value, _, _) in environment.values.items():
-            if not name.startswith("_") and name not in self.methods:  # Não exporta variáveis privadas
+        # e identifica quais são exportadas
+        for name, value in environment.values.items():
+            # Verifica para funções
+            if hasattr(value, 'declaration') and hasattr(value.declaration, 'exported'):
                 self.methods[name] = value
+                if value.declaration.exported:
+                    self.exports[name] = value
+                    self.export_count += 1
+                    if self.debug:
+                        print(f"DEBUG: Função exportada: {name}")
+                        
+            # Verifica para valores simples exportados
+            elif hasattr(value, 'exported') and value.exported:
+                self.exports[name] = value
+                self.export_count += 1
+                if self.debug:
+                    print(f"DEBUG: Valor exportado: {name}")
+        
+        # Debug para informar quais símbolos foram exportados
+        print(f"DEBUG: Módulo {name} exportando: {list(self.exports.keys())} ({self.export_count} itens)")
     
     def get_method(self, name):
         """Recupera um método ou valor do módulo pelo nome"""
+        # Primeiro verifica nos exports se estiver usando a importação com namespace
+        if name in self.exports:
+            value = self.exports[name]
+            # Se for um valor exportado encapsulado, retorna o valor interno
+            if isinstance(value, ExportedValue):
+                return value.value
+            return value
+            
+        # Fallback para o comportamento anterior para compatibilidade
         if name in self.methods:
             return self.methods[name]
         
         # Fallback para verificar diretamente no ambiente
         try:
-            return self.environment.get(name)
+            value = self.environment.get(name)
+            # Se for um valor exportado encapsulado, retorna o valor interno
+            if isinstance(value, ExportedValue):
+                return value.value
+            return value
         except RuntimeError:
             raise Exception(f"Método ou atributo '{name}' não encontrado no módulo '{self.name}'")
+    
+    def debug_exports(self):
+        """Método para depuração dos exports do módulo"""
+        print(f"\nDEBUG: Detalhes do módulo '{self.name}':")
+        print(f"- Total de exports: {len(self.exports)}")
+        print(f"- Total de métodos: {len(self.methods)}")
+        print(f"- Exports disponíveis:")
+        for name, value in self.exports.items():
+            value_type = type(value).__name__
+            if isinstance(value, ExportedValue):
+                print(f"  - {name}: ExportedValue({value.value})")
+            elif hasattr(value, 'declaration') and hasattr(value.declaration, 'exported'):
+                print(f"  - {name}: Function (exported={value.declaration.exported})")
+            else:
+                print(f"  - {name}: {value_type}")
+        
+        # Verificar o ambiente do módulo
+        print("\nDEBUG: Ambiente do Módulo:")
+        for name, value in self.environment.values.items():
+            is_exported = "✓" if name in self.exports else "✗"
+            print(f"  - {name}: {type(value).__name__} [exported: {is_exported}]")
+            
+            # Verifica se o valor tem a flag exported
+            if hasattr(value, 'exported'):
+                print(f"    - Tem atributo exported: {value.exported}")
+            elif hasattr(value, 'declaration') and hasattr(value.declaration, 'exported'):
+                print(f"    - Declaração tem exported: {value.declaration.exported}")
     
     def __str__(self):
         """Representação em string do módulo"""
@@ -280,20 +626,24 @@ class NajaModule:
 
 class Interpreter:
     """Interpretador para NajaScript"""
-    def __init__(self):
-        self.globals = Environment()
+    def __init__(self, debug=False):
+        """Inicializa o interpretador"""
+        self.debug = debug
+        self.globals = Environment(None)
         self.environment = self.globals
-        self.locals = self.environment
-        self.error = None
-        self.module_paths = ['.', './modules']
+        self.modules = {}  # Dicionário para módulos nativos
+        self.imported_modules = {}  # Dicionário para módulos importados
+        self.current_class = None
+        self.current_module = None
+        self.current_file = None
+        self.for_loops = []
+        self.loop_depth = 0
         self.jit_compiler = None
-        self.debug = False
-        self.source_map = {}
-        self.imported_modules = {}
-        
-        # Inicializa as funções nativas
         self._setup_builtins()
         self._register_native_functions()
+        self.type_registry = {}  # Registro de classes para o sistema de tipos
+        self.async_event_loop = None  # Loop de eventos para async/await
+        self.logger = None
     
     def preprocess_source(self, source):
         """Pré-processa o código fonte, traduzindo comandos em português para NajaScript"""
@@ -454,6 +804,14 @@ class Interpreter:
             print(f"Variável '{var_name}' mudou: {old_value} -> {new_value}")
             return None
         self.environment.define("printChange", print_change_func)
+        
+        # Função para sleep assíncrono
+        def async_sleep(ms):
+            """Implementação simplificada para simular sleep assíncrono"""
+            import time
+            time.sleep(ms / 1000)  # Convertendo ms para segundos
+            return None
+        self.environment.define("asyncSleep", async_sleep)
     
         def int_func(value):
             """Converte um valor para inteiro"""
@@ -491,6 +849,7 @@ class Interpreter:
         if ast is None:
             return None
         
+        self.source = ast
         result = None
         try:
             # Se for um objeto Program, obtém as statements
@@ -504,7 +863,10 @@ class Interpreter:
                 try:
                     statement_type = statement.__class__.__name__
                     if self.debug:
-                        print(f"\nDEBUG: Executando statement {i}: {statement_type}")
+                        if self.logger:
+                            self.logger.debug(f"\nDEBUG: Executando statement {i}: {statement_type}")
+                        else:
+                            print(f"\nDEBUG: Executando statement {i}: {statement_type}")
                         if hasattr(statement, '__dict__'):
                             for key, value in statement.__dict__.items():
                                 if key == 'body' and hasattr(value, '__len__'):
@@ -516,19 +878,31 @@ class Interpreter:
                     result = self.execute(statement)
                     
                     if self.debug:
-                        print(f"DEBUG: Statement {i} ({statement_type}) executada com sucesso")
+                        if self.logger:
+                            self.logger.debug(f"DEBUG: Statement {i} ({statement_type}) executada com sucesso")
+                        else:
+                            print(f"DEBUG: Statement {i} ({statement_type}) executada com sucesso")
                         if statement_type == "FunctionDeclaration":
                             # Verifica se a função está disponível após definição
                             function_name = statement.name
                             try:
                                 func = self.environment.get(function_name)
-                                print(f"DEBUG: Verificação - função '{function_name}' disponível: {type(func)}")
+                                if self.logger:
+                                    self.logger.debug(f"DEBUG: Verificação - função '{function_name}' disponível: {type(func)}")
+                                else:
+                                    print(f"DEBUG: Verificação - função '{function_name}' disponível: {type(func)}")
                                 print(f"DEBUG: Ambiente atual: functions={list(self.environment.functions.keys())}")
                             except Exception as e:
-                                print(f"DEBUG: Erro ao verificar função '{function_name}': {e}")
+                                if self.logger:
+                                    self.logger.error(f"DEBUG: Erro ao verificar função '{function_name}': {e}")
+                                else:
+                                    print(f"DEBUG: Erro ao verificar função '{function_name}': {e}")
                 except Exception as e:
                     if self.debug:
-                        print(f"DEBUG: Erro na statement {i} ({statement_type}): {e}")
+                        if self.logger:
+                            self.logger.error(f"DEBUG: Erro na statement {i} ({statement_type}): {e}")
+                        else:
+                            print(f"DEBUG: Erro na statement {i} ({statement_type}): {e}")
                         import traceback
                         traceback.print_exc()
                     raise
@@ -536,7 +910,10 @@ class Interpreter:
         except Exception as e:
             self.error = str(e)
             if self.debug:
-                print(f"DEBUG: Erro durante a interpretação: {e}")
+                if self.logger:
+                    self.logger.error(f"DEBUG: Erro durante a interpretação: {e}")
+                else:
+                    print(f"DEBUG: Erro durante a interpretação: {e}")
                 import traceback
                 traceback.print_exc()
             else:
@@ -545,17 +922,19 @@ class Interpreter:
         return result
     
     def execute(self, stmt):
-        """Executa uma instrução e retorna seu valor"""
-        if stmt is None:
-            return None
-        
-        stmt_type = stmt.__class__.__name__
-        method_name = f"execute_{stmt_type}"
-        
+        """Execute uma instrução"""
+        method_name = f"execute_{type(stmt).__name__}"
         if hasattr(self, method_name):
             return getattr(self, method_name)(stmt)
         else:
-            raise Exception(f"Tipo de instrução não implementado: {stmt_type}")
+            raise Exception(f"Método não implementado: {method_name}")
+    
+    def execute_BlockStatement(self, stmt):
+        """Executa um bloco de declarações"""
+        result = None
+        for statement in stmt.statements:
+            result = self.execute(statement)
+        return result
     
     def evaluate(self, expr):
         """Avalia uma expressão e retorna seu valor"""
@@ -575,12 +954,13 @@ class Interpreter:
         else:
             # Adicionando mensagem de erro mais clara para depuração
             if self.debug:
-                print(f"Erro de depuração: Tipo de expressão '{expr_type}' não implementado.")
-                print(f"Expressão: {expr}")
-                print(f"Tipo Python: {type(expr)}")
-                print(f"Atributos: {dir(expr) if hasattr(expr, '__dict__') else 'N/A'}")
-                if isinstance(expr, str):
-                    print(f"Conteúdo da string: {expr}")
+                if self.logger:
+                    self.logger.error(f"Erro de depuração: Tipo de expressão '{expr_type}' não implementado.")
+                    self.logger.error(f"Expressão: {expr}")
+                    self.logger.error(f"Tipo Python: {type(expr)}")
+                    self.logger.error(f"Atributos: {dir(expr) if hasattr(expr, '__dict__') else 'N/A'}")
+                    if isinstance(expr, str):
+                        self.logger.error(f"Conteúdo da string: {expr}")
             
             # Mensagem de erro padrão
             raise Exception(f"Tipo de expressão não implementado: {expr_type}")
@@ -596,6 +976,10 @@ class Interpreter:
         # Verifica se é um módulo
         if isinstance(obj, NajaModule):
             return obj.get_method(expr.name)
+        
+        # Se for uma instância de NajaObject (objetos de classe)
+        elif isinstance(obj, NajaObject):
+            return obj._get_property(expr.name)
         
         # Pode adicionar outros tipos de objetos que suportam acesso a atributos aqui
         
@@ -762,6 +1146,15 @@ class Interpreter:
         # Avalia os argumentos
         arguments = [self.evaluate(arg) for arg in expr.arguments]
         
+        # Log de depuração
+        if self.debug:
+            if self.logger:
+                self.logger.debug(f"MethodCall: objeto={obj}, método={method_name}, argumentos={arguments}")
+                self.logger.debug(f"Tipo do objeto: {type(obj).__name__}")
+            else:
+                print(f"DEBUG: MethodCall: objeto={obj}, método={method_name}, argumentos={arguments}")
+                print(f"DEBUG: Tipo do objeto: {type(obj).__name__}")
+        
         # Verifica se o objeto é um módulo
         if isinstance(obj, NajaModule):
             method = obj.get_method(method_name)
@@ -775,6 +1168,14 @@ class Interpreter:
                 return method(*arguments)
             else:
                 raise Exception(f"'{method_name}' no módulo '{obj.name}' não é uma função chamável")
+        
+        # Verifica se é um objeto de uma classe definida pelo usuário
+        elif isinstance(obj, NajaObject):
+            try:
+                # Chama o método no objeto
+                return obj._call_method(method_name, self, arguments)
+            except Exception as e:
+                raise Exception(f"Erro ao chamar método '{method_name}' no objeto {obj._class_name}: {e}")
         
         # Verifica se o objeto tem o método solicitado
         elif isinstance(obj, NajaList):
@@ -874,8 +1275,62 @@ class Interpreter:
         if stmt.value:
             value = self.evaluate(stmt.value)
         
-        self.environment.define(stmt.name, value, stmt.is_const)
-        return None
+        if value is None and stmt.var_type != "any" and stmt.var_type != "void":
+            # Para tipos específicos, garantir valores padrão
+            if stmt.var_type == "int":
+                value = 0
+            elif stmt.var_type == "float":
+                value = 0.0
+            elif stmt.var_type == "string":
+                value = ""
+            elif stmt.var_type == "bool":
+                value = False
+            elif stmt.var_type == "list":
+                value = NajaList()
+            elif stmt.var_type == "dict":
+                value = NajaDict()
+            elif stmt.var_type == "set":
+                value = NajaSet()
+            elif stmt.var_type == "map":
+                value = NajaMap()
+            elif stmt.var_type == "tuple":
+                value = NajaTuple()
+        
+        # Para valores primitivos como int, float, boolean, etc. não podemos
+        # adicionar o atributo exported diretamente. Vamos envolver em um 
+        # wrapper se for necessário exportar.
+        if stmt.exported:
+            if self.debug:
+                print(f"DEBUG: Variável '{stmt.name}' marcada como exportada")
+                print(f"DEBUG: Tipo de valor: {type(value)}")
+                
+            # Para objetos complexos, podemos definir o atributo diretamente
+            if isinstance(value, (NajaList, NajaDict, NajaSet, NajaMap, NajaTuple, Function)):
+                value.exported = True
+                if self.debug:
+                    print(f"DEBUG: Adicionando atributo 'exported' diretamente ao valor de '{stmt.name}'")
+            else:
+                # Para tipos primitivos, precisamos armazenar em uma classe wrapper
+                value = ExportedValue(value)
+                if self.debug:
+                    print(f"DEBUG: Encapsulando valor '{stmt.name}' em ExportedValue")
+        
+        if stmt.is_const:
+            self.environment.define_const(stmt.name, value)
+        else:
+            self.environment.define(stmt.name, value)
+        
+        # Verificar se a variável foi corretamente armazenada com a flag exported
+        if self.debug and stmt.exported:
+            stored_value = self.environment.get(stmt.name)
+            if isinstance(stored_value, ExportedValue):
+                print(f"DEBUG: Verificação de exportação na variável '{stmt.name}': OK (ExportedValue)")
+            elif hasattr(stored_value, 'exported'):
+                print(f"DEBUG: Verificação de exportação na variável '{stmt.name}': {stored_value.exported}")
+            else:
+                print(f"DEBUG: ERRO! Variável '{stmt.name}' não tem flag exported")
+        
+        return value
     
     def execute_ExpressionStatement(self, stmt):
         """Executa uma expressão como uma instrução"""
@@ -901,113 +1356,232 @@ class Interpreter:
         return None 
     
     def execute_ImportStatement(self, stmt):
-        """Executa uma instrução de importação"""
-        module_name = stmt.module_name
+        """Executa uma declaração de importação de módulo"""
+        module_name = stmt.module_name.strip('"').strip("'")
         
-        # Remove aspas se presentes
-        if module_name.startswith('"'): module_name = module_name[1:]
-        if module_name.endswith('"'): module_name = module_name[:-1]
-        if module_name.startswith("'"): module_name = module_name[1:]
-        if module_name.endswith("'"): module_name = module_name[:-1]
+        if self.debug:
+            print(f"DEBUG: Importando módulo: {module_name}")
         
-        # Verifica se o módulo já foi importado
+        # Se o módulo já foi carregado, reutiliza
         if module_name in self.imported_modules:
-            return self.imported_modules[module_name]
-        
-        # Tratamento especial para o módulo NajaGame
-        if module_name == "NajaGame":
-            try:
-                # Importa o módulo pygame_bridge
-                import importlib.util
-                spec = importlib.util.spec_from_file_location("pygame_bridge", "modules/pygame_bridge.py")
-                pygame_bridge = importlib.util.module_from_spec(spec)
-                spec.loader.exec_module(pygame_bridge)
+            module = self.imported_modules[module_name]
+            # Define o módulo no ambiente atual
+            self.environment.define(module_name, module)
+            
+            # Para depuração
+            if self.debug:
+                print(f"DEBUG: Módulo {module_name} carregado do cache")
+                print(f"DEBUG: Tipo do módulo: {type(module)}")
+                module.debug_exports()
+            
+            # Quando um módulo é importado, define apenas seus símbolos exportados
+            # no ambiente atual para acesso direto
+            if self.debug:
+                print(f"DEBUG: Exportando símbolos do módulo {module_name}:")
+            
+            for name, value in module.exports.items():
+                if self.debug:
+                    print(f"DEBUG:   - {name}: {type(value)}")
+                    
+                # Se for um valor encapsulado, extrai o valor interno
+                if isinstance(value, ExportedValue):
+                    value_to_define = value.value
+                    if self.debug:
+                        print(f"DEBUG:     (Desencapsulado para {type(value_to_define)})")
+                else:
+                    value_to_define = value
                 
-                # Registra as funções exportadas no ambiente global
-                for name, func in pygame_bridge.naja_exports.items():
-                    self.environment.define(name, func)
+                # Adiciona ao ambiente atual
+                self.environment.define(name, value_to_define)
+                if self.debug:
+                    print(f"DEBUG:     Adicionado ao ambiente: {name}")
+            
+            # Verificar se os valores foram realmente adicionados ao ambiente
+            if self.debug:
+                print("\nDEBUG: Verificando valores exportados no ambiente:")
+                for name in module.exports.keys():
+                    try:
+                        value = self.environment.get(name)
+                        print(f"DEBUG:   - {name}: {type(value)}")
+                    except Exception as e:
+                        print(f"DEBUG:   - {name}: ERRO! {str(e)}")
                 
-                self.imported_modules[module_name] = True
-                return True
-            except Exception as e:
-                raise Exception(f"Erro ao importar módulo NajaGame: {str(e)}")
+            return module
         
-        # Procura o módulo nos caminhos definidos
-        module_found = False
+        # Tenta encontrar o módulo nos caminhos registrados
         module_path = None
         
-        for path in self.module_paths:
-            # Tenta encontrar o módulo como arquivo .naja
-            potential_path = os.path.join(path, module_name + ".naja")
-            if os.path.exists(potential_path):
-                module_path = potential_path
-                module_found = True
-                break
-            
-            # Tenta encontrar o módulo como arquivo .py
-            potential_path = os.path.join(path, module_name + ".py")
-            if os.path.exists(potential_path):
-                module_path = potential_path
-                module_found = True
-                break
-            
-            # Tenta encontrar o módulo como diretório com __init__.naja
-            potential_path = os.path.join(path, module_name, "__init__.naja")
-            if os.path.exists(potential_path):
-                module_path = potential_path
-                module_found = True
-                break
-        
-        if not module_found:
-            raise Exception(f"Módulo não encontrado: {module_name}")
-        
-        # Carrega e executa o módulo
-        try:
-            with open(module_path, "r", encoding="utf-8") as f:
-                module_source = f.read()
+        # Primeiro verifica se é um módulo nativo
+        if module_name in self.modules:
+            # Para módulos nativos, cria um módulo a partir das funções exportadas
+            native_module = self.modules[module_name]
             
             # Cria um novo ambiente para o módulo
             module_env = Environment(self.globals)
             
-            # Analisa e executa o código do módulo
-            lexer = Lexer(module_source)
-            parser = Parser(lexer)
-            ast = parser.parse()
+            # Adiciona todas as funções exportadas ao ambiente do módulo
+            for name, func in native_module.items():
+                module_env.define(name, func)
+                # Marca a função como exportada para garantir a consistência
+                if hasattr(func, 'declaration'):
+                    func.declaration.exported = True
             
-            # Salva o ambiente atual
+            # Cria o objeto módulo
+            module = NajaModule(module_name, module_env, self.debug)
+            
+            # Debug do módulo criado
+            if self.debug:
+                print(f"\nDEBUG: Módulo nativo {module_name} criado")
+                module.debug_exports()
+            
+            # Armazena para reutilização
+            self.imported_modules[module_name] = module
+            
+            # Define o módulo no ambiente atual para acesso com notação de ponto
+            self.environment.define(module_name, module)
+            
+            # Define todos os símbolos exportados no ambiente atual para acesso direto
+            for name, value in module.exports.items():
+                if self.debug:
+                    print(f"DEBUG:   - {name}: {type(value)}")
+                    
+                # Se for um valor encapsulado, extrai o valor interno
+                if isinstance(value, ExportedValue):
+                    value_to_define = value.value
+                    if self.debug:
+                        print(f"DEBUG:     (Desencapsulado para {type(value_to_define)})")
+                else:
+                    value_to_define = value
+                
+                # Adiciona ao ambiente atual
+                self.environment.define(name, value_to_define)
+                if self.debug:
+                    print(f"DEBUG:     Adicionado ao ambiente: {name}")
+            
+            # Verificar se os valores foram realmente adicionados ao ambiente
+            if self.debug:
+                print("\nDEBUG: Verificando valores exportados no ambiente:")
+                for name in module.exports.keys():
+                    try:
+                        value = self.environment.get(name)
+                        print(f"DEBUG:   - {name}: {type(value)}")
+                    except Exception as e:
+                        print(f"DEBUG:   - {name}: ERRO! {str(e)}")
+            
+            return module
+        
+        # Caso contrário, procura nos caminhos de módulos
+        for path in self.module_paths:
+            # Tenta como módulo interno no diretório modules/
+            potential_path = os.path.join(path, module_name + ".naja")
+            if os.path.exists(potential_path):
+                module_path = potential_path
+                break
+            
+            # Tenta como módulo interno no diretório naja_modules/
+            potential_path = os.path.join(path, "naja_modules", module_name, "index.naja")
+            if os.path.exists(potential_path):
+                module_path = potential_path
+                break
+            
+            # Tenta como caminho relativo ao caminho atual
+            potential_path = os.path.join(path, module_name)
+            if os.path.exists(potential_path) and os.path.isdir(potential_path):
+                index_path = os.path.join(potential_path, "index.naja")
+                if os.path.exists(index_path):
+                    module_path = index_path
+                    break
+        
+        # Verifica se encontrou o módulo
+        if not module_path:
+            raise Exception(f"Módulo '{module_name}' não encontrado")
+        
+        # Carrega o módulo
+        try:
+            with open(module_path, 'r', encoding='utf-8') as file:
+                module_source = file.read()
+                
+            # Salva o arquivo atual e módulo atual
+            previous_file = self.current_file
+            previous_module = self.current_module
+            
+            # Define o arquivo atual e módulo atual
+            self.current_file = module_path
+            self.current_module = module_name
+            
+            # Cria um novo ambiente para o módulo
+            module_env = Environment(self.globals)
+            
+            # Salva o ambiente atual e define o ambiente do módulo
             previous_env = self.environment
             self.environment = module_env
             
             try:
+                # Pré-processa o código fonte (se tiver suporte a português)
+                module_source = self.preprocess_source(module_source)
+                
+                # Cria o lexer e parser
+                lexer = Lexer(module_source)
+                parser = Parser(lexer)
+                
+                # Analisa o módulo
+                ast = parser.parse()
+                
                 # Executa o módulo
                 self.interpret(ast)
                 
-                # Registra o módulo como importado
-                self.imported_modules[module_name] = module_env
+                # Cria o objeto módulo
+                module = NajaModule(module_name, module_env, self.debug)
                 
-                # Cria um objeto de módulo para acessos qualificados
-                module_obj = NajaModule(module_name, module_env)
+                # Debug do módulo criado
+                if self.debug:
+                    print(f"\nDEBUG: Módulo de arquivo {module_name} criado")
+                    module.debug_exports()
                 
-                # Define o objeto de módulo no ambiente global
-                self.globals.define(module_name, module_obj)
+                # Armazena para reutilização
+                self.imported_modules[module_name] = module
                 
-                # Exporta as definições do módulo para o ambiente global para compatibilidade
-                for name, func in module_env.functions.items():
-                    if not name.startswith("_"):  # Não exporta variáveis privadas
-                        self.globals.define(name, func)
+                # Define o módulo no ambiente atual para acesso com notação de ponto
+                previous_env.define(module_name, module)
                 
-                # Também exporta os valores do ambiente
-                for name, (value, is_const, is_flux) in module_env.values.items():
-                    if not name.startswith("_"):  # Não exporta variáveis privadas
-                        if name not in self.globals.functions:  # Evita duplicatas
-                            self.globals.define(name, value, is_const, is_flux)
+                # Define apenas os símbolos exportados no ambiente atual para acesso direto
+                for name, value in module.exports.items():
+                    if self.debug:
+                        print(f"DEBUG:   - {name}: {type(value)}")
+                        
+                    # Se for um valor encapsulado, extrai o valor interno
+                    if isinstance(value, ExportedValue):
+                        value_to_define = value.value
+                        if self.debug:
+                            print(f"DEBUG:     (Desencapsulado para {type(value_to_define)})")
+                    else:
+                        value_to_define = value
+                    
+                    # Adiciona ao ambiente anterior
+                    previous_env.define(name, value_to_define)
+                    if self.debug:
+                        print(f"DEBUG:     Adicionado ao ambiente: {name}")
                 
-                return module_env
+                # Verificar se os valores foram realmente adicionados ao ambiente
+                if self.debug:
+                    print("\nDEBUG: Verificando valores exportados no ambiente anterior:")
+                    for name in module.exports.keys():
+                        try:
+                            value = previous_env.get(name)
+                            print(f"DEBUG:   - {name}: {type(value)}")
+                        except Exception as e:
+                            print(f"DEBUG:   - {name}: ERRO! {str(e)}")
+                
+                return module
+                
             finally:
-                # Restaura o ambiente original
+                # Restaura o ambiente, arquivo e módulo anteriores
                 self.environment = previous_env
+                self.current_file = previous_file
+                self.current_module = previous_module
+                
         except Exception as e:
-            raise Exception(f"Erro ao carregar módulo {module_name}: {str(e)}")
+            raise Exception(f"Erro ao carregar módulo '{module_name}': {str(e)}")
     
     def execute_WhileStatement(self, stmt):
         """Executa uma instrução while"""
@@ -1024,7 +1598,21 @@ class Interpreter:
     def execute_Assignment(self, stmt):
         """Executa uma atribuição"""
         value = self.evaluate(stmt.value)
-        self.environment.assign(stmt.name, value)
+        
+        # Verifica se estamos atribuindo a uma propriedade de objeto (GetAttr)
+        if isinstance(stmt.name, GetAttr):
+            # Avalia o objeto
+            obj = self.evaluate(stmt.name.object)
+            
+            # Se for um objeto NajaObject, define a propriedade
+            if isinstance(obj, NajaObject):
+                obj._set_property(stmt.name.name, value)
+            else:
+                raise Exception(f"Não é possível atribuir à propriedade '{stmt.name.name}' em um não-objeto")
+        else:
+            # Atribuição normal a uma variável
+            self.environment.assign(stmt.name, value)
+            
         return value
     
     def evaluate_ListLiteral(self, expr):
@@ -1045,7 +1633,21 @@ class Interpreter:
     def evaluate_Assignment(self, expr):
         """Avalia uma expressão de atribuição diretamente"""
         value = self.evaluate(expr.value)
-        self.environment.assign(expr.name, value)
+        
+        # Verifica se estamos atribuindo a uma propriedade de objeto (GetAttr)
+        if isinstance(expr.name, GetAttr):
+            # Avalia o objeto
+            obj = self.evaluate(expr.name.object)
+            
+            # Se for um objeto NajaObject, define a propriedade
+            if isinstance(obj, NajaObject):
+                obj._set_property(expr.name.name, value)
+            else:
+                raise Exception(f"Não é possível atribuir à propriedade '{expr.name.name}' em um não-objeto")
+        else:
+            # Atribuição normal a uma variável
+            self.environment.assign(expr.name, value)
+        
         return value
 
     def execute_ForStatement(self, stmt):
@@ -1091,13 +1693,25 @@ class Interpreter:
 
     def execute_FunctionDeclaration(self, stmt):
         """Executa uma declaração de função"""
-        # Cria uma nova função e a armazena no ambiente atual
         function = Function(stmt, self.environment)
         
-        # Armazena a função no ambiente
+        # Armazenar a informação de exportação
+        if hasattr(stmt, 'exported') and stmt.exported:
+            function.declaration.exported = True
+            if self.debug:
+                print(f"DEBUG: Função '{stmt.name}' marcada como exportada")
+        
         self.environment.define(stmt.name, function)
         
-        return None
+        # Verificar se a função foi corretamente armazenada e com a flag exported
+        if self.debug and hasattr(stmt, 'exported') and stmt.exported:
+            stored_function = self.environment.get(stmt.name)
+            if hasattr(stored_function, 'declaration') and hasattr(stored_function.declaration, 'exported'):
+                print(f"DEBUG: Verificação de exportação na função '{stmt.name}': {stored_function.declaration.exported}")
+            else:
+                print(f"DEBUG: ERRO! Função '{stmt.name}' não tem declaração ou flag exported")
+        
+        return function
 
     def execute_ReturnStatement(self, stmt):
         """Executa uma declaração de retorno"""
@@ -1105,3 +1719,311 @@ class Interpreter:
         if stmt.value:
             value = self.evaluate(stmt.value)
         raise ReturnException(value)
+
+    def execute_FluxDeclaration(self, stmt):
+        """Executa uma declaração flux"""
+        if self.debug:
+            if self.logger:
+                self.logger.debug(f"DEBUG: Executando flux {stmt.name}")
+            else:
+                print(f"DEBUG: Executando flux {stmt.name}")
+        
+        # Cria um valor flux
+        flux_value = FluxValue(stmt.expression, self, self.environment)
+        
+        # Define a variável no ambiente atual
+        self.environment.define(stmt.name, flux_value, False, True)
+        
+        return None
+
+    def evaluate_AwaitExpression(self, expr):
+        """Avalia uma expressão de await"""
+        # Esta é uma implementação simplificada, sem real assincronicidade
+        # Em uma implementação completa, seria necessário usar async/await do Python
+        
+        # Avalia a expressão sendo aguardada
+        result = self.evaluate(expr.expression)
+        
+        if self.debug:
+            if self.logger:
+                self.logger.debug(f"DEBUG: Avaliando expressão await: {result}")
+            else:
+                print(f"DEBUG: Avaliando expressão await: {result}")
+        
+        # Simplesmente retorna o resultado, simulando que a espera foi concluída
+        return result
+        
+    def evaluate_TypeCast(self, expr):
+        """Avalia uma expressão de cast de tipo (tipo)expressão"""
+        # Avalia a expressão que está sendo convertida
+        value = self.evaluate(expr.expression)
+        
+        if self.debug:
+            if self.logger:
+                self.logger.debug(f"DEBUG: Convertendo {value} para {expr.target_type}")
+            else:
+                print(f"DEBUG: Convertendo {value} para {expr.target_type}")
+        
+        target_type = expr.target_type
+        
+        # Realiza a conversão com base no tipo alvo
+        if target_type == "int":
+            try:
+                if isinstance(value, str):
+                    return int(value)
+                elif isinstance(value, (int, float)):
+                    return int(value)
+                else:
+                    raise Exception(f"Não é possível converter {type(value).__name__} para int")
+            except ValueError:
+                return 0  # Valor padrão se a conversão falhar
+        
+        elif target_type == "float":
+            try:
+                if isinstance(value, str):
+                    return float(value)
+                elif isinstance(value, (int, float)):
+                    return float(value)
+                else:
+                    raise Exception(f"Não é possível converter {type(value).__name__} para float")
+            except ValueError:
+                return 0.0  # Valor padrão se a conversão falhar
+        
+        elif target_type == "string":
+            return str(value)
+        
+        elif target_type == "bool":
+            return self.is_truthy(value)
+        
+        # Para outros tipos, por enquanto apenas retorna o valor original
+        return value
+
+    def evaluate_SuperExpression(self, expr):
+        """Avalia uma expressão super"""
+        # Buscar a classe base do objeto atual
+        if not hasattr(self.environment, "get") or not self.environment.get("this"):
+            raise Exception("'super' só pode ser usado dentro de métodos de classe")
+        
+        current_obj = self.environment.get("this")
+        if not isinstance(current_obj, NajaObject) or not hasattr(current_obj, "_class_name"):
+            raise Exception("'super' só pode ser usado dentro de métodos de classe")
+        
+        # Obter a classe base
+        class_name = current_obj._class_name
+        class_def = self.environment.get_class_definition(class_name)
+        
+        if not class_def or not class_def.extends:
+            raise Exception(f"A classe '{class_name}' não tem uma classe base")
+        
+        base_class_name = class_def.extends
+        base_class = self.environment.get_class_definition(base_class_name)
+        
+        if not base_class:
+            raise Exception(f"Classe base '{base_class_name}' não encontrada")
+        
+        # Se estamos chamando um método específico
+        if expr.method:
+            # Encontrar o método na classe base
+            method = None
+            for m in base_class.methods:
+                if m.name == expr.method:
+                    method = m
+                    break
+            
+            if not method:
+                raise Exception(f"Método '{expr.method}' não encontrado na classe base '{base_class_name}'")
+            
+            # Criar um Function com o método da classe base
+            function = Function(method, self.environment)
+            
+            # Avaliar os argumentos
+            arguments = [self.evaluate(arg) for arg in expr.arguments]
+            
+            # Chamar o método com 'this' apontando para o objeto atual
+            prev_env = self.environment
+            method_env = Environment(self.environment)
+            method_env.define("this", current_obj)
+            
+            try:
+                self.environment = method_env
+                return function(self, arguments)
+            finally:
+                self.environment = prev_env
+        
+        # Se estamos apenas referenciando super sem chamar um método específico
+        return base_class_name
+
+    def evaluate_NewExpression(self, expr):
+        """Avalia uma expressão de instanciação de classe (new ClassName())"""
+        # Obtém a definição da classe
+        class_name = expr.class_name
+        class_def = self.environment.get_class_definition(class_name)
+        
+        if not class_def:
+            raise Exception(f"Classe '{class_name}' não encontrada")
+        
+        # Cria um novo objeto da classe
+        obj = NajaObject(class_name)
+        
+        # Se a classe estender outra classe, herda propriedades e métodos
+        if class_def.extends:
+            base_class_name = class_def.extends
+            base_class_def = self.environment.get_class_definition(base_class_name)
+            
+            if base_class_def:
+                # Define as propriedades da classe base
+                for prop in base_class_def.properties:
+                    obj._define_property(prop.name, None if prop.value is None else self.evaluate(prop.value), prop.access_modifier)
+                
+                # Herda os métodos da classe base que não foram sobreescritos
+                for method in base_class_def.methods:
+                    if method.name != "constructor" and not any(m.name == method.name for m in class_def.methods):
+                        method_func = Function(method, self.environment)
+                        obj._define_method(method.name, method_func, method.access_modifier)
+        
+        # Define propriedades do objeto com valores padrão
+        for prop in class_def.properties:
+            obj._define_property(prop.name, None if prop.value is None else self.evaluate(prop.value), prop.access_modifier)
+        
+        # Define métodos do objeto
+        for method in class_def.methods:
+            if method.name != "constructor":  # Construtores são tratados separadamente
+                method_func = Function(method, self.environment)
+                obj._define_method(method.name, method_func, method.access_modifier)
+        
+        # Procura e executa o construtor
+        constructor = None
+        for method in class_def.methods:
+            if method.name == "constructor":
+                constructor = method
+                break
+        
+        # Se a classe tiver um construtor, chama-o com os argumentos fornecidos
+        if constructor:
+            # Avalia os argumentos
+            arguments = [self.evaluate(arg) for arg in expr.arguments]
+            
+            # Cria e configura a função construtora
+            constructor_func = Function(constructor, self.environment)
+            
+            # Configura o ambiente com 'this'
+            prev_env = self.environment
+            constructor_env = Environment(self.environment)
+            
+            # Importante: Definimos 'this' no ambiente do construtor
+            constructor_env.define("this", obj)
+            
+            # Também passamos os parâmetros do construtor para o ambiente
+            for i, param in enumerate(constructor.parameters):
+                if i < len(arguments):
+                    # param pode ser uma tupla (tipo, nome) ou um objeto Parameter
+                    if hasattr(param, 'name'):
+                        param_name = param.name
+                    elif isinstance(param, tuple) and len(param) > 1:
+                        param_name = param[1]
+                    else:
+                        param_name = str(param)
+                    constructor_env.define(param_name, arguments[i])
+            
+            try:
+                # Define o ambiente temporário
+                self.environment = constructor_env
+                
+                # Chama o construtor executando seu corpo
+                self.execute_block(constructor.body, constructor_env)
+            finally:
+                # Restaura o ambiente
+                self.environment = prev_env
+            
+        return obj
+
+    def execute_ClassDeclaration(self, stmt):
+        """Executa uma declaração de classe"""
+        # Define a classe no ambiente
+        self.environment.define_class(stmt.name, stmt)
+        
+        # Também define um construtor de classe (função que cria novas instâncias)
+        class_constructor = lambda *args: self.create_instance(stmt.name, args)
+        self.environment.define(stmt.name, class_constructor)
+        
+        return None
+        
+    def create_instance(self, class_name, args):
+        """Cria uma nova instância de classe programaticamente"""
+        # Criamos uma expressão NewExpression
+        expr = NewExpression(class_name, args)
+        
+        # E avaliamos usando o método existente
+        return self.evaluate_NewExpression(expr)
+
+    def execute_CompoundAssignment(self, stmt):
+        """Executa uma atribuição composta (+=, -=, etc.)"""
+        # Obtém o valor atual da variável
+        current_value = self.environment.get(stmt.name)
+        
+        # Obtém o valor a ser combinado
+        new_value = self.evaluate(stmt.value)
+        
+        result = None
+        
+        # Aplica a operação composta adequada
+        if stmt.operator == TokenType.PLUS_ASSIGN:
+            result = current_value + new_value
+        elif stmt.operator == TokenType.MINUS_ASSIGN:
+            result = current_value - new_value
+        elif stmt.operator == TokenType.MULTIPLY_ASSIGN:
+            result = current_value * new_value
+        elif stmt.operator == TokenType.DIVIDE_ASSIGN:
+            result = current_value / new_value
+        elif stmt.operator == TokenType.MODULO_ASSIGN:
+            result = current_value % new_value
+        elif stmt.operator == TokenType.POWER_ASSIGN:
+            result = current_value ** new_value
+        else:
+            raise Exception(f"Operador de atribuição composta não suportado: {stmt.operator}")
+        
+        # Atribui o novo valor
+        self.environment.assign(stmt.name, result)
+        
+        return result
+
+    def evaluate_CompoundAssignment(self, expr):
+        """Avalia uma atribuição composta como expressão"""
+        # Obtém o valor atual da variável
+        current_value = self.environment.get(expr.name)
+        
+        # Obtém o valor a ser combinado
+        new_value = self.evaluate(expr.value)
+        
+        result = None
+        
+        # Aplica a operação composta adequada
+        if expr.operator == TokenType.PLUS_ASSIGN:
+            result = current_value + new_value
+        elif expr.operator == TokenType.MINUS_ASSIGN:
+            result = current_value - new_value
+        elif expr.operator == TokenType.MULTIPLY_ASSIGN:
+            result = current_value * new_value
+        elif expr.operator == TokenType.DIVIDE_ASSIGN:
+            result = current_value / new_value
+        elif expr.operator == TokenType.MODULO_ASSIGN:
+            result = current_value % new_value
+        elif expr.operator == TokenType.POWER_ASSIGN:
+            result = current_value ** new_value
+        else:
+            raise Exception(f"Operador de atribuição composta não suportado: {expr.operator}")
+        
+        # Atribui o novo valor
+        self.environment.assign(expr.name, result)
+        
+        return result
+
+    def evaluate_ThisExpression(self, expr):
+        """Avalia a palavra-chave 'this'"""
+        # Tenta obter 'this' do ambiente
+        this_obj = self.environment.get("this")
+        
+        if this_obj is None:
+            raise Exception("A palavra-chave 'this' só pode ser usada dentro de métodos de classe")
+        
+        return this_obj

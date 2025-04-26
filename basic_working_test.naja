@@ -1,0 +1,66 @@
+// Basic NajaScript Test
+
+// Variables
+int a = 10;
+float b = 3.14;
+string c = "Hello";
+bool d = true;
+
+// Basic operations
+int sum = a + 5;
+float product = b * 2;
+
+// Output
+println("a = " + a);
+println("b = " + b);
+println("c = " + c);
+println("d = " + d);
+println("sum = " + sum);
+println("product = " + product);
+
+// Conditional
+if (a > 5) {
+    println("a is greater than 5");
+} else {
+    println("a is not greater than 5");
+}
+
+// Loop
+int i = 0;
+while (i < 3) {
+    println("i = " + i);
+    i = i + 1;
+}
+
+// For loop
+println("For loop:");
+for (int j = 0; j < 3; j = j + 1) {
+    println("j = " + j);
+}
+
+// Data structures
+println("Data structures:");
+list numbers = [1, 2, 3, 4, 5];
+println("List: " + numbers);
+println("List length: " + numbers.length());
+
+dict person = {};
+person.add("name", "João");
+person.add("age", 25);
+println("Dict: " + person);
+println("Name: " + person.get("name"));
+
+// Function
+fun add(int x, int y) {
+    return x + y;
+}
+
+println("Function: add(3, 4) = " + add(3, 4));
+
+// Main function
+fun main() {
+    println("This is the main function");
+}
+
+// Call main
+main(); 

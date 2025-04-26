@@ -1,0 +1,27 @@
+// Teste simples de objetos
+
+class Pessoa {
+    string nome;
+    
+    constructor(string nome) {
+        this.nome = nome;
+    }
+    
+    public void saudacao() {
+        println("Olá, meu nome é " + this.nome);
+    }
+}
+
+// Programa principal
+fun main() {
+    println("=== Teste de Objeto Simples ===");
+    
+    // Criando um objeto usando var
+    var p = new Pessoa("João");
+    p.saudacao();
+    
+    println("=== Fim ===");
+}
+
+// Executar o programa
+main(); 

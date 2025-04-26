@@ -33,6 +33,44 @@ class TokenType(Enum):
     FLUX = auto()
     ANY = auto()  # Novo token para o tipo any
     IMPORT = auto()  # Novo token para importação de módulos
+    EXPORT = auto()  # Novo token para exportação de módulos
+    VAR = auto()  # Novo token para tipo genérico var
+    
+    # Novos tokens para OOP
+    CLASS = auto()
+    EXTENDS = auto()
+    IMPLEMENTS = auto()
+    INTERFACE = auto()
+    PUBLIC = auto()
+    PRIVATE = auto()
+    PROTECTED = auto()
+    STATIC = auto()
+    THIS = auto()
+    SUPER = auto()
+    NEW = auto()
+    CONSTRUCTOR = auto()
+    
+    # Tratamento de exceções
+    TRY = auto()
+    CATCH = auto()
+    FINALLY = auto()
+    THROW = auto()
+    
+    # Async/await
+    ASYNC = auto()
+    AWAIT = auto()
+    
+    # Generics
+    GENERIC = auto()
+    
+    # Pattern matching
+    MATCH = auto()
+    WHEN = auto()
+    
+    # Novos tipos de dados
+    SET = auto()
+    MAP = auto()
+    TUPLE = auto()
     
     # Literais
     INTEGER = auto()
@@ -57,6 +95,17 @@ class TokenType(Enum):
     GTE = auto()
     TERNARY = auto()
     
+    # Operadores de atribuição compostos
+    PLUS_ASSIGN = auto()
+    MINUS_ASSIGN = auto()
+    MULTIPLY_ASSIGN = auto()
+    DIVIDE_ASSIGN = auto()
+    MODULO_ASSIGN = auto()
+    POWER_ASSIGN = auto()
+    
+    # Operadores para spread/rest
+    SPREAD = auto()
+    
     # Delimitadores
     LPAREN = auto()
     RPAREN = auto()
@@ -69,6 +118,7 @@ class TokenType(Enum):
     COMMA = auto()
     DOT = auto()
     ARROW = auto()
+    DECORATOR = auto()  # Para decoradores (@)
     
     # Outros
     IDENTIFIER = auto()
@@ -132,10 +182,48 @@ class Lexer:
             'type': TokenType.TYPE,
             'flux': TokenType.FLUX,
             'any': TokenType.ANY,
+            'var': TokenType.VAR,
             'true': TokenType.TRUE,
             'false': TokenType.FALSE,
-            'import': TokenType.IMPORT,  # Adicionando a palavra-chave import
-            'importar': TokenType.IMPORT,  # Permitindo 'importar' como alias para 'import'
+            'import': TokenType.IMPORT,
+            'importar': TokenType.IMPORT,
+            'export': TokenType.EXPORT,
+            
+            # Novos keywords para OOP
+            'class': TokenType.CLASS,
+            'extends': TokenType.EXTENDS,
+            'implements': TokenType.IMPLEMENTS,
+            'interface': TokenType.INTERFACE,
+            'public': TokenType.PUBLIC,
+            'private': TokenType.PRIVATE,
+            'protected': TokenType.PROTECTED,
+            'static': TokenType.STATIC,
+            'this': TokenType.THIS,
+            'super': TokenType.SUPER,
+            'new': TokenType.NEW,
+            'constructor': TokenType.CONSTRUCTOR,
+            
+            # Tratamento de exceções
+            'try': TokenType.TRY,
+            'catch': TokenType.CATCH,
+            'finally': TokenType.FINALLY,
+            'throw': TokenType.THROW,
+            
+            # Async/await
+            'async': TokenType.ASYNC,
+            'await': TokenType.AWAIT,
+            
+            # Generics
+            'generic': TokenType.GENERIC,
+            
+            # Pattern matching
+            'match': TokenType.MATCH,
+            'when': TokenType.WHEN,
+            
+            # Novos tipos de dados
+            'set': TokenType.SET,
+            'map': TokenType.MAP,
+            'tuple': TokenType.TUPLE,
         }
     
     def advance(self):
@@ -240,33 +328,33 @@ class Lexer:
             return Token(TokenType.IDENTIFIER, result, self.line, start_column)
     
     def get_next_token(self):
+        """Obtém o próximo token da entrada"""
         while self.current_char is not None:
             # Espaços em branco
             if self.current_char.isspace():
                 self.skip_whitespace()
                 continue
             
-            # Comentários de linha única (# ou //)
+            # Comentários
             if self.current_char == '#' or (self.current_char == '/' and self.peek() == '/'):
                 self.skip_comment()
                 continue
             
-            # Comentários de bloco (/* ... */)
+            # Comentários de bloco
             if self.current_char == '/' and self.peek() == '*':
-                # Avança /* 
-                self.advance()
-                self.advance()
+                self.advance()  # Consome '/'
+                self.advance()  # Consome '*'
                 
-                # Continua até encontrar */
-                while self.current_char is not None:
-                    if self.current_char == '*' and self.peek() == '/':
-                        self.advance()  # avança *
-                        self.advance()  # avança /
-                        break
+                while not (self.current_char == '*' and self.peek() == '/'):
                     self.advance()
+                    if self.current_char is None:
+                        self.error("Comentário de bloco não finalizado")
+                
+                self.advance()  # Consome '*'
+                self.advance()  # Consome '/'
                 continue
             
-            # Identificadores e palavras-chave
+            # Identificadores
             if self.current_char.isalpha() or self.current_char == '_':
                 return self.identifier()
             
@@ -275,41 +363,74 @@ class Lexer:
                 return self.number()
             
             # Strings
-            if self.current_char in ('"', "'"):
+            if self.current_char == '"' or self.current_char == "'":
                 return self.string()
             
-            # Operadores e delimitadores
+            # Operadores compostos e símbolos especiais
             if self.current_char == '+':
-                column = self.column
+                start_column = self.column
                 self.advance()
-                return Token(TokenType.PLUS, '+', self.line, column)
+                if self.current_char == '=':
+                    self.advance()
+                    return Token(TokenType.PLUS_ASSIGN, '+=', self.line, start_column)
+                return Token(TokenType.PLUS, '+', self.line, start_column)
             
             if self.current_char == '-':
-                column = self.column
+                start_column = self.column
                 self.advance()
-                if self.current_char == '>' and self.peek() == ' ':
+                if self.current_char == '=':
                     self.advance()
-                    return Token(TokenType.ARROW, '->', self.line, column)
-                return Token(TokenType.MINUS, '-', self.line, column)
+                    return Token(TokenType.MINUS_ASSIGN, '-=', self.line, start_column)
+                if self.current_char == '>':
+                    self.advance()
+                    return Token(TokenType.ARROW, '->', self.line, start_column)
+                return Token(TokenType.MINUS, '-', self.line, start_column)
             
             if self.current_char == '*':
-                column = self.column
+                start_column = self.column
                 self.advance()
+                if self.current_char == '=':
+                    self.advance()
+                    return Token(TokenType.MULTIPLY_ASSIGN, '*=', self.line, start_column)
                 if self.current_char == '*':
                     self.advance()
-                    return Token(TokenType.POWER, '**', self.line, column)
-                return Token(TokenType.MULTIPLY, '*', self.line, column)
+                    if self.current_char == '=':
+                        self.advance()
+                        return Token(TokenType.POWER_ASSIGN, '**=', self.line, start_column)
+                    return Token(TokenType.POWER, '**', self.line, start_column)
+                return Token(TokenType.MULTIPLY, '*', self.line, start_column)
             
             if self.current_char == '/':
-                column = self.column
+                start_column = self.column
                 self.advance()
-                return Token(TokenType.DIVIDE, '/', self.line, column)
+                if self.current_char == '=':
+                    self.advance()
+                    return Token(TokenType.DIVIDE_ASSIGN, '/=', self.line, start_column)
+                return Token(TokenType.DIVIDE, '/', self.line, start_column)
             
             if self.current_char == '%':
-                column = self.column
+                start_column = self.column
                 self.advance()
-                return Token(TokenType.MODULO, '%', self.line, column)
+                if self.current_char == '=':
+                    self.advance()
+                    return Token(TokenType.MODULO_ASSIGN, '%=', self.line, start_column)
+                return Token(TokenType.MODULO, '%', self.line, start_column)
             
+            # Operador spread/rest
+            if self.current_char == '.' and self.peek() == '.' and self.peek(2) == '.':
+                start_column = self.column
+                self.advance()
+                self.advance()
+                self.advance()
+                return Token(TokenType.SPREAD, '...', self.line, start_column)
+            
+            # Operador decorator
+            if self.current_char == '@':
+                start_column = self.column
+                self.advance()
+                return Token(TokenType.DECORATOR, '@', self.line, start_column)
+            
+            # Operadores e delimitadores
             if self.current_char == '=':
                 column = self.column
                 self.advance()

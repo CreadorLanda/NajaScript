@@ -1,0 +1,6 @@
+// Módulo Basico - Um módulo simples para testes
+
+// Função simples que retorna o dobro de um número
+fun dobro(n) {
+    return n * 2;
+} 

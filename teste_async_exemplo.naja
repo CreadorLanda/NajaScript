@@ -1,0 +1,111 @@
+// Exemplo de funções assíncronas em NajaScript
+
+// Função para simular espera assíncrona
+async fun esperar(int ms) {
+    println("Iniciando espera de " + ms + " milissegundos...");
+    await asyncSleep(ms);
+    println("Espera de " + ms + " milissegundos concluída!");
+    return "Concluído em " + ms + " ms";
+}
+
+// Função assíncrona para buscar dados (simulação)
+async fun buscarDados(string url) {
+    println("Buscando dados de: " + url);
+    
+    // Simulando tempo de resposta variável
+    int tempoResposta = 1000 + (int)(Math.random() * 2000);
+    await asyncSleep(tempoResposta);
+    
+    // Simulação de dados retornados
+    return {
+        "url": url,
+        "tempo": tempoResposta,
+        "dados": "Dados obtidos com sucesso!"
+    };
+}
+
+// Função que executa chamadas assíncronas em sequência
+async fun exemploSequencial() {
+    println("\n=== Executando chamadas em sequência ===");
+    
+    string resultado1 = await esperar(1000);
+    println("Resultado 1: " + resultado1);
+    
+    string resultado2 = await esperar(500);
+    println("Resultado 2: " + resultado2);
+    
+    string resultado3 = await esperar(1500);
+    println("Resultado 3: " + resultado3);
+    
+    println("Todas as operações sequenciais foram concluídas!");
+}
+
+// Função que executa chamadas assíncronas em paralelo
+async fun exemploParalelo() {
+    println("\n=== Executando chamadas em paralelo ===");
+    
+    // Iniciando todas as operações ao mesmo tempo
+    any operacao1 = esperar(1000);
+    any operacao2 = esperar(500);
+    any operacao3 = esperar(1500);
+    
+    // Aguardando todas as operações concluírem
+    println("Aguardando todas as operações concluírem...");
+    
+    string resultado1 = await operacao1;
+    println("Resultado 1: " + resultado1);
+    
+    string resultado2 = await operacao2;
+    println("Resultado 2: " + resultado2);
+    
+    string resultado3 = await operacao3;
+    println("Resultado 3: " + resultado3);
+    
+    println("Todas as operações paralelas foram concluídas!");
+}
+
+// Função para demonstrar tratamento de erros com async/await
+async fun exemploTratamentoErros() {
+    println("\n=== Tratamento de erros com async/await ===");
+    
+    try {
+        await esperar(1000);
+        
+        // Simulando um erro
+        println("Simulando um erro...");
+        throw "Erro simulado na operação assíncrona";
+    } catch (e) {
+        println("Erro capturado: " + e);
+    }
+    
+    println("Continuando após o erro");
+}
+
+// Função principal assíncrona
+async fun main() {
+    println("=== Teste de Funções Assíncronas em NajaScript ===");
+    
+    // Exemplo simples
+    println("\n--- Exemplo simples ---");
+    string resultado = await esperar(2000);
+    println("Resultado: " + resultado);
+    
+    // Buscando dados
+    println("\n--- Buscando dados ---");
+    dict dados = await buscarDados("https://api.exemplo.com/dados");
+    println("Dados recebidos: " + dados);
+    
+    // Chamadas sequenciais
+    await exemploSequencial();
+    
+    // Chamadas paralelas
+    await exemploParalelo();
+    
+    // Tratamento de erros
+    await exemploTratamentoErros();
+    
+    println("\n=== Fim do teste de funções assíncronas ===");
+}
+
+// Executando a função principal
+main(); 

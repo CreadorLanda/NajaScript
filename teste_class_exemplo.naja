@@ -1,0 +1,91 @@
+// Exemplo de Classes em NajaScript
+
+// Definição da classe básica
+class Animal {
+    private string nome;
+    private int idade;
+    
+    constructor(string nome, int idade) {
+        this.nome = nome;
+        this.idade = idade;
+    }
+    
+    public string getNome() {
+        return this.nome;
+    }
+    
+    public int getIdade() {
+        return this.idade;
+    }
+    
+    public void emitirSom() {
+        println("Som genérico de animal");
+    }
+}
+
+// Classe que herda de Animal
+class Cachorro extends Animal {
+    private string raca;
+    
+    constructor(string nome, int idade, string raca) {
+        super(nome, idade);
+        this.raca = raca;
+    }
+    
+    public string getRaca() {
+        return this.raca;
+    }
+    
+    // Sobrescrevendo o método da classe pai
+    public void emitirSom() {
+        println("Au Au!");
+    }
+}
+
+// Classe que herda de Animal
+class Gato extends Animal {
+    constructor(string nome, int idade) {
+        super(nome, idade);
+    }
+    
+    // Sobrescrevendo o método da classe pai
+    public void emitirSom() {
+        println("Miau!");
+    }
+}
+
+// Programa principal
+fun main() {
+    println("=== Teste de Classes em NajaScript ===");
+    
+    // Criando instâncias
+    Animal animal = new Animal("Animal Genérico", 5);
+    println("Nome: " + animal.getNome());
+    println("Idade: " + animal.getIdade());
+    animal.emitirSom();
+    
+    println("\n--- Testando cachorro ---");
+    Cachorro cachorro = new Cachorro("Rex", 3, "Pastor Alemão");
+    println("Nome: " + cachorro.getNome());
+    println("Idade: " + cachorro.getIdade());
+    println("Raça: " + cachorro.getRaca());
+    cachorro.emitirSom();
+    
+    println("\n--- Testando gato ---");
+    Gato gato = new Gato("Mimi", 2);
+    println("Nome: " + gato.getNome());
+    println("Idade: " + gato.getIdade());
+    gato.emitirSom();
+    
+    println("\n--- Testando polimorfismo ---");
+    Animal animal1 = new Cachorro("Toby", 4, "Vira-lata");
+    Animal animal2 = new Gato("Felix", 3);
+    
+    animal1.emitirSom();  // Deve imprimir "Au Au!"
+    animal2.emitirSom();  // Deve imprimir "Miau!"
+    
+    println("\n=== Fim do teste ===");
+}
+
+// Executar o programa
+main(); 

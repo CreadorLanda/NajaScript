@@ -1,1 +1,36 @@
-println("Teste simples do NajaScript"); 
+// Arquivo de teste para a extensão VSCode do NajaScript
+
+// Importar o módulo MathUtils
+import "MathUtils";
+
+// Função principal
+fun main() {
+    // Exibir informações do módulo
+    println("Informações do módulo: " + MathUtils.info());
+    
+    // Testar operações matemáticas
+    println("\n== Operações Matemáticas ==");
+    println("Adição: 5 + 3 = " + MathUtils.add(5, 3));
+    println("Subtração: 10 - 4 = " + MathUtils.subtract(10, 4));
+    println("Multiplicação: 6 * 7 = " + MathUtils.multiply(6, 7));
+    println("Divisão: 20 / 4 = " + MathUtils.divide(20, 4));
+    
+    // Testar operações avançadas
+    println("\n== Operações Avançadas ==");
+    println("Potência: 2^8 = " + MathUtils.power(2, 8));
+    println("Fatorial: 5! = " + MathUtils.factorial(5));
+    
+    // Testar constantes
+    println("\n== Constantes Matemáticas ==");
+    println("PI = " + MathUtils.PI);
+    println("E = " + MathUtils.E);
+    
+    // Loop para demonstrar sintaxe
+    println("\n== Loop de Demonstração ==");
+    for (int i = 1; i <= 5; i = i + 1) {
+        println("Fatorial de " + i + " = " + MathUtils.factorial(i));
+    }
+}
+
+// Chamada da função principal
+main(); 

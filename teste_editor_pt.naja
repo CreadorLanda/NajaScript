@@ -1,0 +1,51 @@
+// Arquivo de teste em português para a extensão VSCode do NajaScript
+
+// Importar o módulo MathUtils
+importar "MathUtils";
+
+// Função principal
+funcao principal() {
+    // Exibir informações do módulo
+    escreverln("Informações do módulo: " + MathUtils.info());
+    
+    // Testar operações matemáticas
+    escreverln("\n== Operações Matemáticas ==");
+    escreverln("Adição: 5 + 3 = " + MathUtils.add(5, 3));
+    escreverln("Subtração: 10 - 4 = " + MathUtils.subtract(10, 4));
+    escreverln("Multiplicação: 6 * 7 = " + MathUtils.multiply(6, 7));
+    escreverln("Divisão: 20 / 4 = " + MathUtils.divide(20, 4));
+    
+    // Testar operações avançadas
+    escreverln("\n== Operações Avançadas ==");
+    escreverln("Potência: 2^8 = " + MathUtils.power(2, 8));
+    escreverln("Fatorial: 5! = " + MathUtils.factorial(5));
+    
+    // Testar constantes
+    escreverln("\n== Constantes Matemáticas ==");
+    escreverln("PI = " + MathUtils.PI);
+    escreverln("E = " + MathUtils.E);
+    
+    // Loop para demonstrar sintax
+    escreverln("\n== Loop de Demonstração ==");
+    para (inteiro i = 1; i <= 5; i = i + 1) {
+        escreverln("Fatorial de " + i + " = " + MathUtils.factorial(i));
+    }
+    
+    // Estrutura condicional
+    inteiro valor = 10;
+    se (valor > 5) {
+        escreverln("\nO valor é maior que 5");
+    } senao {
+        escreverln("\nO valor é menor ou igual a 5");
+    }
+    
+    // Exemplo de array/lista
+    lista<inteiro> numeros = [1, 2, 3, 4, 5];
+    escreverln("\n== Elementos da Lista ==");
+    paracada (inteiro num em numeros) {
+        escreverln("Número: " + num);
+    }
+}
+
+// Chamada da função principal
+principal(); 

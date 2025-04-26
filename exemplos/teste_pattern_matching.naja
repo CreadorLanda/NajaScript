@@ -1,0 +1,156 @@
+// Exemplo de Pattern Matching em NajaScript
+
+// Função que usa pattern matching para analisar diferentes tipos de valores
+fun analisarValor(any valor) {
+    match valor {
+        // Match com valores literais
+        0 => println("Zero");
+        1 => println("Um");
+        2 => println("Dois");
+        "hello" => println("Saudação em inglês");
+        "ola" => println("Saudação em português");
+        
+        // Wildcards e guardas
+        _ when typeof(valor) == "int" && valor > 100 => {
+            println("Número grande: " + valor);
+        }
+        _ when typeof(valor) == "int" => {
+            println("Outro número inteiro: " + valor);
+        }
+        _ when typeof(valor) == "string" => {
+            println("Outra string: " + valor);
+        }
+        
+        // Capturando valor padrão
+        _ => {
+            println("Valor desconhecido do tipo: " + typeof(valor));
+        }
+    }
+}
+
+// Analisar estruturas de dados com pattern matching
+fun analisarEstrutura(any estrutura) {
+    match estrutura {
+        // Lista vazia
+        [] => println("Lista vazia");
+        
+        // Lista com um elemento
+        [valor] => println("Lista com um elemento: " + valor);
+        
+        // Lista com dois elementos
+        [primeiro, segundo] => println("Lista com dois elementos: " + primeiro + " e " + segundo);
+        
+        // Lista com três ou mais elementos
+        [primeiro, segundo, ...resto] => {
+            println("Lista com três ou mais elementos.");
+            println("Primeiros dois: " + primeiro + ", " + segundo);
+            println("Restante: " + resto);
+        }
+        
+        // Dicionário com chaves específicas
+        { nome: nome, idade: idade } => {
+            println("Pessoa: " + nome + " tem " + idade + " anos");
+        }
+        
+        // Objeto com propriedades
+        obj when obj.tipo == "ponto" => {
+            println("Ponto nas coordenadas (" + obj.x + ", " + obj.y + ")");
+        }
+        
+        // Caso padrão
+        _ => println("Estrutura não reconhecida");
+    }
+}
+
+// Exemplo de pattern matching com tipos de objeto
+fun analisarForma(any forma) {
+    match forma {
+        obj when obj._class_name == "Circulo" => {
+            println("Círculo com raio " + obj.raio);
+        }
+        
+        obj when obj._class_name == "Retangulo" => {
+            println("Retângulo " + obj.largura + "x" + obj.altura);
+        }
+        
+        obj when obj._class_name == "Triangulo" => {
+            println("Triângulo com área " + obj.calcularArea());
+        }
+        
+        _ => println("Forma não reconhecida");
+    }
+}
+
+// Definição de classes para o exemplo
+class Circulo {
+    float raio;
+    
+    constructor(float raio) {
+        this.raio = raio;
+    }
+    
+    public float calcularArea() {
+        return 3.14159 * this.raio * this.raio;
+    }
+}
+
+class Retangulo {
+    float largura;
+    float altura;
+    
+    constructor(float largura, float altura) {
+        this.largura = largura;
+        this.altura = altura;
+    }
+    
+    public float calcularArea() {
+        return this.largura * this.altura;
+    }
+}
+
+class Triangulo {
+    float base;
+    float altura;
+    
+    constructor(float base, float altura) {
+        this.base = base;
+        this.altura = altura;
+    }
+    
+    public float calcularArea() {
+        return (this.base * this.altura) / 2;
+    }
+}
+
+// Programa principal
+fun main() {
+    println("=== Demonstração de Pattern Matching ===");
+    
+    println("\nTeste com valores simples:");
+    analisarValor(0);
+    analisarValor(1);
+    analisarValor(42);
+    analisarValor(200);
+    analisarValor("hello");
+    analisarValor("mundo");
+    analisarValor(true);
+    
+    println("\nTeste com estruturas de dados:");
+    analisarEstrutura([]);
+    analisarEstrutura([42]);
+    analisarEstrutura([1, 2]);
+    analisarEstrutura([1, 2, 3, 4, 5]);
+    analisarEstrutura({nome: "Ana", idade: 30});
+    analisarEstrutura({tipo: "ponto", x: 10, y: 20});
+    
+    println("\nTeste com objetos:");
+    analisarForma(new Circulo(5.0));
+    analisarForma(new Retangulo(4.0, 6.0));
+    analisarForma(new Triangulo(3.0, 4.0));
+    analisarForma({nome: "Não é uma forma"});
+    
+    println("=== Fim da demonstração ===");
+}
+
+// Executar o programa
+main(); 

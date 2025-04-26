@@ -1,0 +1,122 @@
+// Exemplo de uso de async/await em NajaScript
+
+// Função assíncrona para simular uma operação demorada
+async fun aguardar(int milissegundos, string mensagem) {
+    println("Iniciando: " + mensagem);
+    await asyncSleep(milissegundos);
+    println("Concluído: " + mensagem + " (após " + milissegundos + "ms)");
+    return mensagem + " concluído";
+}
+
+// Simulação de requisição à API
+async fun buscarDados(string url) {
+    println("Buscando dados de: " + url);
+    await asyncSleep(1500);  // Simulando latência de rede
+    
+    // Simulando dados retornados pela API
+    return {
+        "id": 1,
+        "titulo": "Dados da API",
+        "url": url,
+        "timestamp": "2023-06-15T10:30:00Z"
+    };
+}
+
+// Função assíncrona para processar dados de maneira sequencial
+async fun processarDadosSequencial() {
+    println("\n=== Processamento Sequencial ===");
+    println("Iniciando processamento sequencial...");
+    
+    // As operações esperarão uma pela outra
+    string resultado1 = await aguardar(1000, "Operação 1");
+    string resultado2 = await aguardar(800, "Operação 2");
+    string resultado3 = await aguardar(1200, "Operação 3");
+    
+    println("Todos os resultados: " + resultado1 + ", " + resultado2 + ", " + resultado3);
+    println("Processamento sequencial concluído");
+}
+
+// Função assíncrona para processar dados em paralelo
+async fun processarDadosParalelo() {
+    println("\n=== Processamento Paralelo ===");
+    println("Iniciando processamento em paralelo...");
+    
+    // Iniciamos todas as operações de uma vez, sem aguardar
+    Promise operacao1 = aguardar(1000, "Paralelo 1");
+    Promise operacao2 = aguardar(800, "Paralelo 2");
+    Promise operacao3 = aguardar(1200, "Paralelo 3");
+    
+    // Agora aguardamos todas concluírem
+    string resultado1 = await operacao1;
+    string resultado2 = await operacao2;
+    string resultado3 = await operacao3;
+    
+    println("Todos os resultados: " + resultado1 + ", " + resultado2 + ", " + resultado3);
+    println("Processamento paralelo concluído");
+}
+
+// Tratamento de erros em código assíncrono
+async fun operacaoComErro() {
+    await asyncSleep(500);
+    throw "Algo deu errado!";
+}
+
+async fun demonstrarTratamentoErros() {
+    println("\n=== Tratamento de Erros Assíncronos ===");
+    
+    try {
+        await operacaoComErro();
+        println("Esta linha não será executada");
+    } catch (error e) {
+        println("Erro capturado: " + e);
+    }
+    
+    println("Continuando após erro...");
+}
+
+// Encadeamento de Promises
+async fun encadearPromises() {
+    println("\n=== Encadeamento de Promises ===");
+    
+    try {
+        // Primeiro buscamos dados da API
+        dict dados = await buscarDados("https://api.exemplo.com/dados");
+        println("Dados recebidos: " + dados.titulo);
+        
+        // Usamos os dados para buscar mais informações
+        string idDados = dados.id;
+        dict detalhes = await buscarDados("https://api.exemplo.com/detalhes/" + idDados);
+        println("Detalhes recebidos: ID " + idDados);
+        
+        // Processamos os resultados combinados
+        println("Processamento concluído para: " + dados.titulo);
+    } catch (error e) {
+        println("Erro durante o encadeamento: " + e);
+    }
+}
+
+// Programa principal
+async fun main() {
+    println("=== Demonstração de Async/Await em NajaScript ===");
+    
+    // Exemplo básico de await
+    string resultado = await aguardar(1000, "Operação simples");
+    println("Resultado: " + resultado);
+    
+    // Processamento sequencial
+    await processarDadosSequencial();
+    
+    // Processamento em paralelo
+    await processarDadosParalelo();
+    
+    // Tratamento de erros
+    await demonstrarTratamentoErros();
+    
+    // Encadeamento de Promises
+    await encadearPromises();
+    
+    println("\n=== Fim da demonstração ===");
+}
+
+// Executar o programa principal
+main(); 

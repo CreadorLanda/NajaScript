@@ -1,0 +1,37 @@
+// Super minimal class test
+
+class Test {
+    // Constructor
+    constructor() {
+        println("Constructor called");
+    }
+    
+    // Method
+    public void sayHello() {
+        println("Hello from Test class");
+    }
+}
+
+// Create an instance
+var t = new Test();
+t.sayHello();
+
+// Class with properties - we need to declare them explicitly
+class Person {
+    public string name;
+    public int age;
+    
+    constructor(string name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+    
+    public void introduce() {
+        println("My name is " + this.name + " and I am " + this.age + " years old");
+    }
+}
+
+var p = new Person("John", 30);
+p.introduce();
+
+println("Test complete"); 

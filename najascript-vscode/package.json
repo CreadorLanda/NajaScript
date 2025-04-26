@@ -1,0 +1,110 @@
+{
+    "name": "najascript",
+    "displayName": "NajaScript",
+    "description": "Suporte completo para a linguagem NajaScript com destaque de sintaxe, execução de código e suporte para programação em português",
+    "version": "0.1.0",
+    "engines": {
+        "vscode": "^1.99.0"
+    },
+    "publisher": "najascript",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/username/najascript.git"
+    },
+    "license": "MIT",
+    "categories": [
+        "Programming Languages"
+    ],
+    "activationEvents": [
+        "onLanguage:najascript"
+    ],
+    "main": "./extension.js",
+    "contributes": {
+        "languages": [
+            {
+                "id": "najascript",
+                "aliases": [
+                    "NajaScript",
+                    "najascript",
+                    "naja"
+                ],
+                "extensions": [
+                    ".naja"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "najascript",
+                "scopeName": "source.naja",
+                "path": "./syntaxes/najascript.tmLanguage.json"
+            }
+        ],
+        "themes": [
+            {
+                "label": "NajaScript Dark",
+                "uiTheme": "vs-dark",
+                "path": "./themes/najascript-dark-color-theme.json"
+            }
+        ],
+        "commands": [
+            {
+                "command": "najascript.run",
+                "title": "Executar NajaScript",
+                "icon": "$(play)"
+            },
+            {
+                "command": "najascript.runPortuguese",
+                "title": "Executar NajaScript (Português)",
+                "icon": "$(play)"
+            }
+        ],
+        "menus": {
+            "editor/title": [
+                {
+                    "when": "editorLangId == najascript",
+                    "command": "najascript.run",
+                    "group": "navigation"
+                }
+            ],
+            "editor/context": [
+                {
+                    "when": "editorLangId == najascript",
+                    "command": "najascript.run",
+                    "group": "navigation"
+                },
+                {
+                    "when": "editorLangId == najascript",
+                    "command": "najascript.runPortuguese",
+                    "group": "navigation"
+                }
+            ]
+        },
+        "keybindings": [
+            {
+                "command": "najascript.run",
+                "key": "f4",
+                "when": "editorLangId == najascript"
+            },
+            {
+                "command": "najascript.runPortuguese",
+                "key": "shift+f4",
+                "when": "editorLangId == najascript"
+            }
+        ]
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": ["najascript", "programming language", "portuguese", "python", "education", "beginner", "brazilian"],
+    "author": "",
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/username/najascript/issues"
+    },
+    "homepage": "https://github.com/username/najascript#readme",
+    "devDependencies": {
+        "@types/vscode": "^1.99.1"
+    }
+}

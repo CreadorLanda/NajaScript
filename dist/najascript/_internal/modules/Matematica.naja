@@ -1,0 +1,192 @@
+// Módulo Matematica - Funções matemáticas úteis
+
+// Constante PI
+float PI = 3.14159265359;
+
+// Constante E (base do logaritmo natural)
+float E = 2.71828182846;
+
+// Função para calcular o fatorial de um número
+fun fatorial(n) {
+    if (n <= 1) {
+        return 1;
+    }
+    return n * fatorial(n - 1);
+}
+
+// Função para calcular potência (x^y)
+fun potencia(x, y) {
+    if (y == 0) {
+        return 1;
+    }
+    
+    float resultado = 1;
+    int i = 0;
+    while (i < y) {
+        resultado = resultado * x;
+        i = i + 1;
+    }
+    return resultado;
+}
+
+// Função para calcular a raiz quadrada (aproximação simples)
+fun raizQuadrada(x) {
+    if (x < 0) {
+        println("Erro: não é possível calcular raiz quadrada de número negativo");
+        return 0;
+    }
+    
+    if (x == 0) {
+        return 0;
+    }
+    
+    // Método de Newton-Raphson para aproximação
+    float estimativa = x / 2;
+    float precisao = 0.0001;
+    
+    while (true) {
+        float nova_estimativa = (estimativa + x / estimativa) / 2;
+        if (valorAbsoluto(nova_estimativa - estimativa) < precisao) {
+            return nova_estimativa;
+        }
+        estimativa = nova_estimativa;
+    }
+}
+
+// Função para calcular o valor absoluto
+fun valorAbsoluto(x) {
+    if (x < 0) {
+        return 0 - x;
+    }
+    return x;
+}
+
+// Função para arredondar um número para o inteiro mais próximo
+fun arredondar(x) {
+    // Primeiro, obtemos a parte inteira manualmente
+    int parte_inteira = 0;
+    if (x >= 0) {
+        // Para números positivos, é fácil
+        while (parte_inteira + 1.0 <= x) {
+            parte_inteira = parte_inteira + 1;
+        }
+    } else {
+        // Para números negativos
+        parte_inteira = 0 - 1; // Começamos com -1
+        while (parte_inteira > x) {
+            parte_inteira = parte_inteira - 1;
+        }
+    }
+    
+    // Agora calculamos a parte decimal manualmente
+    float parte_decimal = x - parte_inteira;
+    
+    // Se a parte decimal for 0.5 ou maior, arredondamos para cima
+    if (parte_decimal >= 0.5) {
+        return parte_inteira + 1;
+    }
+    
+    return parte_inteira;
+}
+
+// Função para encontrar o máximo entre dois números
+fun max(a, b) {
+    if (a > b) {
+        return a;
+    }
+    return b;
+}
+
+// Função para encontrar o mínimo entre dois números
+fun min(a, b) {
+    if (a < b) {
+        return a;
+    }
+    return b;
+}
+
+// Função para converter radianos para graus
+fun radianosParaGraus(radianos) {
+    return radianos * 180.0 / PI;
+}
+
+// Função para converter graus para radianos
+fun grausParaRadianos(graus) {
+    return graus * PI / 180.0;
+}
+
+// Função simplificada para cálculo de seno
+// Usa a expansão da série de Taylor
+fun seno(x) {
+    // Primeiro normaliza o ângulo entre 0 e 2*PI
+    while (x > 2.0 * PI) {
+        x = x - 2.0 * PI;
+    }
+    while (x < 0) {
+        x = x + 2.0 * PI;
+    }
+    
+    // Casos especiais para valores conhecidos
+    if (valorAbsoluto(x - PI / 2) < 0.0001) {
+        return 1.0; // seno(PI/2) = 1
+    }
+    if (valorAbsoluto(x - 3 * PI / 2) < 0.0001) {
+        return 0 - 1.0; // seno(3*PI/2) = -1
+    }
+    if (valorAbsoluto(x) < 0.0001 || valorAbsoluto(x - PI) < 0.0001 || valorAbsoluto(x - 2 * PI) < 0.0001) {
+        return 0.0; // seno(0) = seno(PI) = seno(2*PI) = 0
+    }
+    
+    // Calcular usando os primeiros termos da série de Taylor
+    float resultado = x;
+    float termo = x;
+    int i = 1;
+    int iteracoes = 20; // Aumentamos o número de iterações para melhor precisão
+    
+    while (i < iteracoes) {
+        // Calculamos o próximo termo com o sinal correto
+        termo = termo * (0 - x * x) / ((2 * i) * (2 * i + 1));
+        resultado = resultado + termo;
+        i = i + 1;
+    }
+    
+    return resultado;
+}
+
+// Função simplificada para cálculo de cosseno
+// Usa a expansão da série de Taylor
+fun cosseno(x) {
+    // Primeiro normaliza o ângulo entre 0 e 2*PI
+    while (x > 2.0 * PI) {
+        x = x - 2.0 * PI;
+    }
+    while (x < 0) {
+        x = x + 2.0 * PI;
+    }
+    
+    // Casos especiais para valores conhecidos
+    if (valorAbsoluto(x - PI) < 0.0001) {
+        return 0 - 1.0; // cos(PI) = -1
+    }
+    if (valorAbsoluto(x - 0) < 0.0001 || valorAbsoluto(x - 2 * PI) < 0.0001) {
+        return 1.0; // cos(0) = cos(2*PI) = 1
+    }
+    if (valorAbsoluto(x - PI / 2) < 0.0001 || valorAbsoluto(x - 3 * PI / 2) < 0.0001) {
+        return 0.0; // cos(PI/2) = cos(3*PI/2) = 0
+    }
+    
+    // Calcular usando os primeiros termos da série de Taylor
+    float resultado = 1.0;
+    float termo = 1.0;
+    int i = 1;
+    int iteracoes = 20; // Aumentamos o número de iterações para melhor precisão
+    
+    while (i < iteracoes) {
+        // Calculamos o próximo termo com o sinal correto
+        termo = termo * (0 - x * x) / ((2 * i - 1) * (2 * i));
+        resultado = resultado + termo;
+        i = i + 1;
+    }
+    
+    return resultado;
+} 

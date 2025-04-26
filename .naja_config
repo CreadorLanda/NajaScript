@@ -1,0 +1,7 @@
+{
+  "repositories": {
+    "local": "naja_repository",
+    "remote": "https://github.com/CreadorLanda"
+  },
+  "use_remote": true
+}

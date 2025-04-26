@@ -1,0 +1,15 @@
+{
+  "name": "NajaScript Module Repository",
+  "description": "Repository for NajaScript modules",
+  "modules": {
+    "MathUtils": {
+      "description": "Biblioteca de funções matemáticas",
+      "versions": {
+        "1.0.0": {
+          "added": "2025-04-26T21:28:46.714912",
+          "description": "Biblioteca de funções matemáticas"
+        }
+      }
+    }
+  }
+}

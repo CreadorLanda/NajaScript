@@ -1,0 +1,34 @@
+// Teste simplificado de classe em NajaScript
+
+class Pessoa {
+    public string nome;
+    public int idade;
+    
+    constructor(string n, int i) {
+        this.nome = n;
+        this.idade = i;
+    }
+}
+
+fun main() {
+    println("=== Teste de classe simples ===");
+    
+    // Criando uma instância
+    Pessoa pessoa = new Pessoa("João", 30);
+    
+    // Acessando atributos
+    println("Nome: " + pessoa.nome);
+    println("Idade: " + pessoa.idade);
+    
+    // Modificando atributos
+    pessoa.nome = "João Silva";
+    pessoa.idade = 31;
+    
+    println("\nApós modificação:");
+    println("Nome: " + pessoa.nome);
+    println("Idade: " + pessoa.idade);
+    
+    println("\nTeste concluído!");
+}
+
+main(); 

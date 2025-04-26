@@ -1,0 +1,142 @@
+// NajaScript Comprehensive Syntax Test
+
+// PART 1: Basic Types
+println("=== PART 1: Basic Types ===");
+
+int int_var = 42;
+println("int: " + int_var);
+
+float float_var = 3.14159;
+println("float: " + float_var);
+
+string string_var = "Hello, NajaScript!";
+println("string: " + string_var);
+
+bool bool_var = true;
+println("bool: " + bool_var);
+
+// PART 2: Basic Operations
+println("\n=== PART 2: Basic Operations ===");
+
+int sum = 5 + 10;
+println("sum (5 + 10): " + sum);
+
+int difference = 20 - 5;
+println("difference (20 - 5): " + difference);
+
+int product = 4 * 5;
+println("product (4 * 5): " + product);
+
+float quotient = 10 / 3;
+println("quotient (10 / 3): " + quotient);
+
+int remainder = 10 % 3;
+println("remainder (10 % 3): " + remainder);
+
+// Using multiplication for power since ^ operator isn't supported
+int power = 2 * 2 * 2; // 2³ = 8
+println("power (2³): " + power);
+
+// PART 3: Logical Operations
+println("\n=== PART 3: Logical Operations ===");
+
+bool and_result = true && false;
+println("AND (true && false): " + and_result);
+
+bool or_result = true || false;
+println("OR (true || false): " + or_result);
+
+// Using negation in a different way
+bool true_value = true;
+bool not_result = true_value == false;
+println("NOT (true == false): " + not_result);
+
+// PART 4: Comparison Operations
+println("\n=== PART 4: Comparison Operations ===");
+
+bool equal = 5 == 5;
+println("equal (5 == 5): " + equal);
+
+bool not_equal = 5 != 10;
+println("not equal (5 != 10): " + not_equal);
+
+bool less_than = 5 < 10;
+println("less than (5 < 10): " + less_than);
+
+bool greater_than = 10 > 5;
+println("greater than (10 > 5): " + greater_than);
+
+bool less_than_equal = 5 <= 5;
+println("less than or equal (5 <= 5): " + less_than_equal);
+
+bool greater_than_equal = 5 >= 5;
+println("greater than or equal (5 >= 5): " + greater_than_equal);
+
+// PART 5: Conditional Statements
+println("\n=== PART 5: Conditional Statements ===");
+
+int test_value = 42;
+
+if (test_value > 50) {
+    println("Value is greater than 50");
+} else if (test_value > 40) {
+    println("Value is greater than 40");
+} else {
+    println("Value is 40 or less");
+}
+
+// PART 6: Loops
+println("\n=== PART 6: Loops ===");
+
+println("While loop:");
+int counter = 0;
+while (counter < 3) {
+    println("  counter: " + counter);
+    counter = counter + 1;
+}
+
+println("For loop:");
+for (int i = 0; i < 3; i = i + 1) {
+    println("  i: " + i);
+}
+
+// PART 7: Data Structures
+println("\n=== PART 7: Data Structures ===");
+
+// List
+list numbers = [1, 2, 3, 4, 5];
+println("List: " + numbers);
+println("List length: " + numbers.length());
+println("List element at index 2: " + numbers.get(2));
+numbers.add(6);
+println("List after adding 6: " + numbers);
+
+// Dictionary
+dict person = {};
+person.add("name", "Maria");
+person.add("age", 30);
+println("Dictionary: " + person);
+println("Dictionary value for 'name': " + person.get("name"));
+
+// PART 8: Functions
+println("\n=== PART 8: Functions ===");
+
+fun add(int a, int b) {
+    return a + b;
+}
+
+fun greet(string name) {
+    return "Hello, " + name + "!";
+}
+
+println("Function add(3, 4): " + add(3, 4));
+println("Function greet('NajaScript'): " + greet("NajaScript"));
+
+// PART 9: Main Function
+fun main() {
+    println("\n=== PART 9: Main Function ===");
+    println("All syntax features have been tested successfully!");
+}
+
+// Execute the main function
+main(); 

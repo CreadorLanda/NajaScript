@@ -5,11 +5,12 @@ import sys
 import argparse
 import os
 import traceback
+import time
 
 try:
     from lexer import Lexer
     from parser_naja import Parser
-    from interpreter import Interpreter
+    from interpreter import Interpreter, Environment
     from naja_bytecode import NajaBytecodeCompiler, BytecodeInterpreter
     from naja_llvm import NajaLLVMGenerator
     from ast_nodes import ImportStatement
@@ -18,6 +19,13 @@ except Exception as e:
     print(f"Erro ao importar módulos: {e}")
     traceback.print_exc()
     sys.exit(1)
+
+# Configure logging
+import logging
+logging.basicConfig(filename='najascript.log', level=logging.DEBUG, 
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    filemode='w')
+logger = logging.getLogger('naja')
 
 def initialize_llvm():
     """Inicializa o LLVM"""
@@ -32,6 +40,8 @@ def initialize_llvm():
     return target_machine
 
 def main():
+    start_time = time.time()
+    
     parser = argparse.ArgumentParser(description='NajaScript Interpreter')
     parser.add_argument('file', nargs='?', help='Script para executar')
     parser.add_argument('--module-path', action='append', help='Caminhos adicionais para buscar módulos')
@@ -41,10 +51,11 @@ def main():
 
     # Criar o interpretador
     interpreter = Interpreter()
-    interpreter.debug = args.debug
+    interpreter.debug = args.debug  # Usar o argumento de linha de comando
+    interpreter.logger = logger
     
-    # Modo de depuração
-    debug = args.debug
+    # Log de início
+    logger.info("Iniciando interpretador NajaScript")
     
     # Definir caminhos de módulos
     module_paths = ['.', './modules']
@@ -66,84 +77,40 @@ def main():
         import_stmt = ImportStatement('"NajaPt"')
         interpreter.execute_ImportStatement(import_stmt)
     
+    # Executar o arquivo principal
     if args.file:
         try:
-            with open(args.file, 'r', encoding='utf-8') as f:
-                source = f.read()
+            # Carregar o código fonte
+            with open(args.file, 'r', encoding='utf-8') as file:
+                source = file.read()
             
-            # Aplicar pré-processamento ao código fonte
-            if hasattr(interpreter, 'preprocess_source'):
-                source = interpreter.preprocess_source(source)
-                if debug:
-                    print("\n--- Código após pré-processamento ---")
-                    print(source)
-                    print("--------------------------------------\n")
-                
-            # Analisar e executar o código
+            # Pré-processamento do código (suporte a português)
+            source = interpreter.preprocess_source(source)
+
+            # Iniciar o lexer e parser
             lexer = Lexer(source)
             parser = Parser(lexer)
-            try:
-                ast = parser.parse()
-                
-                if debug:
-                    print("\n--- AST gerada ---")
-                    print(f"Tipo: {type(ast)}")
-                    print(f"Statements: {len(ast.statements) if hasattr(ast, 'statements') else 'N/A'}")
-                    if hasattr(ast, 'statements'):
-                        for i, stmt in enumerate(ast.statements):
-                            print(f"Statement {i}: {type(stmt).__name__}")
-                    print("------------------\n")
-                
-                try:
-                    # Execução do código
-                    result = interpreter.interpret(ast)
-                    
-                    # Valor de retorno de script
-                    if result is not None:
-                        print(result)
-                except Exception as e:
-                    print(f"Erro durante a interpretação: {e}")
-                    if debug:
-                        print("\n--- Traceback detalhado ---")
-                        traceback.print_exc()
-                        print("---------------------------\n")
-            except Exception as e:
-                print(f"Erro durante a análise do código: {e}")
-                if debug:
-                    traceback.print_exc()
-                
-        except FileNotFoundError:
-            print(f"Erro: Arquivo '{args.file}' não encontrado.")
+            ast = parser.parse()
+            
+            # Executar o código
+            interpreter.current_file = os.path.abspath(args.file)
+            resultado = interpreter.interpret(ast)
+            
+            if resultado is not None:
+                print(resultado)
+            
         except Exception as e:
-            print(f"Erro: {e}")
+            print(f"Erro durante a interpretação: {str(e)}")
+            if args.debug:
+                import traceback
+                traceback.print_exc()
     else:
-        # Modo interativo
-        print("NajaScript v0.1 - Modo Interativo (Digite 'sair()' para encerrar)")
-        while True:
-            try:
-                line = input(">> ")
-                if line.strip() == 'sair()':
-                    break
-                
-                # Aplicar pré-processamento ao código fonte
-                if hasattr(interpreter, 'preprocess_source'):
-                    processed_line = interpreter.preprocess_source(line)
-                    if debug and processed_line != line:
-                        print(f"Processado: {processed_line}")
-                    line = processed_line
-                
-                lexer = Lexer(line)
-                parser = Parser(lexer)
-                ast = parser.parse()
-                result = interpreter.interpret(ast)
-                
-                if result is not None:
-                    print(result)
-            except KeyboardInterrupt:
-                print("\nOperação interrompida")
-                break
-            except Exception as e:
-                print(f"Erro: {e}")
+        print("Nenhum arquivo fornecido para execução")
+    
+    # Exibir tempo de execução
+    end_time = time.time()
+    execution_time = end_time - start_time
+    print(f"\nTempo de execução: {execution_time:.5f} segundos")
 
 if __name__ == "__main__":
     main()

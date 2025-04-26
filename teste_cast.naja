@@ -1,0 +1,32 @@
+// Exemplo simples para testar o casting de tipos
+
+// Valores iniciais
+string valor_string = "123";
+float valor_float = 123.45;
+int valor_int = 42;
+
+// Testando cast para int
+println("=== Testando cast para int ===");
+println("string '123' para int: " + (int)valor_string);       // Deve ser 123
+println("float 123.45 para int: " + (int)valor_float);       // Deve ser 123
+
+// Testando cast para float
+println("\n=== Testando cast para float ===");
+println("string '123' para float: " + (float)valor_string);   // Deve ser 123.0
+println("int 42 para float: " + (float)valor_int);           // Deve ser 42.0
+
+// Testando cast para string
+println("\n=== Testando cast para string ===");
+println("int 42 para string: " + (string)valor_int);         // Deve ser "42"
+println("float 123.45 para string: " + (string)valor_float); // Deve ser "123.45"
+
+// Testando dentro de expressões
+println("\n=== Testando cast em expressões ===");
+println("(int)valor_string + valor_int: " + ((int)valor_string + valor_int));  // 123 + 42 = 165
+
+// Conversão com valores inválidos
+println("\n=== Testando valores inválidos ===");
+string texto_invalido = "abc";
+println("Tentando converter 'abc' para int: " + (int)texto_invalido);  // Deve retornar 0 ou erro
+
+println("\nTeste de casting concluído!"); 

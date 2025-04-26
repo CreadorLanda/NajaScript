@@ -1,0 +1,85 @@
+// NajaScript Syntax Test
+
+// Variáveis e tipos básicos
+int numero = 42;
+float decimal = 3.14;
+string texto = "Olá, NajaScript!";
+bool valido = true;
+
+// Operações básicas
+int soma = 5 + 10;
+int subtracao = 20 - 5;
+int multiplicacao = 4 * 5;
+float divisao = 10 / 3;
+int modulo = 10 % 3;
+int potencia = 2 ^ 3;  // 2³ = 8
+
+// Operadores lógicos
+bool e = true && false;  // AND
+bool ou = true || false;  // OR
+bool nao = !true;  // NOT
+
+// Operadores de comparação
+bool igual = 5 == 5;
+bool diferente = 5 != 10;
+bool menor = 5 < 10;
+bool maior = 10 > 5;
+bool menorIgual = 5 <= 5;
+bool maiorIgual = 5 >= 5;
+
+// Estruturas condicionais
+if (numero > 0) {
+    println("Número positivo");
+} else if (numero < 0) {
+    println("Número negativo");
+} else {
+    println("Zero");
+}
+
+// Laços de repetição
+println("\nLaço while:");
+int contador = 0;
+while (contador < 3) {
+    println("Contador: " + contador);
+    contador = contador + 1;
+}
+
+println("\nLaço for:");
+for (int i = 0; i < 3; i = i + 1) {
+    println("i = " + i);
+}
+
+// Estruturas de dados
+println("\nEstrutura de dados:");
+list numeros = [1, 2, 3, 4, 5];
+println("Lista: " + numeros);
+println("Tamanho da lista: " + numeros.length());
+println("Segundo elemento: " + numeros.get(1));
+
+dict pessoa = {};
+pessoa.add("nome", "Maria");
+pessoa.add("idade", 30);
+println("Dicionário: " + pessoa);
+println("Nome: " + pessoa.get("nome"));
+
+// Funções
+fun soma(int a, int b) {
+    return a + b;
+}
+
+fun saudacao(string nome) {
+    return "Olá, " + nome + "!";
+}
+
+println("\nFunções:");
+println("Soma de 3 e 4: " + soma(3, 4));
+println(saudacao("NajaScript"));
+
+// Função principal
+fun main() {
+    println("\n=== Teste de Sintaxe NajaScript ===");
+    println("Todos os recursos básicos testados!");
+}
+
+// Executar a função principal
+main(); 
