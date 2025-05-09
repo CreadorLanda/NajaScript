@@ -1,0 +1,21 @@
+// Módulo de teste para exportações
+
+const string nome = "Módulo de Teste";
+export nome;
+
+const int versao = 1;
+export versao;
+
+const bool ativo = true;
+export ativo;
+
+// Declar funções separadamente e depois exportá-las
+fun saudacao(string nome) {
+    return "Olá, " + nome + "!";
+}
+export saudacao;
+
+fun soma(int a, int b) {
+    return a + b;
+}
+export soma; 

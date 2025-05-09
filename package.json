@@ -1,58 +1,116 @@
 {
   "name": "najascript",
   "displayName": "NajaScript",
-  "description": "Suporte para a linguagem NajaScript no VSCode",
-  "version": "0.0.1",
+  "description": "Suporte para a linguagem NajaScript com destaque de sintaxe, execução de código e autocompletar para facilitar o desenvolvimento",
+  "version": "0.2.2",
   "engines": {
-    "vscode": "^1.85.0"
+    "vscode": "^1.99.0"
   },
+  "publisher": "najascript",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/username/najascript.git"
+  },
+  "license": "MIT",
   "categories": [
-    "Programming Languages",
-    "Snippets",
-    "Themes"
+    "Programming Languages"
   ],
-  "activationEvents": [],
-  "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:najascript"
+  ],
+  "main": "./extension.js",
+  "icon": "icons/naja-logo.png",
   "contributes": {
     "languages": [{
       "id": "najascript",
-      "aliases": ["NajaScript", "najascript"],
+      "aliases": ["NajaScript", "najascript", "naja"],
       "extensions": [".naja"],
-      "configuration": "./language-configuration.json"
+      "configuration": "./language-configuration.json",
+      "icon": {
+        "light": "./icons/naja-file.png",
+        "dark": "./icons/naja-file.png"
+      }
     }],
     "grammars": [{
       "language": "najascript",
-      "scopeName": "source.najascript",
+      "scopeName": "source.naja",
       "path": "./syntaxes/najascript.tmLanguage.json"
     }],
-    "snippets": [{
-      "language": "najascript",
-      "path": "./snippets/najascript.json"
-    }],
     "themes": [{
-      "label": "NajaScript",
+      "label": "NajaScript Dark",
       "uiTheme": "vs-dark",
-      "path": "./themes/najascript-color-theme.json"
-    }]
+      "path": "./themes/najascript-dark-color-theme.json"
+    }],
+    "commands": [{
+      "command": "najascript.run",
+      "title": "Executar NajaScript",
+      "icon": "$(play)"
+    }, {
+      "command": "najascript.runPortuguese",
+      "title": "Executar NajaScript (Português)",
+      "icon": "$(play)"
+    }],
+    "menus": {
+      "editor/title": [{
+        "when": "editorLangId == najascript",
+        "command": "najascript.run",
+        "group": "navigation"
+      }],
+      "editor/context": [{
+        "when": "editorLangId == najascript",
+        "command": "najascript.run",
+        "group": "navigation"
+      }, {
+        "when": "editorLangId == najascript",
+        "command": "najascript.runPortuguese",
+        "group": "navigation"
+      }]
+    },
+    "keybindings": [{
+      "command": "najascript.run",
+      "key": "f4",
+      "when": "editorLangId == najascript"
+    }, {
+      "command": "najascript.runPortuguese",
+      "key": "shift+f4",
+      "when": "editorLangId == najascript"
+    }],
+    "configuration": {
+      "type": "object",
+      "title": "NajaScript",
+      "properties": {
+        "najascript.useTerminal": {
+          "type": "boolean",
+          "default": true,
+          "description": "Executar código NajaScript no terminal integrado em vez do canal de saída"
+        },
+        "najascript.enableAutocomplete": {
+          "type": "boolean",
+          "default": true,
+          "description": "Habilitar sugestões de código e autocompletar para NajaScript"
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "vscode-languageclient": "^7.0.0",
+    "vscode-languageserver": "^7.0.0",
+    "vscode-languageserver-textdocument": "^1.0.1"
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "vscode:prepublish": "npm install",
+    "postinstall": "cd server && npm install"
   },
+  "keywords": ["najascript", "programming language", "education", "beginner"],
+  "author": "",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/username/najascript/issues"
+  },
+  "homepage": "https://github.com/username/najascript#readme",
   "devDependencies": {
-    "@types/vscode": "^1.85.0",
-    "@types/glob": "^8.1.0",
-    "@types/mocha": "^10.0.6",
-    "@types/node": "20.x",
-    "@typescript-eslint/eslint-plugin": "^6.15.0",
-    "@typescript-eslint/parser": "^6.15.0",
-    "eslint": "^8.56.0",
-    "glob": "^10.3.10",
-    "mocha": "^10.2.0",
-    "typescript": "^5.3.3"
-  }
+    "@types/vscode": "^1.99.1"
+  },
+  "readme": "# NajaScript Extension for VS Code\n\nThis extension provides language support for the NajaScript programming language, including syntax highlighting, code completion, and execution in the integrated terminal."
 } 

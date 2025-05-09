@@ -1,0 +1,5 @@
+// test_package module
+
+export fun info() {
+    return "Package test_package version latest";
+}

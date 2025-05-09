@@ -156,8 +156,10 @@ class SwitchStatement(Statement):
         self.default = default
 
 class ImportStatement(Statement):
-    def __init__(self, module_name):
+    def __init__(self, module_name, import_items=None, is_import_all=False):
         self.module_name = module_name
+        self.import_items = import_items if import_items else []  # Lista de itens específicos a importar
+        self.is_import_all = is_import_all  # Flag para import {*}
 
 class MatchStatement(Statement):
     def __init__(self, expression, cases):
@@ -301,5 +303,7 @@ class TupleLiteral(Literal):
         self.elements = elements if elements else []
 
 class ExportStatement(Statement):
-    def __init__(self, declaration):
-        self.declaration = declaration
+    def __init__(self, identifier):
+        # Agora pode ser apenas um identificador (nome de variável) 
+        # em vez de uma declaração completa
+        self.identifier = identifier

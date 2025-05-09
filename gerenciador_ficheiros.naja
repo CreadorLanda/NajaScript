@@ -1,0 +1,103 @@
+// Gerenciador de Ficheiros para NajaScript
+
+// Classe principal para gerenciamento de ficheiros
+class GerenciadorFicheiros {
+    constructor() {
+        this.diretorioAtual = "";
+    }
+
+    // Obtém o diretório de trabalho atual
+    obterDiretorioAtual() {
+        return _fs_getDirAtual();
+    }
+
+    // Define o diretório de trabalho atual
+    definirDiretorioAtual(caminho) {
+        var resultado = _fs_setDirAtual(caminho);
+        this.diretorioAtual = this.obterDiretorioAtual();
+        return resultado;
+    }
+
+    // Lista arquivos no diretório especificado (ou diretório atual se não for especificado)
+    listarArquivos(diretorio = null) {
+        if (diretorio == null) {
+            diretorio = this.obterDiretorioAtual();
+        }
+        return _fs_listarArquivos(diretorio);
+    }
+
+    // Lista diretórios no caminho especificado (ou diretório atual se não for especificado)
+    listarDiretorios(diretorio = null) {
+        if (diretorio == null) {
+            diretorio = this.obterDiretorioAtual();
+        }
+        return _fs_listarDiretorios(diretorio);
+    }
+
+    // Lista arquivos e diretórios
+    listarTudo(diretorio = null) {
+        if (diretorio == null) {
+            diretorio = this.obterDiretorioAtual();
+        }
+        return _fs_listarTudo(diretorio);
+    }
+
+    // Verifica se o caminho existe
+    existe(caminho) {
+        return _fs_existe(caminho);
+    }
+
+    // Verifica se o caminho é um arquivo
+    ehArquivo(caminho) {
+        return _fs_ehArquivo(caminho);
+    }
+
+    // Verifica se o caminho é um diretório
+    ehDiretorio(caminho) {
+        return _fs_ehDiretorio(caminho);
+    }
+
+    // Cria um novo diretório
+    criarDiretorio(caminho) {
+        return _fs_criarDiretorio(caminho);
+    }
+
+    // Remove um diretório (vazio por padrão, recursivo se especificado)
+    removerDiretorio(caminho, recursivo = false) {
+        return _fs_removerDiretorio(caminho, recursivo);
+    }
+
+    // Lê o conteúdo de um arquivo como texto
+    lerArquivo(caminho) {
+        return _fs_lerArquivo(caminho);
+    }
+
+    // Escreve texto em um arquivo
+    escreverArquivo(caminho, conteudo, anexar = false) {
+        return _fs_escreverArquivo(caminho, conteudo, anexar);
+    }
+
+    // Copia um arquivo
+    copiarArquivo(origem, destino) {
+        return _fs_copiarArquivo(origem, destino);
+    }
+
+    // Move um arquivo
+    moverArquivo(origem, destino) {
+        return _fs_moverArquivo(origem, destino);
+    }
+
+    // Remove um arquivo
+    removerArquivo(caminho) {
+        return _fs_removerArquivo(caminho);
+    }
+
+    // Obtem informações sobre um arquivo
+    infoArquivo(caminho) {
+        return _fs_infoArquivo(caminho);
+    }
+}
+
+// Exportando uma instância da classe
+var gerenciador = new GerenciadorFicheiros();
+export default gerenciador; 

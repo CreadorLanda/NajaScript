@@ -58,16 +58,82 @@ class NajaPackageManager:
         if not package_dir.exists():
             package_dir.mkdir(parents=True)
         
-        # Create a simple module file
-        module_file = package_dir / "index.naja"
-        with open(module_file, 'w', encoding='utf-8') as f:
-            f.write(f"// {package_name} module\n\n")
-            f.write(f"export fun info() {{\n")
-            f.write(f"    return \"Package {package_name} version {version}\";\n")
-            f.write("}\n")
+        # Aqui deveria tentar baixar o pacote do repositório
+        # Em vez de apenas criar um arquivo com uma função info
+        
+        # Tentar baixar o pacote (implementação básica)
+        package_downloaded = self._download_package(package_name, version, package_dir)
+        
+        # Se não conseguir baixar, criar um template básico
+        if not package_downloaded:
+            print(f"Não foi possível baixar o pacote {package_name}. Criando um template básico.")
+            module_file = package_dir / "index.naja"
+            with open(module_file, 'w', encoding='utf-8') as f:
+                # Usar o formato do gerenciador_ficheiros.naja como exemplo
+                f.write(f"// Módulo {package_name}\n")
+                f.write(f"// Versão {version}\n\n")
+                
+                # Criar uma classe com nome baseado no pacote
+                class_name = ''.join(word.capitalize() for word in package_name.split('_'))
+                
+                f.write(f"classe {class_name} {{\n")
+                f.write("    funcao construtor() {\n")
+                f.write("        // Inicialização do módulo\n")
+                f.write("    }\n\n")
+                
+                f.write("    // Função de exemplo\n")
+                f.write("    funcao info() {\n")
+                f.write(f"        retornar \"Módulo {package_name} versão {version}\";\n")
+                f.write("    }\n\n")
+                
+                f.write("    // Adicione seus métodos aqui\n")
+                f.write("    // ...\n")
+                f.write("}\n\n")
+                
+                f.write(f"// Exportar uma instância da classe\n")
+                f.write(f"var instancia = {class_name}();\n")
         
         print(f"Successfully added {package_name}@{version}")
         return True
+    
+    def _download_package(self, package_name, version, dest_dir):
+        """Tenta baixar um pacote do repositório configurado"""
+        try:
+            # Tentar importar e usar o NajaRepositoryManager
+            try:
+                from naja_repository_manager import NajaRepositoryManager
+                repo_manager = NajaRepositoryManager(self.project_dir)
+                
+                # Se conseguir, tentar instalar do repositório
+                # Não chamamos o install_from_repo diretamente porque já estamos 
+                # processando o pacote no add_package
+                
+                # Tentar primeiro o repositório local
+                local_repo = repo_manager.config.get("repositories", {}).get("local")
+                if local_repo:
+                    try:
+                        repo_path = Path(local_repo)
+                        if repo_manager._install_from_local(repo_path, package_name, version, False):
+                            return True
+                    except Exception as e:
+                        print(f"Erro ao buscar do repositório local: {e}")
+                
+                # Se falhar e o repositório remoto estiver habilitado, tentar remote
+                if repo_manager.config.get("use_remote", False):
+                    try:
+                        if repo_manager._install_from_remote(package_name, version, False):
+                            return True
+                    except Exception as e:
+                        print(f"Erro ao buscar do repositório remoto: {e}")
+                
+                return False
+                
+            except ImportError:
+                print("NajaRepositoryManager não disponível. Impossível baixar pacotes automáticamente.")
+                return False
+        except Exception as e:
+            print(f"Erro ao baixar o pacote: {e}")
+            return False
     
     def remove_package(self, package_name, dev=False):
         """Remove a package from the project"""

@@ -1,0 +1,154 @@
+// Módulo para gerenciamento de arquivos e diretórios
+// Implementa operações básicas de manipulação de arquivos no sistema
+
+classe GerenciadorFicheiros {
+    funcao construtor() {
+        // Inicialização do gerenciador
+    }
+    
+    // Obter o diretório atual de trabalho
+    funcao obterDiretorioAtual() {
+        retornar __funcao_nativa("os.getcwd");
+    }
+    
+    // Verificar se um caminho existe (arquivo ou diretório)
+    funcao existeCaminho(caminho) {
+        retornar __funcao_nativa("os.path.exists", caminho);
+    }
+    
+    // Verificar se o caminho é um arquivo
+    funcao eArquivo(caminho) {
+        retornar __funcao_nativa("os.path.isfile", caminho);
+    }
+    
+    // Verificar se o caminho é um diretório
+    funcao eDiretorio(caminho) {
+        retornar __funcao_nativa("os.path.isdir", caminho);
+    }
+    
+    // Listar arquivos em um diretório
+    funcao listarArquivos(diretorio) {
+        var conteudo = __funcao_nativa("os.listdir", diretorio);
+        var arquivos = [];
+        
+        para (var i = 0; i < conteudo.tamanho(); i++) {
+            var caminho = diretorio + "/" + conteudo[i];
+            se (this.eArquivo(caminho)) {
+                arquivos.inserir(conteudo[i]);
+            }
+        }
+        
+        retornar arquivos;
+    }
+    
+    // Listar diretórios em um caminho
+    funcao listarDiretorios(diretorio) {
+        var conteudo = __funcao_nativa("os.listdir", diretorio);
+        var diretorios = [];
+        
+        para (var i = 0; i < conteudo.tamanho(); i++) {
+            var caminho = diretorio + "/" + conteudo[i];
+            se (this.eDiretorio(caminho)) {
+                diretorios.inserir(conteudo[i]);
+            }
+        }
+        
+        retornar diretorios;
+    }
+    
+    // Criar um diretório
+    funcao criarDiretorio(caminho) {
+        tentar {
+            __funcao_nativa("os.makedirs", caminho, verdadeiro);
+            retornar verdadeiro;
+        } capturar (erro) {
+            retornar falso;
+        }
+    }
+    
+    // Remover um diretório
+    funcao removerDiretorio(caminho) {
+        tentar {
+            __funcao_nativa("os.rmdir", caminho);
+            retornar verdadeiro;
+        } capturar (erro) {
+            retornar falso;
+        }
+    }
+    
+    // Ler conteúdo de um arquivo
+    funcao lerArquivo(caminho) {
+        tentar {
+            retornar __funcao_nativa("__ler_arquivo", caminho);
+        } capturar (erro) {
+            retornar "";
+        }
+    }
+    
+    // Escrever conteúdo em um arquivo
+    funcao escreverArquivo(caminho, conteudo) {
+        tentar {
+            __funcao_nativa("__escrever_arquivo", caminho, conteudo);
+            retornar verdadeiro;
+        } capturar (erro) {
+            retornar falso;
+        }
+    }
+    
+    // Remover um arquivo
+    funcao removerArquivo(caminho) {
+        tentar {
+            __funcao_nativa("os.remove", caminho);
+            retornar verdadeiro;
+        } capturar (erro) {
+            retornar falso;
+        }
+    }
+    
+    // Copiar um arquivo
+    funcao copiarArquivo(origem, destino) {
+        tentar {
+            var conteudo = this.lerArquivo(origem);
+            retornar this.escreverArquivo(destino, conteudo);
+        } capturar (erro) {
+            retornar falso;
+        }
+    }
+    
+    // Mover/renomear um arquivo
+    funcao moverArquivo(origem, destino) {
+        tentar {
+            __funcao_nativa("os.rename", origem, destino);
+            retornar verdadeiro;
+        } capturar (erro) {
+            // Tentar copiar e depois remover, caso esteja em sistemas de arquivos diferentes
+            se (this.copiarArquivo(origem, destino)) {
+                retornar this.removerArquivo(origem);
+            }
+            retornar falso;
+        }
+    }
+    
+    // Obter informações sobre um arquivo
+    funcao obterInfoArquivo(caminho) {
+        tentar {
+            var stats = __funcao_nativa("os.stat", caminho);
+            var nome = __funcao_nativa("os.path.basename", caminho);
+            
+            retornar {
+                "nome": nome,
+                "tamanho": stats.st_size,
+                "dataModificacao": stats.st_mtime,
+                "dataCriacao": stats.st_ctime,
+                "dataAcesso": stats.st_atime,
+                "eDiretorio": this.eDiretorio(caminho),
+                "eArquivo": this.eArquivo(caminho)
+            };
+        } capturar (erro) {
+            retornar nulo;
+        }
+    }
+}
+
+// Exportar instância do gerenciador
+var gerenciador = GerenciadorFicheiros(); 

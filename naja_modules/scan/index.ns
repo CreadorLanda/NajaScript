@@ -1,0 +1,72 @@
+// scan.ns - Módulo para escaneamento de redes baseado em scapy e paramiko
+// Versão simplificada para NajaScript
+
+// Importações internas necessárias
+import os;
+import sys;
+
+// Informações do módulo
+export fun info() {
+    return "scan module v1.0.0 - Network scanning tools for NajaScript";
+}
+
+// Funções para escaneamento de rede (baseado em scapy)
+
+// Função para descoberta de hosts ativos na rede
+export fun discover_hosts(string network_range) {
+    println("Descobrindo hosts na rede: " + network_range);
+    
+    // Implementação simplificada que seria feita em Python com scapy
+    // Na versão real, precisaria de uma ponte para o Python
+    
+    return ["192.168.1.1", "192.168.1.2", "192.168.1.5"];
+}
+
+// Escanear portas abertas em um host
+export fun scan_ports(string host, int start_port, int end_port) {
+    println("Escaneando portas de " + start_port + " a " + end_port + " no host " + host);
+    
+    // Simplificação do resultado
+    return [22, 80, 443, 3306];
+}
+
+// Detectar sistema operacional (OS fingerprinting)
+export fun detect_os(string host) {
+    println("Detectando sistema operacional de: " + host);
+    return "Linux 5.10";
+}
+
+// Funções para SSH (baseado em paramiko)
+
+// Conectar via SSH
+export fun ssh_connect(string host, string username, string password) {
+    println("Conectando via SSH a " + host + " com usuário " + username);
+    return true;
+}
+
+// Executar comando via SSH
+export fun ssh_execute(string host, string command) {
+    println("Executando comando no host " + host + ": " + command);
+    return "comando executado com sucesso";
+}
+
+// Transferir arquivo via SSH/SCP
+export fun ssh_transfer(string local_path, string remote_path, string host) {
+    println("Transferindo " + local_path + " para " + host + ":" + remote_path);
+    return true;
+}
+
+// Função de ajuda
+export fun help() {
+    println("Módulo scan - Funções disponíveis:");
+    println("- discover_hosts(network_range): Descobre hosts ativos na rede");
+    println("- scan_ports(host, start_port, end_port): Escaneia portas abertas");
+    println("- detect_os(host): Detecta o sistema operacional");
+    println("- ssh_connect(host, username, password): Conecta via SSH");
+    println("- ssh_execute(host, command): Executa comando via SSH");
+    println("- ssh_transfer(local_path, remote_path, host): Transfere arquivo");
+    return "Consulte a documentação para mais detalhes";
+}
+
+// Inicialização do módulo
+println("Módulo scan inicializado"); 

@@ -1,6 +1,8 @@
 {
   "dependencies": {
-    "MathUtils": "1.0.0"
+    "MathUtils": "1.0.0",
+    "TestRegistry": "latest",
+    "test_package": "latest"
   },
   "devDependencies": {}
 }

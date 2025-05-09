@@ -83,6 +83,12 @@
       }
     },
     {
+      "scope": ["keyword.other.export"],
+      "settings": {
+        "foreground": "#C586C0"
+      }
+    },
+    {
       "scope": ["support.type", "entity.name.type", "entity.name.type.interface"],
       "settings": {
         "foreground": "#4EC9B0"

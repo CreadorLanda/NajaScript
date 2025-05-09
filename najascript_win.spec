@@ -71,8 +71,8 @@ exe = EXE(
 )
 
 # Análise para o gerenciador de pacotes
-naja_add_a = Analysis(
-    ['naja_add.py'],
+naja_a = Analysis(
+    ['naja.py'],
     pathex=[],
     binaries=[],
     datas=[],
@@ -93,14 +93,14 @@ naja_add_a = Analysis(
     noarchive=False,
 )
 
-naja_add_pyz = PYZ(naja_add_a.pure, naja_add_a.zipped_data, cipher=block_cipher)
+naja_pyz = PYZ(naja_a.pure, naja_a.zipped_data, cipher=block_cipher)
 
-naja_add_exe = EXE(
-    naja_add_pyz,
-    naja_add_a.scripts,
+naja_exe = EXE(
+    naja_pyz,
+    naja_a.scripts,
     [],
     exclude_binaries=True,
-    name='naja_add',
+    name='naja',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
@@ -161,16 +161,16 @@ naja_remote_exe = EXE(
 
 collect = COLLECT(
     exe,
-    naja_add_exe,
+    naja_exe,
     naja_remote_exe,
     a.binaries,
-    naja_add_a.binaries,
+    naja_a.binaries,
     naja_remote_a.binaries,
     a.zipfiles,
-    naja_add_a.zipfiles,
+    naja_a.zipfiles,
     naja_remote_a.zipfiles,
     a.datas,
-    naja_add_a.datas,
+    naja_a.datas,
     naja_remote_a.datas,
     strip=False,
     upx=True,

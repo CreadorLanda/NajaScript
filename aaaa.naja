@@ -1,8 +1,0 @@
-import math;
-import random;
-
-int b = math.sin(0.5);
-int c = random.randint(1, 10);
-print(b)
-println(c)
-

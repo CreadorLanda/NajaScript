@@ -1,0 +1,115 @@
+// StringUtils package for NajaScript
+
+// Basic string operations
+export fun concat(string a, string b) {
+    return a + b;
+}
+
+export fun length(string text) {
+    return len(text);
+}
+
+export fun toUpper(string text) {
+    string result = "";
+    for (int i = 0; i < len(text); i = i + 1) {
+        char c = text[i];
+        if (c >= 'a' && c <= 'z') {
+            // Convert to uppercase by subtracting 32 from ASCII value
+            result = result + char(int(c) - 32);
+        } else {
+            result = result + c;
+        }
+    }
+    return result;
+}
+
+export fun toLower(string text) {
+    string result = "";
+    for (int i = 0; i < len(text); i = i + 1) {
+        char c = text[i];
+        if (c >= 'A' && c <= 'Z') {
+            // Convert to lowercase by adding 32 to ASCII value
+            result = result + char(int(c) + 32);
+        } else {
+            result = result + c;
+        }
+    }
+    return result;
+}
+
+export fun reverse(string text) {
+    string result = "";
+    for (int i = len(text) - 1; i >= 0; i = i - 1) {
+        result = result + text[i];
+    }
+    return result;
+}
+
+export fun substring(string text, int start, int end) {
+    string result = "";
+    if (start < 0 || start >= len(text) || end < start || end > len(text)) {
+        println("Error: Invalid substring indices");
+        return result;
+    }
+    
+    for (int i = start; i < end; i = i + 1) {
+        result = result + text[i];
+    }
+    return result;
+}
+
+// Advanced string operations
+export fun contains(string text, string search) {
+    if (len(search) > len(text)) {
+        return false;
+    }
+    
+    for (int i = 0; i <= len(text) - len(search); i = i + 1) {
+        bool found = true;
+        for (int j = 0; j < len(search); j = j + 1) {
+            if (text[i + j] != search[j]) {
+                found = false;
+                break;
+            }
+        }
+        if (found) {
+            return true;
+        }
+    }
+    return false;
+}
+
+export fun startsWith(string text, string prefix) {
+    if (len(prefix) > len(text)) {
+        return false;
+    }
+    
+    for (int i = 0; i < len(prefix); i = i + 1) {
+        if (text[i] != prefix[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+export fun endsWith(string text, string suffix) {
+    if (len(suffix) > len(text)) {
+        return false;
+    }
+    
+    int startPos = len(text) - len(suffix);
+    for (int i = 0; i < len(suffix); i = i + 1) {
+        if (text[startPos + i] != suffix[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Package information
+export fun info() {
+    return "StringUtils package v1.0.0 - String manipulation utilities for NajaScript";
+}
+
+// Initialize
+println("StringUtils package initialized"); 

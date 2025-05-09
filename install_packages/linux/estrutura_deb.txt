@@ -1,0 +1,71 @@
+Estrutura do pacote .deb para NajaScript v1.0.0
+Gerado em: 2025-04-27 17:24:49
+
+najascript_deb_2kn4_mh2/
+  DEBIAN/
+    control
+    postinst
+  usr/
+    bin/
+      naja
+      najascript
+      naja_remote
+    share/
+      applications/
+        najascript.desktop
+      mime/
+        packages/
+          najascript.xml
+      najascript/
+        assets/
+          logoNajaGame.png
+          najascript_icon.ico
+          najascript_icon.png
+          NajaScript_logo.png
+          najascript_setup_icon.ico
+          Flappy_Bird_assets/
+            Game Objects/
+              background-day.png
+              base.png
+              pipe-green.png
+              yellowbird-downflap.png
+              yellowbird-midflap.png
+              yellowbird-upflap.png
+            Sound Efects/
+              die.ogg
+              die.wav
+              hit.ogg
+              hit.wav
+              point.ogg
+              point.wav
+              swoosh.ogg
+              swoosh.wav
+              wing.ogg
+              wing.wav
+            UI/
+              gameover.png
+              message.png
+              Numbers/
+                0.png
+                1.png
+                2.png
+                3.png
+                4.png
+                5.png
+                6.png
+                7.png
+                8.png
+                9.png
+        modules/
+          Basico.naja
+          index.json
+          Matematica.naja
+          NajaGame.naja
+          NajaPt.naja
+          NumeroUtil.naja
+          pygame_bridge.py
+          StringUtils/
+            1.0.0/
+              index.naja
+          __pycache__/
+            pygame_bridge.cpython-313.pyc

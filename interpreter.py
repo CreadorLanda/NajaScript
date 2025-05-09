@@ -12,6 +12,7 @@ import inspect
 import types
 import asyncio
 import traceback
+import math
 
 class ExportedValue:
     """Wrapper para valores primitivos exportados"""
@@ -547,24 +548,38 @@ class NajaModule:
         self.export_count = 0  # Para depuração
         self.debug = debug
         
-        # Mapeia as funções do ambiente para métodos do módulo
-        # e identifica quais são exportadas
-        for name, value in environment.values.items():
-            # Verifica para funções
-            if hasattr(value, 'declaration') and hasattr(value.declaration, 'exported'):
-                self.methods[name] = value
-                if value.declaration.exported:
+        # Verificar se o ambiente tem exports definidos
+        if hasattr(self.environment, 'exports'):
+            # Usar os exports definidos pelo método mark_as_exported
+            for export_name in self.environment.exports:
+                try:
+                    value = self.environment.get(export_name)
+                    self.exports[export_name] = value
+                    self.export_count += 1
+                    if self.debug:
+                        print(f"DEBUG: Exportado: {export_name} ({type(value).__name__})")
+                except RuntimeError:
+                    if self.debug:
+                        print(f"DEBUG: ERRO! Exportação '{export_name}' não encontrada no ambiente")
+        else:
+            # Fallback para o comportamento anterior (buscar pela flag exported)
+            # Mapeia as funções do ambiente para métodos do módulo
+            for name, value in environment.values.items():
+                # Verifica para funções
+                if hasattr(value, 'declaration') and hasattr(value.declaration, 'exported'):
+                    self.methods[name] = value
+                    if value.declaration.exported:
+                        self.exports[name] = value
+                        self.export_count += 1
+                        if self.debug:
+                            print(f"DEBUG: Função exportada: {name}")
+                            
+                # Verifica para valores simples exportados
+                elif hasattr(value, 'exported') and value.exported:
                     self.exports[name] = value
                     self.export_count += 1
                     if self.debug:
-                        print(f"DEBUG: Função exportada: {name}")
-                        
-            # Verifica para valores simples exportados
-            elif hasattr(value, 'exported') and value.exported:
-                self.exports[name] = value
-                self.export_count += 1
-                if self.debug:
-                    print(f"DEBUG: Valor exportado: {name}")
+                        print(f"DEBUG: Valor exportado: {name}")
         
         # Debug para informar quais símbolos foram exportados
         print(f"DEBUG: Módulo {name} exportando: {list(self.exports.keys())} ({self.export_count} itens)")
@@ -737,9 +752,94 @@ class Interpreter:
             return None
         self.environment.define("println", println_func)
         
-        # input
+        # Enhanced input function
         def input_func(prompt=""):
-            return input(prompt)
+            # Get the raw input as string
+            user_input = input(prompt)
+            
+            # Get the caller's stack frame to check for type annotations
+            import inspect, re
+            frame = inspect.currentframe()
+            if frame:
+                try:
+                    caller_frame = frame.f_back
+                    if caller_frame:
+                        # Get the code context where input() is being called
+                        context = inspect.getframeinfo(caller_frame).code_context
+                        if context:
+                            # Extract the line with the input call
+                            call_line = context[0].strip()
+                            
+                            # Check for int input() pattern
+                            if re.search(r'int\s+input\s*\(', call_line) or re.search(r':\s*int\s*=\s*input\s*\(', call_line):
+                                try:
+                                    return int(user_input)
+                                except ValueError:
+                                    print("Warning: Invalid integer input. Returning 0.")
+                                    return 0
+                            
+                            # Check for float input() pattern
+                            if re.search(r'float\s+input\s*\(', call_line) or re.search(r':\s*float\s*=\s*input\s*\(', call_line):
+                                try:
+                                    return float(user_input)
+                                except ValueError:
+                                    print("Warning: Invalid float input. Returning 0.0.")
+                                    return 0.0
+                                    
+                            # Check for bool input() pattern
+                            if re.search(r'bool\s+input\s*\(', call_line) or re.search(r':\s*bool\s*=\s*input\s*\(', call_line):
+                                lower_input = user_input.lower().strip()
+                                if lower_input in ('true', 'yes', 'y', '1'):
+                                    return True
+                                elif lower_input in ('false', 'no', 'n', '0'):
+                                    return False
+                                else:
+                                    print("Warning: Invalid boolean input. Returning False.")
+                                    return False
+                            
+                            # Check variable names for type hints
+                            var_match = re.search(r'(\w+)\s*=\s*input\s*\(', call_line)
+                            if var_match:
+                                var_name = var_match.group(1).lower()
+                                
+                                # Check for numeric variable names
+                                if re.match(r'(num|count|age|year|id|index|amount|total|sum|value).*', var_name):
+                                    try:
+                                        # First try to convert to int
+                                        return int(user_input)
+                                    except ValueError:
+                                        try:
+                                            # Try float if int fails
+                                            return float(user_input)
+                                        except ValueError:
+                                            print(f"Warning: Expecting numeric input for '{var_name}'. Returning 0.")
+                                            return 0
+                                            
+                                # Check for float-like variable names
+                                if re.match(r'(price|cost|rate|percent|average|avg|decimal|float|weight|height).*', var_name):
+                                    try:
+                                        return float(user_input)
+                                    except ValueError:
+                                        print(f"Warning: Expecting float input for '{var_name}'. Returning 0.0.")
+                                        return 0.0
+                                        
+                                # Check for boolean variable names
+                                if re.match(r'(is|has|can|should|will|enable|allow|accept|confirm|valid|flag|toggle|status|ready|active).*', var_name):
+                                    lower_input = user_input.lower().strip()
+                                    if lower_input in ('true', 'yes', 'y', '1'):
+                                        return True
+                                    elif lower_input in ('false', 'no', 'n', '0'):
+                                        return False
+                                    else:
+                                        print(f"Warning: Expecting boolean input for '{var_name}'. Returning False.")
+                                        return False
+                finally:
+                    # Clean up reference to avoid memory leaks
+                    del frame
+            
+            # Default behavior: return as string
+            return user_input
+            
         self.environment.define("input", input_func)
         
         # type
@@ -813,6 +913,236 @@ class Interpreter:
             return None
         self.environment.define("asyncSleep", async_sleep)
     
+        # Implementar funções HTTP nativas (sem precisar de import)
+        try:
+            import requests
+            import json
+            from urllib.parse import urljoin
+            
+            class Response:
+                """Representa uma resposta HTTP formatada para NajaScript (estilo Fetch API JavaScript)"""
+                def __init__(self, response):
+                    # Propriedades públicas
+                    self.status = response.status_code
+                    self.ok = 200 <= response.status_code < 300
+                    self.headers = NajaDict(dict(response.headers))
+                    self.statusText = response.reason
+                    self.url = response.url
+                    
+                    # Propriedades privadas
+                    self._raw = response
+                    self._text = response.text
+                    self._json_data = None
+                    self._json_parsed = False
+                
+                def text(self):
+                    """Retorna o corpo da resposta como texto"""
+                    return self._text
+                
+                def json(self):
+                    """Retorna o corpo da resposta como objeto JS"""
+                    if not self._json_parsed:
+                        try:
+                            parsed = json.loads(self._text)
+                            # Converter dicionários para NajaDict
+                            if isinstance(parsed, dict):
+                                result = NajaDict()
+                                for k, v in parsed.items():
+                                    result.add(k, v)
+                                self._json_data = result
+                            else:
+                                self._json_data = parsed
+                            self._json_parsed = True
+                        except Exception as e:
+                            raise RuntimeError(f"A resposta não é um JSON válido: {str(e)}")
+                    return self._json_data
+                
+                def blob(self):
+                    """Retorna os dados brutos da resposta"""
+                    return self._raw.content
+            
+            # Implementação nativa do fetch (similar ao JavaScript)
+            def fetch_native(url, options=None):
+                """
+                Realiza uma requisição HTTP (similar ao fetch de JavaScript)
+                
+                Parâmetros:
+                url: URL para a requisição
+                options: Opções da requisição com:
+                    - method: método HTTP (GET, POST, etc.)
+                    - headers: cabeçalhos HTTP
+                    - body: corpo da requisição
+                """
+                # Configurações padrão
+                default_headers = {
+                    "User-Agent": "NajaScript/1.0",
+                    "Content-Type": "application/json"
+                }
+                
+                # Extrair as opções
+                method = "GET"
+                headers = dict(default_headers)
+                params = None
+                body = None
+                
+                if options:
+                    # Verificar se options tem os atributos necessários
+                    if isinstance(options, NajaDict):
+                        # Se for NajaDict
+                        if "method" in options._dict:
+                            method = options._dict["method"]
+                        if "headers" in options._dict and options._dict["headers"]:
+                            headers_obj = options._dict["headers"]
+                            if isinstance(headers_obj, NajaDict):
+                                for k, v in headers_obj._dict.items():
+                                    headers[k] = v
+                        if "params" in options._dict:
+                            params = options._dict["params"]
+                        if "body" in options._dict:
+                            body = options._dict["body"]
+                    else:
+                        # Se for um dicionário normal
+                        if hasattr(options, "get"):
+                            if options.get("method"):
+                                method = options.get("method")
+                            if options.get("headers"):
+                                headers_obj = options.get("headers")
+                                if isinstance(headers_obj, dict):
+                                    headers.update(headers_obj)
+                                elif hasattr(headers_obj, "_dict"):
+                                    headers.update(headers_obj._dict)
+                            if options.get("params"):
+                                params = options.get("params")
+                            if options.get("body"):
+                                body = options.get("body")
+                
+                # Converter para maiúsculas se for string
+                if isinstance(method, str):
+                    method = method.upper()
+                
+                try:
+                    # Processar body para JSON se for dicionário
+                    if body and (isinstance(body, dict) or hasattr(body, "_dict")):
+                        body_dict = body._dict if hasattr(body, "_dict") else body
+                        if method == "GET":
+                            # Para GET, mover body para params
+                            if params is None:
+                                params = {}
+                            params.update(body_dict)
+                            body = None
+                        else:
+                            # Para outros métodos, converter para JSON
+                            body = body_dict
+                    
+                    # Fazer a requisição HTTP
+                    if method == "GET":
+                        response = requests.get(url, params=params, headers=headers)
+                    elif method == "POST":
+                        if isinstance(body, dict):
+                            response = requests.post(url, json=body, headers=headers)
+                        else:
+                            response = requests.post(url, data=body, headers=headers)
+                    elif method == "PUT":
+                        if isinstance(body, dict):
+                            response = requests.put(url, json=body, headers=headers)
+                        else:
+                            response = requests.put(url, data=body, headers=headers)
+                    elif method == "DELETE":
+                        response = requests.delete(url, headers=headers)
+                    elif method == "PATCH":
+                        if isinstance(body, dict):
+                            response = requests.patch(url, json=body, headers=headers)
+                        else:
+                            response = requests.patch(url, data=body, headers=headers)
+                    else:
+                        raise RuntimeError(f"Método HTTP não suportado: {method}")
+                    
+                    # Retornar o objeto Response
+                    return Response(response)
+                except Exception as e:
+                    raise RuntimeError(f"Erro na requisição HTTP: {str(e)}")
+            
+            # Método para GET
+            def get_native(url, params=None, headers=None):
+                """Realiza uma requisição HTTP GET"""
+                options = NajaDict()
+                options.add("method", "GET")
+                if params:
+                    options.add("params", params)
+                if headers:
+                    options.add("headers", headers)
+                return fetch_native(url, options)
+            
+            # Método para POST
+            def post_native(url, data=None, json_data=None, headers=None):
+                """Realiza uma requisição HTTP POST"""
+                options = NajaDict()
+                options.add("method", "POST")
+                
+                if json_data:
+                    options.add("body", json_data)
+                elif data:
+                    options.add("body", data)
+                
+                if headers:
+                    options.add("headers", headers)
+                
+                return fetch_native(url, options)
+            
+            # Função para construir URLs
+            def build_url_native(base_url, path):
+                """Constrói uma URL completa a partir de uma URL base e um caminho"""
+                return urljoin(base_url, path)
+            
+            # Adicionar funções ao ambiente global
+            self.environment.define("fetch", fetch_native)
+            self.environment.define("get", get_native)
+            self.environment.define("post", post_native)
+            self.environment.define("buildUrl", build_url_native)
+            
+            # Adicionar funções para manipulação JSON
+            def json_stringify(obj):
+                """Converte objeto para string JSON (equivalente ao JSON.stringify)"""
+                try:
+                    if hasattr(obj, "_dict"):  # Se for NajaDict
+                        obj = obj._dict
+                    elif hasattr(obj, "_elements"):  # Se for NajaList ou similar
+                        obj = obj._elements
+                    return json.dumps(obj)
+                except Exception as e:
+                    raise RuntimeError(f"Erro ao converter para JSON: {str(e)}")
+            
+            def json_parse(json_str):
+                """Converte string JSON para objeto (equivalente ao JSON.parse)"""
+                try:
+                    parsed = json.loads(json_str)
+                    # Converter dicionários para NajaDict
+                    if isinstance(parsed, dict):
+                        result = NajaDict()
+                        for k, v in parsed.items():
+                            result.add(k, v)
+                        return result
+                    # Converter listas para NajaList
+                    elif isinstance(parsed, list):
+                        result = NajaList()
+                        for item in parsed:
+                            result.add(item)
+                        return result
+                    return parsed
+                except Exception as e:
+                    raise RuntimeError(f"Erro ao analisar JSON: {str(e)}")
+            
+            # Adicionar funções JSON ao ambiente global
+            self.environment.define("JSON", NajaDict({
+                "stringify": json_stringify,
+                "parse": json_parse
+            }))
+            
+        except ImportError as e:
+            if self.debug:
+                print(f"DEBUG: Não foi possível adicionar funções HTTP nativas: {e}")
+        
+        # Função de conversão para int
         def int_func(value):
             """Converte um valor para inteiro"""
             if isinstance(value, str):
@@ -822,19 +1152,74 @@ class Interpreter:
                     return 0
             elif isinstance(value, (int, float)):
                 return int(value)
+            elif value is None:
+                return 0
             return 0
         
         self.environment.define("int", int_func)  # Adicionando função int()
     
-    def _register_native_functions(self):
-        """Registra funções nativas no ambiente"""
-        # Funções de E/S
-        self.environment.define("print", print)
-        self.environment.define("input", input)
+        # Float function similar to int_func
+        def float_func(value):
+            """Converte um valor para float"""
+            if isinstance(value, str):
+                try:
+                    return float(value)
+                except ValueError:
+                    return 0.0
+            elif isinstance(value, (int, float)):
+                return float(value)
+            return 0.0
         
-        # Funções de conversão
-        self.environment.define("int", int)
-        self.environment.define("float", float)
+        self.environment.define("float", float_func)  # Adicionando função float()
+    
+        def bool_func(value):
+            """Converte um valor para booleano"""
+            if isinstance(value, str):
+                lower_val = value.lower().strip()
+                if lower_val in ('true', 'yes', 'y', '1'):
+                    return True
+                elif lower_val in ('false', 'no', 'n', '0', ''):
+                    return False
+            return bool(value)
+        
+        self.environment.define("bool", bool_func)  # Adicionando função bool()
+    
+    def _register_native_functions(self):
+        """Registra funções e módulos nativos que serão acessíveis para NajaScript"""
+        # Funções matemáticas
+        import math
+        
+        self.modules["math"] = {
+            "abs": abs,
+            "round": round,
+            "sqrt": math.sqrt,
+            "pow": pow,
+            "sin": math.sin,
+            "cos": math.cos,
+            "tan": math.tan,
+            "floor": math.floor,
+            "ceil": math.ceil,
+        }
+        
+        # Módulo HTTP (semelhante ao Axios)
+        try:
+            from http_module import create_http_module
+            self.modules["http"] = create_http_module()
+        except ImportError:
+            if self.debug:
+                print("DEBUG: Módulo HTTP não pôde ser carregado (requests pode estar faltando)")
+        
+        # Converte valores de booleanos
+        def bool_converter(value):
+            if isinstance(value, str):
+                lower_val = value.lower().strip()
+                if lower_val in ('true', 'yes', 'y', '1'):
+                    return True
+                elif lower_val in ('false', 'no', 'n', '0', ''):
+                    return False
+            return bool(value)
+        self.environment.define("bool", bool_converter)
+        
         self.environment.define("str", str)
         self.environment.define("toString", str)  # Alias para str
         
@@ -843,6 +1228,17 @@ class Interpreter:
         self.environment.define("round", round)
         self.environment.define("min", min)
         self.environment.define("max", max)
+        
+        # Import math functions
+        self.environment.define("sqrt", math.sqrt)
+        self.environment.define("pow", pow)
+        self.environment.define("sin", math.sin)
+        self.environment.define("cos", math.cos)
+        self.environment.define("tan", math.tan)
+        self.environment.define("floor", math.floor)
+        self.environment.define("ceil", math.ceil)
+        self.environment.define("PI", math.pi)
+        self.environment.define("E", math.e)
     
     def interpret(self, ast):
         """Interpreta a árvore sintática abstrata"""
@@ -1274,7 +1670,7 @@ class Interpreter:
         value = None
         if stmt.value:
             value = self.evaluate(stmt.value)
-        
+            
         if value is None and stmt.var_type != "any" and stmt.var_type != "void":
             # Para tipos específicos, garantir valores padrão
             if stmt.var_type == "int":
@@ -1307,13 +1703,13 @@ class Interpreter:
             # Para objetos complexos, podemos definir o atributo diretamente
             if isinstance(value, (NajaList, NajaDict, NajaSet, NajaMap, NajaTuple, Function)):
                 value.exported = True
-                if self.debug:
-                    print(f"DEBUG: Adicionando atributo 'exported' diretamente ao valor de '{stmt.name}'")
-            else:
-                # Para tipos primitivos, precisamos armazenar em uma classe wrapper
-                value = ExportedValue(value)
-                if self.debug:
-                    print(f"DEBUG: Encapsulando valor '{stmt.name}' em ExportedValue")
+        if self.debug:
+            print(f"DEBUG: Adicionando atributo 'exported' diretamente ao valor de '{stmt.name}'")
+        else:
+            # Para tipos primitivos, precisamos armazenar em uma classe wrapper
+            value = ExportedValue(value)
+            if self.debug:
+                print(f"DEBUG: Encapsulando valor '{stmt.name}' em ExportedValue")
         
         if stmt.is_const:
             self.environment.define_const(stmt.name, value)
@@ -1361,6 +1757,10 @@ class Interpreter:
         
         if self.debug:
             print(f"DEBUG: Importando módulo: {module_name}")
+            if stmt.import_items:
+                print(f"DEBUG: Importando itens específicos: {stmt.import_items}")
+            if stmt.is_import_all:
+                print(f"DEBUG: Importando todos os itens")
         
         # Se o módulo já foi carregado, reutiliza
         if module_name in self.imported_modules:
@@ -1374,38 +1774,44 @@ class Interpreter:
                 print(f"DEBUG: Tipo do módulo: {type(module)}")
                 module.debug_exports()
             
-            # Quando um módulo é importado, define apenas seus símbolos exportados
-            # no ambiente atual para acesso direto
+            # Quando um módulo é importado, define seus símbolos exportados
+            # de acordo com a importação solicitada
             if self.debug:
                 print(f"DEBUG: Exportando símbolos do módulo {module_name}:")
             
-            for name, value in module.exports.items():
-                if self.debug:
-                    print(f"DEBUG:   - {name}: {type(value)}")
-                    
-                # Se for um valor encapsulado, extrai o valor interno
-                if isinstance(value, ExportedValue):
-                    value_to_define = value.value
-                    if self.debug:
-                        print(f"DEBUG:     (Desencapsulado para {type(value_to_define)})")
-                else:
-                    value_to_define = value
-                
-                # Adiciona ao ambiente atual
-                self.environment.define(name, value_to_define)
-                if self.debug:
-                    print(f"DEBUG:     Adicionado ao ambiente: {name}")
+            # Se for importação seletiva (import {item1, item2} from "módulo")
+            if stmt.import_items:
+                for name in stmt.import_items:
+                    if name in module.exports:
+                        value = module.exports[name]
+                        if self.debug:
+                            print(f"DEBUG:   - {name}: {type(value)}")
+                            
+                        # Se for um valor encapsulado, extrai o valor interno
+                        if isinstance(value, ExportedValue):
+                            value_to_define = value.value
+                            if self.debug:
+                                print(f"DEBUG:     (Desencapsulado para {type(value_to_define)})")
+                        else:
+                            value_to_define = value
+                        
+                        # Adiciona ao ambiente atual
+                        self.environment.define(name, value_to_define)
+                        if self.debug:
+                            print(f"DEBUG:     Adicionado ao ambiente: {name}")
+                    else:
+                        raise RuntimeError(f"O módulo '{module_name}' não exporta '{name}'")
             
             # Verificar se os valores foram realmente adicionados ao ambiente
-            if self.debug:
-                print("\nDEBUG: Verificando valores exportados no ambiente:")
-                for name in module.exports.keys():
+            if self.debug and stmt.import_items:
+                print("\nDEBUG: Verificando valores importados no ambiente:")
+                for name in stmt.import_items:
                     try:
                         value = self.environment.get(name)
                         print(f"DEBUG:   - {name}: {type(value)}")
                     except Exception as e:
                         print(f"DEBUG:   - {name}: ERRO! {str(e)}")
-                
+        
             return module
         
         # Tenta encontrar o módulo nos caminhos registrados
@@ -1490,7 +1896,7 @@ class Interpreter:
                 index_path = os.path.join(potential_path, "index.naja")
                 if os.path.exists(index_path):
                     module_path = index_path
-                    break
+                break
         
         # Verifica se encontrou o módulo
         if not module_path:
@@ -1647,7 +2053,7 @@ class Interpreter:
         else:
             # Atribuição normal a uma variável
             self.environment.assign(expr.name, value)
-        
+            
         return value
 
     def execute_ForStatement(self, stmt):
@@ -1698,7 +2104,7 @@ class Interpreter:
         # Armazenar a informação de exportação
         if hasattr(stmt, 'exported') and stmt.exported:
             function.declaration.exported = True
-            if self.debug:
+        if self.debug:
                 print(f"DEBUG: Função '{stmt.name}' marcada como exportada")
         
         self.environment.define(stmt.name, function)
@@ -2027,3 +2433,35 @@ class Interpreter:
             raise Exception("A palavra-chave 'this' só pode ser usada dentro de métodos de classe")
         
         return this_obj
+
+    def execute_ExportStatement(self, stmt):
+        """Executa uma declaração de exportação"""
+        if self.debug:
+            print(f"DEBUG: Exportando identificador '{stmt.identifier}'")
+        
+        # Obter o valor atual da variável
+        value = self.environment.get(stmt.identifier)
+        
+        # Para tipos primitivos, encapsular em ExportedValue sem alterar a variável original
+        if isinstance(value, (int, float, str, bool)):
+            # Não tenta reatribuir a constante, apenas marcar como exportada
+            exported_value = ExportedValue(value)
+            # Não fazer assign se for constante, só marcar para exportação
+            if stmt.identifier in self.environment.values:
+                is_const, _ = self.environment.value_info.get(stmt.identifier, (False, False))
+                if not is_const:
+                    self.environment.assign(stmt.identifier, exported_value)
+        # Para funções, atualizar o atributo exported
+        elif isinstance(value, Function):
+            value.declaration.exported = True
+            if self.debug:
+                print(f"DEBUG: Função '{stmt.identifier}' marcada para exportação")
+        else:
+            # Para objetos complexos, definir o atributo diretamente
+            if not hasattr(value, 'exported'):
+                value.exported = True
+        
+        # Marcar explicitamente no ambiente atual que este símbolo é exportado
+        self.environment.mark_as_exported(stmt.identifier)
+        
+        return value

@@ -1,0 +1,7 @@
+// Teste de importação seletiva apenas de variáveis
+import { nome, versao, ativo } from "modulo_teste";
+
+// Usar as variáveis diretamente
+println("Nome: " + nome);
+println("Versão: " + versao);
+println("Ativo: " + ativo); 

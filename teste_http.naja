@@ -1,0 +1,60 @@
+// Exemplo de NajaScript para navegador
+
+// Importa módulo DOM (hipotético)
+import { document, window } from "dom";
+
+// Função para ser executada após carregar página
+fun aoCarregar() {
+    // Selecionar elemento pelo ID
+    var titulo = document.getElementById("titulo");
+    
+    // Modificar conteúdo
+    titulo.innerHTML = "NajaScript no Navegador!";
+    
+    // Adicionar evento de clique em um botão
+    var botao = document.getElementById("meuBotao");
+    botao.addEventListener("click", aoClicar);
+    
+    // Fazer requisição HTTP
+    fazerRequisicao();
+}
+
+// Manipulador de evento de clique
+fun aoClicar(event) {
+    var resultado = document.getElementById("resultado");
+    resultado.innerHTML = "Botão foi clicado!";
+    
+    // Alterar estilos
+    resultado.style.color = "green";
+    resultado.style.fontWeight = "bold";
+}
+
+// Requisição HTTP assíncrona
+async fun fazerRequisicao() {
+    var resposta = await fetch("https://jsonplaceholder.typicode.com/todos/1");
+    var dados = await resposta.json();
+    
+    var conteudo = document.getElementById("conteudo");
+    conteudo.innerHTML = "Tarefa: " + dados.title;
+}
+
+// Registrar evento de carregamento da página
+window.addEventListener("load", aoCarregar);
+
+// Definir uma variável reativa
+flux contador = 0;
+
+// Atualizar contador a cada segundo
+fun iniciarContador() {
+    window.setInterval(() => {
+        contador = contador + 1;
+        document.getElementById("contador").innerHTML = "Contador: " + contador;
+    }, 1000);
+}
+
+// Iniciar o contador
+iniciarContador();
+
+// Exportar funções para uso global no HTML
+export aoClicar;
+export fazerRequisicao;

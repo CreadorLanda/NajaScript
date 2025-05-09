@@ -15,7 +15,8 @@
     { "include": "#constants" },
     { "include": "#variables" },
     { "include": "#punctuation" },
-    { "include": "#modules" }
+    { "include": "#modules" },
+    { "include": "#exports" }
   ],
   "repository": {
     "keywords": {
@@ -27,6 +28,14 @@
         {
           "name": "keyword.control",
           "match": "\\b(se|senao|enquanto|para|paracada|fazer|parar|continuar|retornar|tentar|pegar|finalmente|lance|importar|de|como|padrao|caso|trocar|em|escolher)\\b"
+        }
+      ]
+    },
+    "exports": {
+      "patterns": [
+        {
+          "name": "keyword.other.export",
+          "match": "\\bexport\\b"
         }
       ]
     },

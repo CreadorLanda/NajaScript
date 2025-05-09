@@ -1,0 +1,9 @@
+// Teste básico de importação
+import "modulo_teste";
+
+// Acessar os valores diretamente com notação de ponto
+println("Nome: " + modulo_teste.nome);
+println("Versão: " + modulo_teste.versao);
+println("Saudação: " + modulo_teste.saudacao("Mundo"));
+println("Soma: " + modulo_teste.soma(7, 5));
+println("Ativo: " + modulo_teste.ativo); 

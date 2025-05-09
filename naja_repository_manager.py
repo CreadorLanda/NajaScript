@@ -21,7 +21,7 @@ from naja_package_manager import NajaPackageManager, NAJA_PACKAGES_DIR
 
 # Constants
 NAJA_CONFIG_FILE = ".naja_config"
-NAJA_REGISTRY_URL = "https://example.com/naja-registry"  # Placeholder
+NAJA_REGISTRY_URL = "https://github.com/CreadorLanda/naja-packages"  # GitHub repository
 LOCAL_REPO_DEFAULT = "naja_repository"
 
 class NajaRepositoryManager:
@@ -40,7 +40,7 @@ class NajaRepositoryManager:
                     "local": str(Path(LOCAL_REPO_DEFAULT).resolve()),
                     "remote": NAJA_REGISTRY_URL
                 },
-                "use_remote": False
+                "use_remote": True  # Enable remote by default
             }
             self._write_config(default_config)
             return default_config
@@ -164,120 +164,244 @@ class NajaRepositoryManager:
     def _install_from_remote(self, package_name, version, dev):
         """Install a package from the remote repository (GitHub)"""
         
-        print(f"Fetching package {package_name}@{version} from GitHub...")
+        print(f"Buscando pacote {package_name}@{version} no repositório remoto...")
+        
+        try:
+            import tqdm
+            has_tqdm = True
+        except ImportError:
+            has_tqdm = False
+            print("******* anim not installed ")
         
         # Default repository URL (can be changed in config)
-        repo_url = self.config.get("repositories", {}).get("remote", "https://github.com/NajaScript")
+        repo_url = self.config.get("repositories", {}).get("remote", "https://github.com/CreadorLanda/naja-packages")
         
-        # Remove 'https://github.com/' if present
+        # Ensure the URL is the full GitHub repo URL
+        if not repo_url.startswith("https://github.com/"):
+            repo_url = f"https://github.com/{repo_url}"
+        
+        # Extract the org/repo from the URL
         if repo_url.startswith("https://github.com/"):
-            org_name = repo_url[19:]
+            parts = repo_url[19:].split('/')
+            if len(parts) >= 2:
+                org_name = parts[0]
+                repo_name = parts[1]
+            else:
+                # If URL format is just org name
+                org_name = repo_url[19:]
+                repo_name = "naja-packages"
         else:
             org_name = repo_url
-        
-        # Default package naming convention: naja-[package_name]
-        repo_name = f"naja-{package_name.lower()}"
+            repo_name = "naja-packages"
         
         # Determine version tag/branch
         version_tag = version if version != "latest" else "main"
         
-        # GitHub ZIP URL
-        zip_url = f"https://github.com/{org_name}/{repo_name}/archive/refs/heads/{version_tag}.zip"
+        print(f"Acessando {org_name}/{repo_name} (branch/tag: {version_tag})")
         
-        # If version is specified and not "latest", try tag URL instead of branch
-        if version != "latest":
-            zip_url = f"https://github.com/{org_name}/{repo_name}/archive/refs/tags/v{version}.zip"
-        
-        # Use temporary directory
+        # Diretório temporário para trabalhar
         with tempfile.TemporaryDirectory() as temp_dir:
-            zip_path = os.path.join(temp_dir, f"{package_name}.zip")
-            
             try:
-                # Download the zip file
-                print(f"Downloading from {zip_url}...")
-                urllib.request.urlretrieve(zip_url, zip_path)
+                # Criar diretório para o pacote
+                package_dir = os.path.join(temp_dir, package_name)
+                os.makedirs(package_dir, exist_ok=True)
                 
-            except urllib.error.HTTPError as e:
-                if e.code == 404:
-                    # If version tag wasn't found, try the main branch
-                    if version != "latest" and version_tag != "main":
-                        print(f"Version {version} not found, trying main branch...")
-                        zip_url = f"https://github.com/{org_name}/{repo_name}/archive/refs/heads/main.zip"
-                        try:
-                            urllib.request.urlretrieve(zip_url, zip_path)
-                        except urllib.error.HTTPError:
-                            print(f"Package {package_name} not found on GitHub")
+                # URLs para acesso direto aos arquivos no GitHub
+                base_raw_url = f"https://raw.githubusercontent.com/{org_name}/{repo_name}/{version_tag}"
+                base_api_url = f"https://api.github.com/repos/{org_name}/{repo_name}/contents"
+                
+                # Verificar se o diretório do pacote existe usando a API do GitHub
+                api_url = f"{base_api_url}/modules/{package_name}?ref={version_tag}"
+                
+                print(f"Verificando existência do pacote via: {api_url}")
+                
+                try:
+                    # Configurar um request com headers apropriados para a API do GitHub
+                    request = urllib.request.Request(api_url)
+                    request.add_header('Accept', 'application/vnd.github.v3+json')
+                    request.add_header('User-Agent', 'NajaScript Package Manager')
+                    
+                    with urllib.request.urlopen(request) as response:
+                        if response.getcode() == 200:
+                            package_info = json.loads(response.read().decode('utf-8'))
+                        else:
+                            print(f"Erro ao acessar o pacote: código {response.getcode()}")
                             return False
-                    else:
-                        print(f"Package {package_name} not found on GitHub")
+                except urllib.error.HTTPError as e:
+                    if e.code == 404:
+                        print(f"Pacote {package_name} não encontrado no GitHub (erro 404)")
+                        print(f"Verifique se o pacote existe em: https://github.com/{org_name}/{repo_name}/tree/{version_tag}/modules/{package_name}")
                         return False
-                else:
-                    print(f"HTTP Error: {e.code} - {e.reason}")
+                    else:
+                        print(f"Erro HTTP: {e.code} - {e.reason}")
+                        return False
+                except Exception as e:
+                    print(f"Erro ao verificar pacote: {e}")
                     return False
+                
+                # Verificar versões disponíveis
+                version_to_use = version
+                
+                # Encontrar diretórios de versão (itens que são diretórios)
+                available_versions = []
+                for item in package_info:
+                    if item['type'] == 'dir':
+                        available_versions.append(item['name'])
+                
+                if not available_versions:
+                    print(f"Nenhuma versão disponível para {package_name}")
+                    return False
+                
+                print(f"Versões disponíveis: {', '.join(available_versions)}")
+                
+                # Determinar qual versão usar
+                if version == "latest":
+                    # Use a versão mais recente (ordenação simples)
+                    version_to_use = sorted(available_versions)[-1]
+                    print(f"Usando versão mais recente: {version_to_use}")
+                else:
+                    # Verificar se a versão específica existe
+                    if version not in available_versions:
+                        print(f"Versão {version} não encontrada para {package_name}")
+                        print(f"Versões disponíveis: {', '.join(available_versions)}")
+                        return False
+                
+                # Obter os arquivos da versão escolhida
+                version_api_url = f"{base_api_url}/modules/{package_name}/{version_to_use}?ref={version_tag}"
+                
+                print(f"Buscando arquivos da versão {version_to_use}...")
+                
+                try:
+                    request = urllib.request.Request(version_api_url)
+                    request.add_header('Accept', 'application/vnd.github.v3+json')
+                    request.add_header('User-Agent', 'NajaScript Package Manager')
+                    
+                    with urllib.request.urlopen(request) as response:
+                        if response.getcode() == 200:
+                            version_files = json.loads(response.read().decode('utf-8'))
+                        else:
+                            print(f"Erro ao acessar a versão: código {response.getcode()}")
+                            return False
+                except Exception as e:
+                    print(f"Erro ao verificar versão: {e}")
+                    return False
+                
+                # Criar diretório para a versão
+                version_dir = os.path.join(package_dir, version_to_use)
+                os.makedirs(version_dir, exist_ok=True)
+                
+                # Baixar cada arquivo da versão
+                found_index_naja = False
+                found_index_ns = False
+                
+                # Mostrar uma barra de progresso para o download se tqdm estiver disponível
+                if has_tqdm:
+                    progress_bar = tqdm.tqdm(total=len(version_files), desc="Downloading files", unit="file")
+                
+                for file_info in version_files:
+                    file_name = file_info['name']
+                    if file_name == "index.naja":
+                        found_index_naja = True
+                    elif file_name == "index.ns":
+                        found_index_ns = True
+                    
+                    # Usar download_url diretamente da resposta da API
+                    if 'download_url' in file_info and file_info['download_url']:
+                        raw_file_url = file_info['download_url']
+                    else:
+                        # Fallback para URL direta
+                        raw_file_url = f"{base_raw_url}/modules/{package_name}/{version_to_use}/{file_name}"
+                    
+                    file_path = os.path.join(version_dir, file_name)
+                    
+                    if not has_tqdm:
+                        print(f"Baixando arquivo: {file_name}")
+                    
+                    try:
+                        # Criar request para obter o conteúdo do arquivo
+                        file_request = urllib.request.Request(raw_file_url)
+                        file_request.add_header('User-Agent', 'NajaScript Package Manager')
+                        file_request.add_header('Accept', 'application/vnd.github.v3.raw')
+                        
+                        # Baixar o conteúdo do arquivo
+                        with urllib.request.urlopen(file_request) as file_response:
+                            file_content = file_response.read()
+                            
+                            # Verificar se o conteúdo é válido para arquivos .naja ou .ns
+                            if file_name.endswith(('.naja', '.ns')):
+                                try:
+                                    text_content = file_content.decode('utf-8')
+                                    if len(text_content.strip().splitlines()) < 3 and "export fun info()" in text_content:
+                                        print(f"AVISO: O arquivo {file_name} parece ser um stub/placeholder.")
+                                except UnicodeDecodeError:
+                                    # Se não conseguir decodificar como texto, provavelmente é binário
+                                    pass
+                            
+                            # Escrever o conteúdo no arquivo local
+                            with open(file_path, 'wb') as f:
+                                f.write(file_content)
+                                if not has_tqdm:
+                                    print(f"Arquivo {file_name} salvo com {len(file_content)} bytes")
+                    except Exception as e:
+                        print(f"Erro ao baixar {file_name}: {e}")
+                        if has_tqdm:
+                            progress_bar.close()
+                        return False
+                    
+                    if has_tqdm:
+                        progress_bar.update(1)
+                
+                if has_tqdm:
+                    progress_bar.close()
+                
+                # Verificar se existe um arquivo index (naja ou ns)
+                if not (found_index_naja or found_index_ns):
+                    print(f"Arquivo index.naja ou index.ns não encontrado na versão {version_to_use}")
+                    print(f"Verifique se o arquivo existe em: https://github.com/{org_name}/{repo_name}/blob/{version_tag}/modules/{package_name}/{version_to_use}")
+                    
+                    # Se não existe, criar um index.ns padrão
+                    print("Criando arquivo index.ns padrão...")
+                    index_file_path = os.path.join(version_dir, "index.ns")
+                    with open(index_file_path, 'w', encoding='utf-8') as f:
+                        f.write(f"// {package_name} package index file\n\n")
+                        f.write(f"// Auto-generated for version {version_to_use}\n\n")
+                        f.write("// Export functions\n")
+                        f.write("export fun info() {\n")
+                        f.write(f'    return "Package {package_name} version {version_to_use}";\n')
+                        f.write("}\n")
+                    
+                    print(f"Arquivo index.ns criado com sucesso")
+                    found_index_ns = True
+                
+                # Verificar que pelo menos um dos arquivos index foi encontrado ou criado
+                if not (found_index_naja or found_index_ns):
+                    print(f"Falha ao criar arquivo index para o pacote")
+                    return False
+                
+                # Criar e preparar o diretório de destino
+                dst_path = self.project_dir / NAJA_PACKAGES_DIR / package_name
+                if dst_path.exists():
+                    shutil.rmtree(dst_path)
+                
+                # Copiar conteúdo para o destino
+                try:
+                    shutil.copytree(version_dir, dst_path)
+                    print(f"Arquivos do pacote copiados para {dst_path}")
+                except Exception as e:
+                    print(f"Erro ao copiar arquivos do pacote: {e}")
+                    return False
+                
+                # Atualizar o package.json com a versão atual
+                self.package_manager.add_package(package_name, version_to_use, dev)
+                
+                print(f"✅ Pacote {package_name}@{version_to_use} instalado com sucesso do GitHub")
+                return True
+                
             except Exception as e:
-                print(f"Error downloading package: {e}")
+                print(f"Erro durante instalação: {e}")
+                import traceback
+                traceback.print_exc()
                 return False
-            
-            # Create extraction directory
-            extract_dir = os.path.join(temp_dir, "extract")
-            os.makedirs(extract_dir, exist_ok=True)
-            
-            # Extract the ZIP file
-            try:
-                with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-                    zip_ref.extractall(extract_dir)
-            except Exception as e:
-                print(f"Error extracting package: {e}")
-                return False
-            
-            # Find the extracted directory (it might include the branch/tag name)
-            extracted_dirs = os.listdir(extract_dir)
-            if not extracted_dirs:
-                print("No files extracted from ZIP")
-                return False
-            
-            src_dir = os.path.join(extract_dir, extracted_dirs[0])
-            
-            # Create and prepare the destination directory
-            dst_path = self.project_dir / NAJA_PACKAGES_DIR / package_name
-            if dst_path.exists():
-                shutil.rmtree(dst_path)
-            
-            # Look for a src or lib directory within the package
-            package_src = None
-            for dir_name in ["src", "lib", "naja"]:
-                candidate = os.path.join(src_dir, dir_name)
-                if os.path.isdir(candidate):
-                    package_src = candidate
-                    break
-            
-            # If no src/lib directory, use the root
-            if package_src is None:
-                package_src = src_dir
-            
-            # Copy contents to the destination
-            try:
-                shutil.copytree(package_src, dst_path)
-                print(f"Package files copied to {dst_path}")
-            except Exception as e:
-                print(f"Error copying package files: {e}")
-                return False
-            
-            # Ensure an index.naja file exists
-            index_file = dst_path / "index.naja"
-            if not index_file.exists():
-                # Create a basic index.naja if missing
-                with open(index_file, 'w', encoding='utf-8') as f:
-                    f.write(f"// {package_name} module\n\n")
-                    f.write(f"export fun info() {{\n")
-                    f.write(f"    return \"Package {package_name} version {version} from GitHub\";\n")
-                    f.write("}\n")
-            
-            # Update the package.json
-            self.package_manager.add_package(package_name, version, dev)
-            
-            print(f"Successfully installed {package_name}@{version} from GitHub")
-            return True
     
     def search(self, query):
         """Search for packages in repositories"""

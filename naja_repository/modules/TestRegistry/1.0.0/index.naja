@@ -1,0 +1,15 @@
+// TestRegistry package for NajaScript
+
+// Basic functions
+export fun hello() {
+    println("Hello from TestRegistry");
+    return "Hello World";
+}
+
+// Package information
+export fun info() {
+    return "TestRegistry package v1.0.0 - Pacote de teste para o registro";
+}
+
+// Initialize
+println("TestRegistry package initialized");

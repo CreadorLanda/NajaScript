@@ -1,0 +1,16 @@
+// Teste de importação seletiva
+import { nome, soma } from "modulo_teste";
+
+println("Nome importado: " + nome);
+println("Soma de 5 + 3 = " + soma(5, 3));
+
+// Isto deve gerar um erro, pois 'versao' não foi importado
+// println("Versão: " + versao); 
+
+// Agora vamos importar tudo
+import "modulo_teste";
+
+// Agora devemos acessar as outras exportações usando a notação de ponto
+println("Versão: " + modulo_teste.versao);
+println("Ativo: " + modulo_teste.ativo);
+println(modulo_teste.saudacao("Tester")); 

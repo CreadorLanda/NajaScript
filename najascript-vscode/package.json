@@ -1,8 +1,8 @@
 {
     "name": "najascript",
     "displayName": "NajaScript",
-    "description": "Suporte completo para a linguagem NajaScript com destaque de sintaxe, execução de código e suporte para programação em português",
-    "version": "0.1.0",
+    "description": "Suporte para a linguagem NajaScript com destaque de sintaxe, execução de código e autocompletar para facilitar o desenvolvimento",
+    "version": "0.2.4",
     "engines": {
         "vscode": "^1.99.0"
     },
@@ -19,6 +19,7 @@
         "onLanguage:najascript"
     ],
     "main": "./extension.js",
+    "icon": "icons/naja-logo.png",
     "contributes": {
         "languages": [
             {
@@ -29,9 +30,20 @@
                     "naja"
                 ],
                 "extensions": [
-                    ".naja"
+                    ".naja",
+                    ".ns"
                 ],
-                "configuration": "./language-configuration.json"
+                "configuration": "./language-configuration.json",
+                "icon": {
+                    "light": "icons/naja-file.png",
+                    "dark": "icons/naja-file.png"
+                }
+            },
+            {
+                "id": "json",
+                "extensions": [
+                    ".naja_config"
+                ]
             }
         ],
         "grammars": [
@@ -92,12 +104,35 @@
                 "key": "shift+f4",
                 "when": "editorLangId == najascript"
             }
-        ]
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "NajaScript",
+            "properties": {
+                "najascript.useTerminal": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Executar código NajaScript no terminal integrado em vez do canal de saída"
+                },
+                "najascript.enableAutocomplete": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Habilitar sugestões de código e autocompletar para NajaScript"
+                }
+            }
+        }
+    },
+    "dependencies": {
+        "vscode-languageclient": "^7.0.0",
+        "vscode-languageserver": "^7.0.0",
+        "vscode-languageserver-textdocument": "^1.0.1"
     },
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "vscode:prepublish": "npm install",
+        "postinstall": "cd server && npm install"
     },
-    "keywords": ["najascript", "programming language", "portuguese", "python", "education", "beginner", "brazilian"],
+    "keywords": ["najascript", "programming language", "education", "beginner"],
     "author": "",
     "type": "commonjs",
     "bugs": {
@@ -106,5 +141,6 @@
     "homepage": "https://github.com/username/najascript#readme",
     "devDependencies": {
         "@types/vscode": "^1.99.1"
-    }
+    },
+    "readme": "# NajaScript Extension for VS Code\n\nThis extension provides language support for the NajaScript programming language, including syntax highlighting, code completion, and execution in the integrated terminal."
 }

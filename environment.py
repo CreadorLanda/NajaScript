@@ -34,6 +34,11 @@ class Environment:
         self.values[name] = value
         self.value_info[name] = (is_const, is_flux)
     
+    def define_const(self, name, value):
+        """Define uma constante no ambiente atual"""
+        # Apenas um wrapper em torno de define com is_const=True
+        return self.define(name, value, is_const=True)
+    
     def define_class(self, name, class_definition):
         """Define uma classe no ambiente atual"""
         self.classes[name] = class_definition
@@ -132,6 +137,21 @@ class Environment:
         if name in self.change_listeners:
             for callback in self.change_listeners[name]:
                 callback(name, old_value, new_value)
+    
+    def mark_as_exported(self, name):
+        """Marca um símbolo como exportado para que possa ser importado por outros módulos"""
+        # Se for uma função, marcar o atributo exported na declaração
+        if name in self.functions:
+            func = self.functions[name]
+            if hasattr(func, 'declaration'):
+                func.declaration.exported = True
+        
+        # Criar um registro de exports se ainda não existir
+        if not hasattr(self, 'exports'):
+            self.exports = set()
+        
+        # Adicionar o nome ao conjunto de exports
+        self.exports.add(name)
     
     def can_access(self, property_name, access_modifier, current_class, accessing_class):
         """Verifica se uma propriedade/método pode ser acessada com base no modificador de acesso"""

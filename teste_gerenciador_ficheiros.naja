@@ -1,0 +1,78 @@
+// Teste do módulo gerenciador de ficheiros
+importar "naja_modules/gerenciador_ficheiros.naja" como gf;
+
+funcao principal() {
+    escrever("=== Teste do Gerenciador de Ficheiros ===");
+
+    // Testar obtenção do diretório atual
+    escrever("\n1. Diretório atual:");
+    var dirAtual = gf.gerenciador.obterDiretorioAtual();
+    escrever("   Diretório atual: " + dirAtual);
+
+    // Testar listagem de arquivos no diretório atual
+    escrever("\n2. Arquivos no diretório atual:");
+    var arquivos = gf.gerenciador.listarArquivos(".");
+    para (var i = 0; i < arquivos.tamanho(); i++) {
+        escrever("   - " + arquivos[i]);
+    }
+
+    // Testar listagem de diretórios
+    escrever("\n3. Diretórios no diretório atual:");
+    var diretorios = gf.gerenciador.listarDiretorios(".");
+    para (var i = 0; i < diretorios.tamanho(); i++) {
+        escrever("   - " + diretorios[i]);
+    }
+
+    // Testar verificação de existência de caminhos
+    escrever("\n4. Verificação de caminhos:");
+    escrever("   'interpreter.py' existe? " + gf.gerenciador.existeCaminho("interpreter.py"));
+    escrever("   'interpreter.py' é arquivo? " + gf.gerenciador.eArquivo("interpreter.py"));
+    escrever("   'naja_modules' é diretório? " + gf.gerenciador.eDiretorio("naja_modules"));
+
+    // Testar criação, escrita, leitura e remoção de arquivos e diretórios
+    escrever("\n5. Operações de escrita e leitura:");
+    
+    // Criar diretório de teste
+    var dirTeste = "diretorio_teste";
+    escrever("   Criando diretório '" + dirTeste + "': " + gf.gerenciador.criarDiretorio(dirTeste));
+    
+    // Criar e escrever em arquivo
+    var arquivoTeste = dirTeste + "/arquivo_teste.txt";
+    escrever("   Escrevendo no arquivo '" + arquivoTeste + "': " + 
+             gf.gerenciador.escreverArquivo(arquivoTeste, "Conteúdo de teste"));
+    
+    // Ler conteúdo do arquivo
+    escrever("   Lendo do arquivo '" + arquivoTeste + "': " + gf.gerenciador.lerArquivo(arquivoTeste));
+    
+    // Obter informações do arquivo
+    var infoArquivo = gf.gerenciador.obterInfoArquivo(arquivoTeste);
+    escrever("   Informações do arquivo:");
+    escrever("     - Nome: " + infoArquivo.nome);
+    escrever("     - Tamanho: " + infoArquivo.tamanho + " bytes");
+    escrever("     - Data de modificação: " + infoArquivo.dataModificacao);
+    
+    // Copiar arquivo
+    var arquivoCopia = dirTeste + "/arquivo_copia.txt";
+    escrever("   Copiando arquivo para '" + arquivoCopia + "': " + 
+             gf.gerenciador.copiarArquivo(arquivoTeste, arquivoCopia));
+    
+    // Mover/renomear arquivo
+    var arquivoMovido = dirTeste + "/arquivo_movido.txt";
+    escrever("   Movendo arquivo para '" + arquivoMovido + "': " + 
+             gf.gerenciador.moverArquivo(arquivoCopia, arquivoMovido));
+    
+    // Remover arquivos
+    escrever("   Removendo arquivo '" + arquivoTeste + "': " + 
+             gf.gerenciador.removerArquivo(arquivoTeste));
+    
+    escrever("   Removendo arquivo '" + arquivoMovido + "': " + 
+             gf.gerenciador.removerArquivo(arquivoMovido));
+    
+    // Remover diretório de teste
+    escrever("   Removendo diretório '" + dirTeste + "': " + 
+             gf.gerenciador.removerDiretorio(dirTeste));
+    
+    escrever("\n=== Testes concluídos ===");
+}
+
+principal(); 

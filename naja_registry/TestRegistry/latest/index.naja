@@ -1,0 +1,5 @@
+// TestRegistry module
+
+export fun info() {
+    return "Package TestRegistry version latest";
+}

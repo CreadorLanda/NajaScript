@@ -1,13 +1,13 @@
 {
-  "name": "NajaScript Module Repository",
-  "description": "Repository for NajaScript modules",
+  "name": "NajaScript Official Repository",
+  "description": "Repositório oficial de módulos para NajaScript",
   "modules": {
-    "MathUtils": {
-      "description": "Biblioteca de funções matemáticas",
+    "TestRegistry": {
+      "description": "Pacote de teste para o registro",
       "versions": {
         "1.0.0": {
-          "added": "2025-04-26T21:28:46.714912",
-          "description": "Biblioteca de funções matemáticas"
+          "description": "Pacote de teste para o registro",
+          "dependencies": {}
         }
       }
     }

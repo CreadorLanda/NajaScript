@@ -3,9 +3,12 @@ const vscode = require('vscode');
 const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs');
+const { LanguageClient, TransportKind } = require('vscode-languageclient/node');
 
 let statusBarItem;
 let outputChannel;
+let terminal;
+let client;
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -33,6 +36,12 @@ function activate(context) {
     context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(updateStatusBarVisibility));
     updateStatusBarVisibility(vscode.window.activeTextEditor);
 
+    // Initialize language server if autocomplete is enabled
+    const config = vscode.workspace.getConfiguration('najascript');
+    if (config.get('enableAutocomplete')) {
+        initLanguageServer(context);
+    }
+
     // Add all disposables to the context
     context.subscriptions.push(runCommand);
     context.subscriptions.push(runPortugueseCommand);
@@ -45,6 +54,46 @@ function updateStatusBarVisibility(editor) {
     } else {
         statusBarItem.hide();
     }
+}
+
+/**
+ * Initializes the language server for autocomplete
+ * @param {vscode.ExtensionContext} context 
+ */
+function initLanguageServer(context) {
+    // Path to the server module 
+    const serverModule = context.asAbsolutePath(
+        path.join('server', 'server.js')
+    );
+
+    // Create the server options
+    const serverOptions = {
+        run: { module: serverModule, transport: TransportKind.ipc },
+        debug: {
+            module: serverModule,
+            transport: TransportKind.ipc,
+            options: { execArgv: ['--nolazy', '--inspect=6009'] }
+        }
+    };
+
+    // Client options define the documents handled by the server
+    const clientOptions = {
+        documentSelector: [{ scheme: 'file', language: 'najascript' }],
+        synchronize: {
+            fileEvents: vscode.workspace.createFileSystemWatcher('**/.naja{modules,packages.json}')
+        }
+    };
+
+    // Create and start the client
+    client = new LanguageClient(
+        'najascriptLanguageServer',
+        'NajaScript Language Server',
+        serverOptions,
+        clientOptions
+    );
+
+    // Start the client, which will also start the server
+    client.start();
 }
 
 /**
@@ -73,36 +122,64 @@ function runNajaScript(inPortuguese) {
             return;
         }
 
-        const outputChannel = getOutputChannel();
-        outputChannel.clear();
-        outputChannel.show(true);
-
-        outputChannel.appendLine(`Executando: ${filePath}`);
-        outputChannel.appendLine('----------------------------');
-
+        // Get configuration
+        const config = vscode.workspace.getConfiguration('najascript');
+        const useTerminal = config.get('useTerminal');
+        
         // Build the command to run NajaScript
+        // Usando python para garantir que o input funcione corretamente
+        const pythonCmd = "python";
+        const najascriptPath = "najascript.py"; // Caminho para o script Python do NajaScript
+        
         const command = inPortuguese
+            ? `${pythonCmd} ${najascriptPath} --pt "${filePath}"`
+            : `${pythonCmd} ${najascriptPath} "${filePath}"`;
+        
+        // Comando alternativo (comando direto)
+        const directCommand = inPortuguese
             ? `najascript --pt "${filePath}"`
             : `najascript "${filePath}"`;
-
-        // Execute the command
-        exec(command, { cwd: path.dirname(filePath) }, (error, stdout, stderr) => {
-            if (stdout) {
-                outputChannel.appendLine(stdout);
+        
+        if (useTerminal) {
+            // Create or show terminal
+            if (!terminal || terminal.exitStatus !== undefined) {
+                terminal = vscode.window.createTerminal('NajaScript');
             }
             
-            if (stderr) {
-                outputChannel.appendLine(`ERRO: ${stderr}`);
-            }
+            terminal.show(true);
             
-            if (error) {
-                outputChannel.appendLine(`Erro de execução: ${error.message}`);
-                vscode.window.showErrorMessage(`Erro ao executar NajaScript: ${error.message}`);
-            } else {
-                outputChannel.appendLine('----------------------------');
-                outputChannel.appendLine('Execução concluída com sucesso!');
-            }
-        });
+            // Tentar encontrar o executável do NajaScript no sistema
+            // Se najascript.py não estiver no PATH, usar o comando direto
+            terminal.sendText(`echo "Executando ${filePath}..."`);
+            terminal.sendText(directCommand);
+        } else {
+            // Use output channel (original implementation)
+            const outputChannel = getOutputChannel();
+            outputChannel.clear();
+            outputChannel.show(true);
+    
+            outputChannel.appendLine(`Executando: ${filePath}`);
+            outputChannel.appendLine('----------------------------');
+    
+            // Execute the command
+            exec(directCommand, { cwd: path.dirname(filePath) }, (error, stdout, stderr) => {
+                if (stdout) {
+                    outputChannel.appendLine(stdout);
+                }
+                
+                if (stderr) {
+                    outputChannel.appendLine(`ERRO: ${stderr}`);
+                }
+                
+                if (error) {
+                    outputChannel.appendLine(`Erro de execução: ${error.message}`);
+                    vscode.window.showErrorMessage(`Erro ao executar NajaScript: ${error.message}`);
+                } else {
+                    outputChannel.appendLine('----------------------------');
+                    outputChannel.appendLine('Execução concluída com sucesso!');
+                }
+            });
+        }
     });
 }
 
@@ -124,6 +201,16 @@ function deactivate() {
     if (outputChannel) {
         outputChannel.dispose();
     }
+    if (terminal) {
+        terminal.dispose();
+    }
+    
+    // Stop the language client
+    if (client) {
+        return client.stop();
+    }
+    
+    return undefined;
 }
 
 module.exports = {

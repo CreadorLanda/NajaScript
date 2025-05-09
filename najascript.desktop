@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=NajaScript
+Comment=NajaScript Programming Language
+Exec=najascript %f
+Icon=/usr/share/najascript/assets/najascript_icon.png
+Terminal=true
+Type=Application
+Categories=Development;Education;
+MimeType=text/x-najascript;
+Keywords=najascript;programming;education;

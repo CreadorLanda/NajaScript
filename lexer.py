@@ -34,6 +34,7 @@ class TokenType(Enum):
     ANY = auto()  # Novo token para o tipo any
     IMPORT = auto()  # Novo token para importação de módulos
     EXPORT = auto()  # Novo token para exportação de módulos
+    FROM = auto()    # Novo token para a cláusula from em importações
     VAR = auto()  # Novo token para tipo genérico var
     
     # Novos tokens para OOP
@@ -188,6 +189,7 @@ class Lexer:
             'import': TokenType.IMPORT,
             'importar': TokenType.IMPORT,
             'export': TokenType.EXPORT,
+            'from': TokenType.FROM,
             
             # Novos keywords para OOP
             'class': TokenType.CLASS,

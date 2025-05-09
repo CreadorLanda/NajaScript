@@ -1,0 +1,11 @@
+// Teste para o pacote simple_test_package
+
+// Importar o pacote
+println("Importando pacote simple_test_package...");
+import "simple_test_package";
+
+// Verificar o conteúdo do pacote
+println("PI = " + simple_test_package.PI);
+println("VERSION = " + simple_test_package.VERSION);
+println("5 + 3 = " + simple_test_package.add(5, 3));
+println("Info: " + simple_test_package.info()); 

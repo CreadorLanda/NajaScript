@@ -1,0 +1,22 @@
+Instruções para finalizar o pacote .deb no Linux:
+
+1. Descompacte o arquivo najascript-*-linux-structure.tar.gz
+   $ tar -xzf najascript-*-linux-structure.tar.gz -C /tmp/
+
+2. Copie os executáveis compilados para a estrutura:
+   $ mkdir -p /tmp/najascript_deb_*/usr/share/najascript/
+   $ cp -r dist/najascript/* /tmp/najascript_deb_*/usr/share/najascript/
+
+3. Crie o pacote .deb:
+   $ cd /tmp/
+   $ dpkg-deb --build najascript_deb_* najascript.deb
+
+4. O pacote najascript.deb estará pronto para instalação com:
+   $ sudo dpkg -i najascript.deb
+   $ sudo apt-get install -f  # Para resolver dependências
+
+Alternativamente, instale FPM e crie o pacote .deb diretamente:
+  $ sudo apt-get install ruby ruby-dev build-essential
+  $ sudo gem install fpm
+  $ cd /caminho/para/NajaScript
+  $ python3 build_installers.py

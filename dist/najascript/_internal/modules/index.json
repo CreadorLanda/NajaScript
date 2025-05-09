@@ -1,0 +1,24 @@
+{
+  "name": "NajaScript Official Repository",
+  "description": "Repositório oficial de módulos para NajaScript",
+  "modules": {
+    "StringUtils": {
+      "description": "Utilitários para manipulação de strings em NajaScript",
+      "versions": {
+        "1.0.0": {
+          "description": "Versão inicial com operações básicas de manipulação de strings",
+          "dependencies": {}
+        }
+      }
+    },
+    "MathUtils": {
+      "description": "Funções matemáticas para NajaScript",
+      "versions": {
+        "1.0.0": {
+          "description": "Versão inicial com operações matemáticas básicas e avançadas",
+          "dependencies": {}
+        }
+      }
+    }
+  }
+}

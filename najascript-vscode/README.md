@@ -1,82 +1,120 @@
-# NajaScript - Extensão VSCode
+# NajaScript Extension for VS Code
 
-Esta extensão oferece suporte à linguagem NajaScript no Visual Studio Code, com destaque especial para o português.
+This extension provides language support for the NajaScript programming language, including syntax highlighting, code completion, and execution in the integrated terminal.
 
-## Características
+## Features
 
-### Suporte Completo para Português
+- Syntax highlighting for NajaScript (`.naja` and `.ns` files)
+- Code execution via the integrated VS Code terminal
+- Code autocompletion for language keywords and functions
+- Module autocompletion for imports
+  - Autocompletes modules in `naja_modules` directory
+  - Recognizes local modules with exported functions
+  - Provides autocompletion for exported functions, classes, and variables
+- Execution button in the editor title and context menu
+- Default keyboard shortcuts for running code (F4)
+- JSON syntax highlighting for `.naja_config` files
 
-NajaScript é uma linguagem que suporta sintaxe tanto em inglês quanto em português, permitindo escrever código em português nativo:
+## Module Autocompletion
 
-```naja
-// Exemplo de código NajaScript em português
-funcao principal() {
-    inteiro contador = 0;
-    enquanto (contador < 10) {
-        escreverln("Contador: " + contador);
-        contador += 1;
-    }
-    
-    se (contador > 5) {
-        escreverln("Valor final: " + contador);
-    } senao {
-        escreverln("Valor baixo");
-    }
-}
-```
+The extension now provides intelligent autocompletion for modules when writing import statements:
 
-### Palavras-chave em Português
+- Type `import "` to get autocompletion for available modules
+- Modules in the `naja_modules` directory are suggested automatically
+- If you create a directory with `.ns` files containing exports, it will be recognized as a module
+- After importing a module, you can access its exported functions with autocompletion:
+  ```
+  import "mymodule";
+  mymodule.exportedFunction(); // exportedFunction will be suggested
+  ```
 
-Esta extensão oferece coloração para palavras-chave em português:
+## Special Files
 
-- **Declarações**: `classe`, `funcao`, `construtor`, `interface`
-- **Controle de Fluxo**: `se`, `senao`, `enquanto`, `para`, `paracada`, `tentar`, `pegar`, `finalmente`
-- **Tipos**: `inteiro`, `decimal`, `texto`, `booleano`, `vazio`, `lista`, `mapa`
-- **Modificadores**: `publico`, `privado`, `protegido`, `estatico`
-- **Operadores**: `e`, `ou`, `nao`
-- **Valores**: `verdadeiro`, `falso`, `nulo`
+- `.ns` - New, shorter extension for NajaScript files
+- `.naja` - Traditional NajaScript files
+- `.naja_config` - Configuration files with JSON syntax highlighting
 
-### Tema de Cores NajaScript Dark
+## Installation / Instalação
 
-A extensão inclui um tema dark específico para NajaScript com as seguintes cores:
+### English
+1. Download the latest `.vsix` package from the GitHub releases
+2. In VS Code, go to the Extensions view (Ctrl+Shift+X)
+3. Click on the "..." menu in the top right corner
+4. Select "Install from VSIX..."
+5. Choose the downloaded `.vsix` file
 
-| Elemento | Exemplo | Cor |
-|----------|---------|-----|
-| Variáveis | `let nome` | Azul claro (#9CDCFE) |
-| Constantes | `const PI = 3.14` | Azul escuro (#569CD6) |
-| Funções | `funcao ola() {}` | Amarelo claro (#DCDCAA) |
-| Parâmetros | `funcao(a, b)` | Azul claro (#9CDCFE) |
-| Classes | `classe Animal {}` | Verde água (#4EC9B0) |
-| Métodos | `andar() {}` | Amarelo claro (#DCDCAA) |
-| Palavra-chave este | `este.nome` | Rosa claro (#C586C0) |
-| Palavra-chave super | `super()` | Rosa claro (#C586C0) |
-| Palavra-chave novo | `novo Pessoa()` | Azul claro (#569CD6) |
-| Tipos | `: texto`, `: Pessoa` | Verde água (#4EC9B0) |
-| Strings | `"texto"` | Laranja (#CE9178) |
-| Números | `123` | Verde pálido (#B5CEA8) |
-| Booleanos | `verdadeiro`, `falso` | Azul claro (#569CD6) |
-| Null | `nulo` | Rosa claro (#C586C0) |
-| Palavras-chave | `se`, `para`, `retornar` | Azul claro (#569CD6) |
-| Comentários | `// comentário` | Verde musgo (#6A9955) |
-| Operadores | `+`, `-`, `*`, `=` | Branco (#D4D4D4) |
-| Pontuação | `()`, `{}`, `;` | Branco (#D4D4D4) |
+### Português
+1. Abra o Visual Studio Code
+2. Pressione `Ctrl+Shift+X` para abrir a aba de extensões
+3. Pesquise por "NajaScript"
+4. Clique em "Instalar"
 
-## Instalação
+Ou instale o arquivo VSIX manualmente:
+1. Baixe o arquivo `.vsix` da extensão
+2. No VS Code, vá em Extensions (Ctrl+Shift+X)
+3. Clique no ícone "..." e selecione "Install from VSIX..."
+4. Selecione o arquivo baixado
 
-1. Baixe o arquivo .vsix
-2. Abra o VS Code
-3. Vá para a aba Extensões
-4. Clique nos três pontos (...) no topo da aba Extensões
-5. Selecione "Instalar do VSIX..."
-6. Selecione o arquivo .vsix baixado
+## Usage / Uso
 
-## Uso
+### English
+#### Running NajaScript Code
+- Open a `.naja` or `.ns` file
+- Press F4 or click the run button in the editor title
+- The code will execute in the integrated terminal
 
-Após a instalação, arquivos .naja serão automaticamente reconhecidos. Para selecionar o tema:
+#### Portuguese Mode
+- Use Shift+F4 to run in Portuguese mode
+- Or select "Executar NajaScript (Português)" from the context menu
 
-1. Pressione Ctrl+K Ctrl+T (ou Cmd+K Cmd+T no Mac)
-2. Selecione "NajaScript Dark" na lista
+### Português
+#### Executar código NajaScript
+1. Abra um arquivo `.naja` ou `.ns`
+2. Use o botão "Executar NajaScript" na barra de status
+3. Alternativamente, pressione F4 ou use o menu de contexto do editor
 
-## Licença
+## Configuration / Configurações
 
-Esta extensão está licenciada sob a [licença MIT](LICENSE.md). 
+### English
+The following settings are available:
+- `najascript.useTerminal`: Execute NajaScript code in the integrated terminal (default: true)
+- `najascript.enableAutocomplete`: Enable code suggestions and autocomplete (default: true)
+
+### Português
+Para personalizar o comportamento da extensão, acesse as configurações do VS Code (`Ctrl+,`) e procure por "NajaScript":
+- **NajaScript: Use Terminal** - Execute código no terminal integrado (permite interação com input)
+- **NajaScript: Enable Autocomplete** - Habilita/desabilita sugestões de código
+
+## Development Features / Recursos de Desenvolvimento
+
+### Autocompletar
+- Palavras-chave da linguagem (`if`, `for`, `while`, `fun`, `export`, etc.)
+- Tipos de dados (`int`, `string`, `bool`, etc.)
+- Funções integradas (`println`, `input`, etc.)
+- Métodos de objetos (`.length()`, `.add()`, etc.)
+- Módulos em contextos de import
+- Funções exportadas de módulos
+
+## Keyboard Shortcuts / Atalhos de Teclado
+- **F4** - Execute current NajaScript file / Executar arquivo NajaScript atual
+- **Shift+F4** - Execute current NajaScript file in Portuguese mode / Executar arquivo com suporte a português
+
+## Requirements / Requisitos
+- Visual Studio Code 1.50.0 or higher / ou superior
+- NajaScript installed and configured in PATH / instalado e configurado no PATH
+
+## Packaging / Empacotamento
+
+To create a VSIX file that can be shared and installed / Para criar um arquivo VSIX que pode ser compartilhado e instalado:
+
+1. Install vsce / Instale o vsce:
+   ```
+   npm install -g @vscode/vsce
+   ```
+
+2. In the extension directory, run / No diretório da extensão, execute:
+   ```
+   vsce package
+   ```
+
+3. A `.vsix` file will be generated / Um arquivo `.vsix` será gerado 

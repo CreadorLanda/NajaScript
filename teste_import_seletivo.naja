@@ -1,0 +1,11 @@
+// Teste de importação seletiva
+import { nome, soma } from "modulo_teste";
+
+// Usar as variáveis e funções diretamente
+println("Nome: " + nome);
+println("Soma: " + soma(10, 20));
+
+// Estas linhas devem dar erro pois não foram importadas
+// println("Versão: " + versao);
+// println("Ativo: " + ativo);
+// println("Saudação: " + saudacao("Teste")); 

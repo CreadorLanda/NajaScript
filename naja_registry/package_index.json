@@ -1,0 +1,24 @@
+{
+  "name": "NajaScript Package Registry",
+  "description": "Central registry for NajaScript packages",
+  "version": "0.1.0",
+  "created": "2025-04-27T16:36:13.436452",
+  "packages": {
+    "TestRegistry": {
+      "name": "TestRegistry",
+      "description": "NajaScript package: TestRegistry",
+      "author": "anonymous",
+      "created": "2025-04-27T16:37:52.133804",
+      "versions": {
+        "latest": {
+          "version": "latest",
+          "published": "2025-04-27T16:37:52.133804",
+          "files": [
+            "index.naja"
+          ]
+        }
+      },
+      "updated": "2025-04-27T16:37:52.133804"
+    }
+  }
+}

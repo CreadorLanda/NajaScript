@@ -962,21 +962,62 @@ class Parser:
     def import_statement(self):
         """
         import_statement : IMPORT STRING_LIT SEMICOLON
+                         | IMPORT LBRACE (IDENTIFIER (COMMA IDENTIFIER)*)? RBRACE FROM STRING_LIT SEMICOLON
+                         | IMPORT LBRACE MULTIPLY RBRACE FROM STRING_LIT SEMICOLON
         """
         self.eat(TokenType.IMPORT)
         
-        # O módulo deve ser um literal de string
-        if self.current_token.type != TokenType.STRING_LIT:
-            self.error("String literal esperado após 'import'")
-        
-        module_name = self.current_token.value
-        self.eat(TokenType.STRING_LIT)
-        
-        # Semicolon opcional
-        if self.current_token.type == TokenType.SEMICOLON:
-            self.eat(TokenType.SEMICOLON)
+        # Verificar se é uma importação seletiva com chaves
+        if self.current_token.type == TokenType.LBRACE:
+            self.eat(TokenType.LBRACE)
             
-        return ImportStatement(module_name)
+            # Verificar se é importação de tudo {*}
+            is_import_all = False
+            import_items = []
+            
+            if self.current_token.type == TokenType.MULTIPLY:
+                is_import_all = True
+                self.eat(TokenType.MULTIPLY)
+            else:
+                # Lista de itens específicos para importar
+                if self.current_token.type != TokenType.RBRACE:
+                    import_items.append(self.current_token.value)
+                    self.eat(TokenType.IDENTIFIER)
+                    
+                    while self.current_token.type == TokenType.COMMA:
+                        self.eat(TokenType.COMMA)
+                        import_items.append(self.current_token.value)
+                        self.eat(TokenType.IDENTIFIER)
+            
+            self.eat(TokenType.RBRACE)
+            
+            # Consumir FROM e o nome do módulo
+            self.eat(TokenType.FROM)
+            
+            if self.current_token.type != TokenType.STRING_LIT:
+                self.error("String literal esperado após 'from'")
+                
+            module_name = self.current_token.value
+            self.eat(TokenType.STRING_LIT)
+            
+            # Semicolon opcional
+            if self.current_token.type == TokenType.SEMICOLON:
+                self.eat(TokenType.SEMICOLON)
+                
+            return ImportStatement(module_name, import_items, is_import_all)
+        else:
+            # Importação simples: import "módulo"
+            if self.current_token.type != TokenType.STRING_LIT:
+                self.error("String literal esperado após 'import'")
+            
+            module_name = self.current_token.value
+            self.eat(TokenType.STRING_LIT)
+            
+            # Semicolon opcional
+            if self.current_token.type == TokenType.SEMICOLON:
+                self.eat(TokenType.SEMICOLON)
+                
+            return ImportStatement(module_name)
     
     def flux_declaration(self):
         """
@@ -1596,16 +1637,46 @@ class Parser:
         """
         export_statement : EXPORT function_declaration
                          | EXPORT var_declaration
+                         | EXPORT CONST type IDENTIFIER '=' expression ';'
+                         | EXPORT IDENTIFIER ';'
         """
         self.eat(TokenType.EXPORT)
         
         if self.current_token.type == TokenType.FUN:
             return self.function_declaration(exported=True)
+        elif self.current_token.type == TokenType.CONST:
+            # Nova sintaxe: export const tipo nome = valor;
+            is_const = True
+            self.eat(TokenType.CONST)
+            
+            var_type = self.current_token.value
+            self.eat(self.current_token.type)  # Consome o tipo (INT, FLOAT, etc.)
+            
+            var_name = self.current_token.value
+            self.eat(TokenType.IDENTIFIER)
+            
+            self.eat(TokenType.ASSIGN)
+            value = self.expression()
+            
+            if self.current_token.type == TokenType.SEMICOLON:
+                self.eat(TokenType.SEMICOLON)
+                
+            return VarDeclaration(var_type, var_name, value, is_const, exported=True)
+        elif self.current_token.type == TokenType.IDENTIFIER:
+            # Nova sintaxe: export identificador;
+            # Isso permite exportar uma variável/constante já declarada
+            var_name = self.current_token.value
+            self.eat(TokenType.IDENTIFIER)
+            
+            if self.current_token.type == TokenType.SEMICOLON:
+                self.eat(TokenType.SEMICOLON)
+                
+            return ExportStatement(var_name)
         elif self.current_token.type in [TokenType.INT, TokenType.FLOAT, TokenType.STRING, 
                                         TokenType.BOOL, TokenType.VOID, TokenType.ANY, 
                                         TokenType.DICT, TokenType.LIST, TokenType.VECTO,
                                         TokenType.SET, TokenType.MAP, TokenType.TUPLE,
-                                        TokenType.CONST, TokenType.VAR]:
+                                        TokenType.VAR]:
             return self.var_declaration(exported=True)
         else:
-            self.error("Expected 'fun' or a type after 'export'") 
+            self.error("Expected 'fun', 'const', a type, or an identifier after 'export'") 

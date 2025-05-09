@@ -1,7 +1,0 @@
-// Teste super simples
-
-fun teste() {
-    println("Olá mundo!");
-}
-
-teste(); 
