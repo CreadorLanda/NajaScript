@@ -1,8 +1,0 @@
-{
-  "name": "simple_test_package",
-  "version": "1.0.0",
-  "author": "Your Name",
-  "description": "A simple test package for NajaScript",
-  "main": "index.ns",
-  "license": "MIT"
-} 

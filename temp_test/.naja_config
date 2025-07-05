@@ -1,7 +1,0 @@
-{
-  "repositories": {
-    "local": "C:\\Users\\DELL\\Documents\\MyOwnProjects\\NajaScript_interoreter\\NajaScript\\temp_test\\naja_repository",
-    "remote": "https://github.com/CreadorLanda/naja-packages"
-  },
-  "use_remote": true
-}
