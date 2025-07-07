@@ -1,0 +1,127 @@
+// Complete test for math-utils library
+import { pi, e, phi, abs, max, min, pow, sqrt, sin, cos, tan, deg2rad, rad2deg, floor, ceil, round, factorial, fibonacci, gcd, lcm, isPrime, mean, sum, mathUtilsInfo } from "math-utils";
+
+fun main() {
+    println("=== MATH UTILS LIBRARY - COMPLETE TEST ===");
+    
+    // Test constants
+    println("\n1. Mathematical Constants:");
+    println("Pi: " + pi());
+    println("E: " + e());
+    println("Golden Ratio: " + phi());
+    
+    // Test basic functions
+    println("\n2. Basic Functions:");
+    println("abs(-5): " + abs(-5.0));
+    println("max(10, 20): " + max(10.0, 20.0));
+    println("min(10, 20): " + min(10.0, 20.0));
+    println("pow(2, 3): " + pow(2.0, 3));
+    println("sqrt(16): " + sqrt(16.0));
+    
+    // Test trigonometric functions
+    println("\n3. Trigonometric Functions:");
+    float angle45 = deg2rad(45.0);
+    println("sin(45°): " + sin(angle45));
+    println("cos(45°): " + cos(angle45));
+    println("tan(45°): " + tan(angle45));
+    
+    // Test conversion functions
+    println("\n4. Conversion Functions:");
+    println("90° to radians: " + deg2rad(90.0));
+    println("π radians to degrees: " + rad2deg(pi()));
+    
+    // Test rounding functions
+    println("\n5. Rounding Functions:");
+    float num = 3.14159;
+    println("Original: " + num);
+    println("Round to 2 places: " + round(num, 2));
+    println("Floor: " + floor(num));
+    println("Ceil: " + ceil(num));
+    
+    // Test special functions
+    println("\n6. Special Functions:");
+    println("5! = " + factorial(5));
+    println("fibonacci(10) = " + fibonacci(10));
+    println("gcd(48, 18) = " + gcd(48, 18));
+    println("lcm(12, 8) = " + lcm(12, 8));
+    
+    // Test prime checking
+    println("\n7. Prime Number Tests:");
+    lista testNumbers = [17, 18, 19, 20, 21];
+    int i = 0;
+    while (i < testNumbers.length()) {
+        int num = testNumbers.obter(i);
+        bool prime = isPrime(num);
+        println(num + " is prime: " + prime);
+        i = i + 1;
+    }
+    
+    // Test statistical functions
+    println("\n8. Statistical Functions:");
+    lista numbers = [1.0, 2.0, 3.0, 4.0, 5.0];
+    println("Numbers: [1, 2, 3, 4, 5]");
+    println("Mean: " + mean(numbers));
+    println("Sum: " + sum(numbers));
+    
+    // Test library info
+    println("\n9. Library Info:");
+    dicionario info = mathUtilsInfo();
+    println("Name: " + info.obter("name"));
+    println("Version: " + info.obter("version"));
+    println("Author: " + info.obter("author"));
+    
+    println("\n=== PRACTICAL EXAMPLES ===");
+    
+    // Example 1: Circle calculations
+    println("\n1. Circle Area and Circumference:");
+    float radius = 5.0;
+    float area = pi() * pow(radius, 2);
+    float circumference = 2.0 * pi() * radius;
+    println("Radius: " + radius);
+    println("Area: " + area);
+    println("Circumference: " + circumference);
+    
+    // Example 2: Distance formula
+    println("\n2. Distance Between Points:");
+    float x1 = 1.0, y1 = 1.0;
+    float x2 = 4.0, y2 = 5.0;
+    float dx = x2 - x1;
+    float dy = y2 - y1;
+    float distance = sqrt(pow(dx, 2) + pow(dy, 2));
+    println("Point 1: (" + x1 + ", " + y1 + ")");
+    println("Point 2: (" + x2 + ", " + y2 + ")");
+    println("Distance: " + distance);
+    
+    // Example 3: Find primes up to 30
+    println("\n3. Prime Numbers up to 30:");
+    lista primes = [];
+    int num = 2;
+    while (num <= 30) {
+        if (isPrime(num)) {
+            primes.add(num);
+        }
+        num = num + 1;
+    }
+    print("Primes: ");
+    int j = 0;
+    while (j < primes.length()) {
+        print(primes.obter(j));
+        if (j < primes.length() - 1) {
+            print(", ");
+        }
+        j = j + 1;
+    }
+    println("");
+    
+    // Example 4: Factorial sequence
+    println("\n4. Factorial Sequence (1! to 10!):");
+    int k = 1;
+    while (k <= 10) {
+        println(k + "! = " + factorial(k));
+        k = k + 1;
+    }
+    
+    println("\n=== ALL TESTS COMPLETED SUCCESSFULLY! ===");
+}
+
+main(); 
