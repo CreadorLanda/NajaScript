@@ -1,0 +1,69 @@
+// Teste de Estruturas de Controle
+importar "NajaPt";
+
+funcao principal() {
+    escreverln("=== Teste de Estruturas de Controle ===");
+    
+    // Teste if/else
+    escreverln("\n=== Teste IF/ELSE ===");
+    inteiro idade = 20;
+    
+    se (idade >= 18) {
+        escreverln("Maior de idade");
+    } senao {
+        escreverln("Menor de idade");
+    }
+    
+    // Teste if/elif/else
+    escreverln("\n=== Teste IF/ELIF/ELSE ===");
+    inteiro nota = 85;
+    
+    se (nota >= 90) {
+        escreverln("Excelente!");
+    } senao se (nota >= 70) {
+        escreverln("Bom!");
+    } senao se (nota >= 50) {
+        escreverln("Regular");
+    } senao {
+        escreverln("Precisa melhorar");
+    }
+    
+    // Teste while
+    escreverln("\n=== Teste WHILE ===");
+    inteiro contador = 1;
+    enquanto (contador <= 5) {
+        escreverln("Contador: " + contador);
+        contador = contador + 1;
+    }
+    
+    // Teste for
+    escreverln("\n=== Teste FOR ===");
+    para (inteiro i = 1; i <= 3; i = i + 1) {
+        escreverln("Loop FOR: " + i);
+    }
+    
+    // Teste for com decrementação
+    escreverln("\n=== Teste FOR Decrescente ===");
+    para (inteiro j = 5; j >= 1; j = j - 1) {
+        escreverln("Contagem regressiva: " + j);
+    }
+    
+    // Teste com operador ternário
+    escreverln("\n=== Teste Operador Ternário ===");
+    inteiro numero = 15;
+    texto resultado = numero % 2 == 0 ? "Par" : "Ímpar";
+    escreverln("O número " + numero + " é " + resultado);
+    
+    // Teste aninhado
+    escreverln("\n=== Teste Estruturas Aninhadas ===");
+    para (inteiro x = 1; x <= 3; x = x + 1) {
+        escreverln("Externo: " + x);
+        para (inteiro y = 1; y <= 2; y = y + 1) {
+            escreverln("  Interno: " + y);
+        }
+    }
+    
+    escreverln("\n=== Teste Concluído ===");
+}
+
+principal(); 

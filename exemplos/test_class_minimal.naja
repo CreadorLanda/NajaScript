@@ -1,0 +1,15 @@
+// Minimal class test
+
+class Test {
+    constructor() {
+        println("Constructor called");
+    }
+}
+
+fun main() {
+    println("Creating test object");
+    Test t = new Test();
+    println("Test complete");
+}
+
+main(); 

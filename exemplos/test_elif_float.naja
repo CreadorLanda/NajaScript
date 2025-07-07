@@ -1,0 +1,106 @@
+// Test elif, float and input in NajaScript
+
+fun testElif() {
+    println("=== Testing elif ===");
+    
+    int score = 85;
+    
+    if (score >= 90) {
+        println("Grade: A");
+    } elif (score >= 80) {
+        println("Grade: B");
+    } elif (score >= 70) {
+        println("Grade: C");
+    } elif (score >= 60) {
+        println("Grade: D");
+    } else {
+        println("Grade: F");
+    }
+}
+
+fun testFloat() {
+    println("\n=== Testing float ===");
+    
+    float pi = 3.14159;
+    float radius = 5.0;
+    
+    println("Pi: " + pi);
+    println("Radius: " + radius);
+    
+    // Calculate area of circle
+    float area = pi * radius * radius;
+    println("Area of circle: " + area);
+    
+    // Test float operations
+    float a = 10.5;
+    float b = 3.2;
+    
+    println("a: " + a);
+    println("b: " + b);
+    println("a + b: " + (a + b));
+    println("a - b: " + (a - b));
+    println("a * b: " + (a * b));
+    println("a / b: " + (a / b));
+    
+    // Test float comparison
+    if (a > b) {
+        println("a is greater than b");
+    } else {
+        println("b is greater than or equal to a");
+    }
+}
+
+fun testInput() {
+    println("\n=== Testing input ===");
+    
+    // Test basic input
+    println("Enter your name:");
+    string name = input();
+    println("Hello, " + name + "!");
+    
+    // Test input with prompt
+    string age_str = input("Enter your age: ");
+    println("You entered: " + age_str);
+    
+    // Test multiple inputs
+    string city = input("Enter your city: ");
+    println("You live in: " + city);
+    
+    // Summary
+    println("\nSummary:");
+    println("Name: " + name);
+    println("Age: " + age_str);
+    println("City: " + city);
+}
+
+fun testFloatInput() {
+    println("\n=== Testing float input ===");
+    
+    // Get float input (as string first)
+    string temp_str = input("Enter temperature in Celsius: ");
+    println("You entered: " + temp_str);
+    
+    // For now, just work with the string
+    println("Temperature (as string): " + temp_str);
+    
+    // Test with predefined float values
+    float celsius = 25.0;
+    float fahrenheit = (celsius * 9.0 / 5.0) + 32.0;
+    
+    println("Example conversion:");
+    println(celsius + "°C = " + fahrenheit + "°F");
+}
+
+fun main() {
+    println("=== NajaScript Advanced Features Test ===");
+    
+    testElif();
+    testFloat();
+    testInput();
+    testFloatInput();
+    
+    println("\n=== Test Complete ===");
+}
+
+// Execute the program
+main(); 

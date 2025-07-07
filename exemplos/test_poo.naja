@@ -1,0 +1,140 @@
+// Test POO (Object-Oriented Programming) in NajaScript
+
+// Base class - Animal
+class Animal {
+    // Properties
+    public string name;
+    private int age;
+    protected string species;
+    
+    // Constructor
+    constructor(string nome, int idade, string especie) {
+        this.name = nome;
+        this.age = idade;
+        this.species = especie;
+        println("Animal criado: " + this.name);
+    }
+    
+    // Public method
+    public fun makeSound() {
+        println(this.name + " faz um som!");
+    }
+    
+    // Public method to get age (since age is private)
+    public fun getAge() {
+        return this.age;
+    }
+    
+    // Protected method
+    protected fun getSpecies() {
+        return this.species;
+    }
+    
+    // Public method
+    public fun info() {
+        println("Nome: " + this.name + ", Idade: " + this.age + ", Espécie: " + this.species);
+    }
+}
+
+// Derived class - Dog extends Animal
+class Dog extends Animal {
+    private string breed;
+    
+    // Constructor
+    constructor(string nome, int idade, string raca) {
+        // Call parent constructor - this would be super() in many languages
+        // For now, we'll initialize manually
+        this.name = nome;
+        this.species = "Cachorro";
+        this.breed = raca;
+        println("Cachorro criado: " + this.name + " (" + this.breed + ")");
+    }
+    
+    // Override makeSound method
+    public fun makeSound() {
+        println(this.name + " faz: Au au!");
+    }
+    
+    // New method specific to Dog
+    public fun fetch() {
+        println(this.name + " busca a bolinha!");
+    }
+    
+    // Public method to get breed
+    public fun getBreed() {
+        return this.breed;
+    }
+    
+    // Method that uses protected member from parent
+    public fun getSpeciesInfo() {
+        return "Este é um " + this.getSpecies() + " da raça " + this.breed;
+    }
+}
+
+// Another derived class - Cat extends Animal
+class Cat extends Animal {
+    private bool isIndoor;
+    
+    constructor(string nome, int idade, bool domestico) {
+        this.name = nome;
+        this.species = "Gato";
+        this.isIndoor = domestico;
+        println("Gato criado: " + this.name);
+    }
+    
+    public fun makeSound() {
+        println(this.name + " faz: Miau!");
+    }
+    
+    public fun climb() {
+        println(this.name + " sobe na árvore!");
+    }
+    
+    public fun isIndoorCat() {
+        return this.isIndoor;
+    }
+}
+
+fun main() {
+    println("=== Test POO em NajaScript ===");
+    
+    // Create objects
+    println("\n--- Criando objetos ---");
+    Animal animal1 = new Animal("Rex", 5, "Cachorro");
+    Dog dog1 = new Dog("Buddy", 3, "Labrador");
+    Cat cat1 = new Cat("Whiskers", 2, true);
+    
+    println("\n--- Testando métodos ---");
+    
+    // Test Animal methods
+    animal1.makeSound();
+    animal1.info();
+    println("Idade do " + animal1.name + ": " + animal1.getAge());
+    
+    // Test Dog methods
+    dog1.makeSound();  // Should override
+    dog1.fetch();      // Dog-specific method
+    println("Raça: " + dog1.getBreed());
+    println(dog1.getSpeciesInfo());  // Uses protected method
+    
+    // Test Cat methods
+    cat1.makeSound();  // Should override
+    cat1.climb();      // Cat-specific method
+    if (cat1.isIndoorCat()) {
+        println(cat1.name + " é um gato doméstico");
+    } else {
+        println(cat1.name + " é um gato de rua");
+    }
+    
+    println("\n--- Testando polimorfismo ---");
+    // Note: This would require more advanced type system
+    // For now, we'll just demonstrate method calls
+    
+    animal1.makeSound();
+    dog1.makeSound();
+    cat1.makeSound();
+    
+    println("\n=== POO Test Completo! ===");
+}
+
+main(); 

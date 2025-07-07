@@ -1,0 +1,26 @@
+// Working class test with debug
+
+class Person {
+    constructor(string name) {
+        this.name = name;
+        println("Person created: " + name);
+    }
+    
+    public fun greet() {
+        println("Hello, I am " + this.name);
+    }
+}
+
+fun main() {
+    println("=== POO Test - Working Version ===");
+    
+    println("Creating person...");
+    var person = new Person("Ana");
+    
+    println("Person created, now calling greet...");
+    person.greet();
+    
+    println("=== Test Complete ===");
+}
+
+main(); 

@@ -1,0 +1,78 @@
+// Test Control Flow Structures (Simple Version)
+
+// Test if/else statements
+fun testIfElse() {
+    println("=== If/Else Test ===");
+    
+    int age = 20;
+    
+    if (age >= 18) {
+        println("Adult");
+    } else {
+        println("Minor");
+    }
+    
+    // Test score evaluation
+    int score = 85;
+    
+    if (score >= 90) {
+        println("Excellent!");
+    } else {
+        if (score >= 70) {
+            println("Good!");
+        } else {
+            println("Needs improvement");
+        }
+    }
+}
+
+// Test while loop
+fun testWhile() {
+    println("\n=== While Loop Test ===");
+    
+    int counter = 1;
+    while (counter <= 5) {
+        println("Counter: " + counter);
+        counter = counter + 1;
+    }
+}
+
+// Test for loop
+fun testFor() {
+    println("\n=== For Loop Test ===");
+    
+    for (int i = 1; i <= 3; i = i + 1) {
+        println("FOR loop: " + i);
+    }
+    
+    // Countdown
+    println("\nCountdown:");
+    for (int j = 5; j >= 1; j = j - 1) {
+        println("  " + j);
+    }
+}
+
+// Test nested loops
+fun testNested() {
+    println("\n=== Nested Loops Test ===");
+    
+    for (int x = 1; x <= 3; x = x + 1) {
+        println("Outer: " + x);
+        for (int y = 1; y <= 2; y = y + 1) {
+            println("  Inner: " + y);
+        }
+    }
+}
+
+// Main function
+fun main() {
+    testIfElse();
+    testWhile();
+    testFor();
+    testNested();
+    
+    println("\n=== Control Flow Test Complete ===");
+}
+
+// Execute the program
+main(); 

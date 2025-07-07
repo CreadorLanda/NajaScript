@@ -1,0 +1,21 @@
+// Minimal class test without type specification
+
+class Test {
+    constructor() {
+        println("Constructor called");
+    }
+    
+    fun greet() {
+        println("Hello from Test class!");
+    }
+}
+
+fun main() {
+    println("Creating test object");
+    var t = new Test();
+    println("Calling method");
+    t.greet();
+    println("Test complete");
+}
+
+main(); 

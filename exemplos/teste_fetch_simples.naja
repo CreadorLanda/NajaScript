@@ -1,0 +1,11 @@
+println("=== TESTE FETCH SIMPLES ===");
+
+any response = fetch("https://httpbin.org/get");
+
+println("Response: " + response);
+
+if (response != null) {
+    println("Status: " + response.status);
+}
+
+println("=== FINALIZADO ==="); 

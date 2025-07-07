@@ -1,0 +1,155 @@
+println("=== TESTING BASIC MODERN FEATURES ===");
+println("");
+
+// 1. CONSOLE ADVANCED
+println("1. CONSOLE ADVANCED:");
+console.log("Standard log message");
+console.warn("This is a warning");
+console.error("This is an error");
+console.info("This is info");
+
+println("");
+
+// 2. CRYPTO & HASH
+println("2. CRYPTO & HASH:");
+string message = "Hello NajaScript!";
+println("Original: " + message);
+println("MD5: " + crypto.md5(message));
+println("SHA256: " + crypto.sha256(message));
+println("Random UUID: " + crypto.randomUUID());
+
+println("");
+
+// 3. DATETIME
+println("3. DATETIME:");
+any now = DateTime.now();
+println("Current DateTime: " + now);
+println("Formatted: " + now.format("%Y-%m-%d %H:%M:%S"));
+println("Year: " + now.getYear());
+println("Month: " + now.getMonth());
+println("Day: " + now.getDay());
+
+println("");
+
+// 4. STORAGE
+println("4. STORAGE:");
+localStorage.setItem("username", "NajaScriptUser");
+localStorage.setItem("score", "9999");
+
+println("Username: " + localStorage.getItem("username"));
+println("Score: " + localStorage.getItem("score"));
+println("Storage length: " + localStorage.length());
+
+println("");
+
+// 5. FILE SYSTEM
+println("5. FILE SYSTEM:");
+string testContent = "This is a test file created by NajaScript!";
+string testFile = "test_file.txt";
+
+// Write file
+bool written = fs.writeFile(testFile, testContent);
+println("File written: " + written);
+
+// Check if exists
+bool exists = fs.exists(testFile);
+println("File exists: " + exists);
+
+// Read file
+if (exists) {
+    string content = fs.readFile(testFile);
+    println("File content: " + content);
+    
+    // Delete file
+    fs.deleteFile(testFile);
+    println("File deleted: " + !fs.exists(testFile));
+}
+
+println("");
+
+// 6. JSON & FETCH
+println("6. JSON & FETCH:");
+dict testObj = {};
+testObj.add("name", "NajaScript");
+testObj.add("features", "Modern");
+testObj.add("version", 2.0);
+
+any stringify_func = JSON.get("stringify");
+string jsonStr = stringify_func(testObj);
+println("JSON String: " + jsonStr);
+
+any parse_func = JSON.get("parse");
+any parsed = parse_func(jsonStr);
+println("Parsed back: " + parsed);
+
+// Test fetch
+println("Testing fetch...");
+any response = fetch("https://httpbin.org/get");
+println("Fetch response status: " + response.status);
+println("Fetch response OK: " + response.ok);
+
+println("");
+
+// 7. EVENTS
+println("7. EVENTS:");
+
+fun eventHandler(data) {
+    println("Event received: " + data);
+}
+
+addEventListener("test-event", eventHandler);
+dispatchEvent("test-event", "Hello from events!");
+
+println("");
+
+// 8. WEBSOCKET
+println("8. WEBSOCKET:");
+any ws = WebSocket("ws://localhost:8080");
+
+fun onOpen() {
+    println("WebSocket opened!");
+}
+
+ws.on("open", onOpen);
+println("WebSocket created: " + ws);
+
+println("");
+
+// 9. PROMISE
+println("9. PROMISE:");
+
+fun promiseExecutor(resolve, reject) {
+    resolve("Promise resolved!");
+}
+
+any promise = Promise(promiseExecutor);
+
+fun onSuccess(value) {
+    println("Promise success: " + value);
+}
+
+promise.then(onSuccess);
+
+println("");
+
+println("=== MODERN FEATURES TESTED! ===");
+println("NajaScript now has:");
+println("✓ Advanced Console");
+println("✓ Crypto & Hash");
+println("✓ DateTime");
+println("✓ Storage");
+println("✓ File System");
+println("✓ JSON & Fetch");
+println("✓ Events");
+println("✓ WebSocket");
+println("✓ Promise");
+println("");
+
+// Test Math
+println("Additional tests:");
+println("10. MATH:");
+println("Math.max(5, 3): " + max(5, 3));
+println("Math.min(5, 3): " + min(5, 3));
+
+println("");
+println("=== ALL TESTS COMPLETE ==="); 

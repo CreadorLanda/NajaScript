@@ -1,0 +1,73 @@
+defdb0c1abe6e001e528b9a06743b33a  usr\bin\naja
+defdb0c1abe6e001e528b9a06743b33a  usr\bin\najascript
+653d923dbfb8c00945c3eaadf547071e  usr\bin\naja_pkg
+83efeb3f4770ddbcc69214de1f47c4c5  usr\share\applications\najascript.desktop
+8f615f05406be110d2e2260c94d9fa4d  usr\share\mime\packages\najascript.xml
+6cfc81e064226e4c343bf0669c479146  usr\share\najascript\ast_nodes.py
+74bb829945185c990965aa2657094802  usr\share\najascript\environment.py
+5f4a0abef3440cb86f936a4ee084f7aa  usr\share\najascript\fs_module.py
+97b73d6e3a85b17520100c4c0eabc415  usr\share\najascript\http_module.py
+a8209168f695d40305dfdec84df2a6bb  usr\share\najascript\interpreter.py
+8d5e67930c24426b08ae0f625eaa630a  usr\share\najascript\jit_compiler.py
+a5f8d829b487d84f4a5e315e9586229a  usr\share\najascript\lexer.py
+aa035c34b0bf9be1c24c3794fd6f0ed8  usr\share\najascript\najascript.py
+997c1dc7fa86699b85c05732fc204a11  usr\share\najascript\naja_bytecode.py
+29584fd16dccd1f3c62a6cc67595361e  usr\share\najascript\naja_github_package_manager.py
+28f3bcd42db5a59c0842bc541f5870a0  usr\share\najascript\parser_naja.py
+99514cabb4cbde0928086bdc555f3b1c  usr\share\najascript\assets\logoNajaGame.png
+6f06b18dedc367b7ce89aa7af6c5f9d6  usr\share\najascript\assets\najascript_icon.ico
+6f06b18dedc367b7ce89aa7af6c5f9d6  usr\share\najascript\assets\najascript_icon.png
+6f06b18dedc367b7ce89aa7af6c5f9d6  usr\share\najascript\assets\NajaScript_logo.png
+013b1f4bd9fd2950eed9af65777c9552  usr\share\najascript\assets\najascript_setup_icon.ico
+214a0a70e9ae043a415827cac6e18193  usr\share\najascript\assets\Flappy_Bird_assets\Game Objects\background-day.png
+177b44c637520dc293a834c27a9d7778  usr\share\najascript\assets\Flappy_Bird_assets\Game Objects\base.png
+69acf88fa7631d5c22c5ad29a1a67c49  usr\share\najascript\assets\Flappy_Bird_assets\Game Objects\pipe-green.png
+61d66249a632e9969a84185df653744f  usr\share\najascript\assets\Flappy_Bird_assets\Game Objects\yellowbird-downflap.png
+82b392525fcd4a9f6ee0aede65d8cecc  usr\share\najascript\assets\Flappy_Bird_assets\Game Objects\yellowbird-midflap.png
+67f0ce149ac4d00b46ea765d618abb1a  usr\share\najascript\assets\Flappy_Bird_assets\Game Objects\yellowbird-upflap.png
+1e1df1540314352000ad998ec7130b35  usr\share\najascript\assets\Flappy_Bird_assets\Sound Efects\die.ogg
+16436c886c305a4bb2f8aa04e0e00919  usr\share\najascript\assets\Flappy_Bird_assets\Sound Efects\die.wav
+9bbbbbf81967c88509bd9ed0bc15edfc  usr\share\najascript\assets\Flappy_Bird_assets\Sound Efects\hit.ogg
+3cf321a7a65534a5abd59dc9aacae746  usr\share\najascript\assets\Flappy_Bird_assets\Sound Efects\hit.wav
+b881ed43f34017dfedd456cb5e3da40c  usr\share\najascript\assets\Flappy_Bird_assets\Sound Efects\point.ogg
+e1458a87070cab0b76f245fbcacc334b  usr\share\najascript\assets\Flappy_Bird_assets\Sound Efects\point.wav
+2573310c3ac9b0ddea6ab6e07a0adfe5  usr\share\najascript\assets\Flappy_Bird_assets\Sound Efects\swoosh.ogg
+db32166321ae7db58ff660306b04389a  usr\share\najascript\assets\Flappy_Bird_assets\Sound Efects\swoosh.wav
+e34cb4c6c2967438f5c0dc8b11de0663  usr\share\najascript\assets\Flappy_Bird_assets\Sound Efects\wing.ogg
+802e8685100ebd33c49630e01407641e  usr\share\najascript\assets\Flappy_Bird_assets\Sound Efects\wing.wav
+b82eea6dbb4771dd5e9cd1cd7dc39648  usr\share\najascript\assets\Flappy_Bird_assets\UI\gameover.png
+72e7d3f9bb4f432a695ff01d40d33cbf  usr\share\najascript\assets\Flappy_Bird_assets\UI\message.png
+c636bf4498a683512682b3aaf80a4e2c  usr\share\najascript\assets\Flappy_Bird_assets\UI\Numbers\0.png
+b46a47ffceba2529dbf2bbbee228add4  usr\share\najascript\assets\Flappy_Bird_assets\UI\Numbers\1.png
+78a2df62beea26aaae3a0a6ff695f7ff  usr\share\najascript\assets\Flappy_Bird_assets\UI\Numbers\2.png
+b73f7be20a8fd427e482f9984f568011  usr\share\najascript\assets\Flappy_Bird_assets\UI\Numbers\3.png
+c818536d8c23d6a08aa0dbd0fb7bc16d  usr\share\najascript\assets\Flappy_Bird_assets\UI\Numbers\4.png
+0a3490755d329e9e3658baad44971cab  usr\share\najascript\assets\Flappy_Bird_assets\UI\Numbers\5.png
+2f83f3e7822c527aef36b10a31016014  usr\share\najascript\assets\Flappy_Bird_assets\UI\Numbers\6.png
+eccba258c31f98d2e7ad4712510ba869  usr\share\najascript\assets\Flappy_Bird_assets\UI\Numbers\7.png
+d64e73185bd186379940455f31f37260  usr\share\najascript\assets\Flappy_Bird_assets\UI\Numbers\8.png
+1a44893c7f28121adb3ec6d5f0d2b2b3  usr\share\najascript\assets\Flappy_Bird_assets\UI\Numbers\9.png
+4710ca69f441e91cb252002864dbc9c8  usr\share\najascript\examples\calculator.naja
+dafaf00e26075bfba3a779f1c63e4449  usr\share\najascript\examples\flappy_bird_completo.naja
+08241790583e9048b57d8e8ba5e69ed5  usr\share\najascript\examples\hello_world.naja
+0e022e8350f895f1a310286e7c70df83  usr\share\najascript\examples\teste_class.naja
+6624b7dd28172c9fbe40bd9a55d520e8  usr\share\najascript\examples\teste_najahack.naja
+74df0f56f6a1a7fc6da264d1d26d6fed  usr\share\najascript\modules\Basico.naja
+aef2c5dfef32b7f8ef002f2e06d6f607  usr\share\najascript\modules\index.json
+a594cd69e2ee7ef51151dd902ba77c3e  usr\share\najascript\modules\Matematica.naja
+41ff633c0da145056bc43e9398fab0fb  usr\share\najascript\modules\NajaGame.naja
+9c2fcc11c0b642c85c29ecdec7f8e391  usr\share\najascript\modules\NajaHack.naja
+9aedfa051a0362398da1a6485020ed33  usr\share\najascript\modules\NajaPt.naja
+0ce07c7da3894a3ee9cffff1e20ff169  usr\share\najascript\modules\NumeroUtil.naja
+baf5ff0601b2c9b818513d194cc51777  usr\share\najascript\modules\pygame_bridge.py
+1fd158d83288cdaa008cdbf5ea1f7333  usr\share\najascript\modules\StringUtils\1.0.0\index.naja
+0ebfd3f548362a0791d564a33abf8832  usr\share\najascript\packages\exemplo-basico\1.0.0\index.naja
+db17d4921f76cd4423de32336e693286  usr\share\najascript\packages\exemplo-basico\1.0.0\package.json
+d70cf77efc2fc5ec71d20f3e95b1a5fe  usr\share\najascript\packages\exemplo-basico\1.0.0\README.md
+a43eaeb3598447f0702f7bb78c743080  usr\share\najascript\packages\math-utils\1.0.0\index.naja
+c8dc9ea2970cf18323c9c7006ebd2112  usr\share\najascript\packages\math-utils\1.0.0\package.json
+c47d66845f1597ca217a472b084e57aa  usr\share\najascript\packages\math-utils\1.0.0\README.md
+c2edb09c0f34f209a3d363d2d0aa9acb  usr\share\najascript\registry\index.json
+a43eaeb3598447f0702f7bb78c743080  usr\share\najascript\registry\packages\math-utils\1.0.0\index.naja
+c8dc9ea2970cf18323c9c7006ebd2112  usr\share\najascript\registry\packages\math-utils\1.0.0\package.json
+c47d66845f1597ca217a472b084e57aa  usr\share\najascript\registry\packages\math-utils\1.0.0\README.md

@@ -1,0 +1,54 @@
+// Simple elif test in NajaScript
+
+fun testElif() {
+    println("=== Testing elif ===");
+    
+    int score = 85;
+    
+    if (score == 90) {
+        println("Grade: A");
+    } elif (score == 85) {
+        println("Grade: B");
+    } elif (score == 75) {
+        println("Grade: C");
+    } else {
+        println("Grade: Other");
+    }
+}
+
+fun testFloat() {
+    println("\n=== Testing float ===");
+    
+    float pi = 3.14159;
+    float radius = 5.0;
+    
+    println("Pi: " + pi);
+    println("Radius: " + radius);
+    
+    // Calculate area of circle
+    float area = pi * radius * radius;
+    println("Area of circle: " + area);
+    
+    // Test float operations
+    float a = 10.5;
+    float b = 3.2;
+    
+    println("a: " + a);
+    println("b: " + b);
+    println("a + b: " + (a + b));
+    println("a - b: " + (a - b));
+    println("a * b: " + (a * b));
+    println("a / b: " + (a / b));
+}
+
+fun main() {
+    println("=== NajaScript Simple Test ===");
+    
+    testElif();
+    testFloat();
+    
+    println("\n=== Test Complete ===");
+}
+
+// Execute the program
+main(); 

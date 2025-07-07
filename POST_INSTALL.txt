@@ -1,0 +1,50 @@
+INSTALAÇÃO CONCLUÍDA COM SUCESSO!
+
+NajaScript v1.2.0 foi instalado em seu sistema.
+
+🚀 COMO USAR:
+
+1. Abra o Prompt de Comando ou PowerShell
+2. Digite: najascript --help
+3. Para executar um programa: najascript meu_programa.naja
+
+📦 PACKAGE MANAGER:
+
+- Listar pacotes: naja_pkg list
+- Instalar pacote: naja_pkg install nome-do-pacote
+- Buscar pacotes: naja_pkg search palavra-chave
+
+🧮 BIBLIOTECA MATH-UTILS:
+
+A biblioteca math-utils com 24 funções matemáticas está incluída!
+
+Exemplo de uso:
+```
+import { pi, sqrt, factorial } from "math-utils";
+
+fun teste() {
+    println("Pi: " + pi());
+    println("√16: " + sqrt(16.0));
+    println("5! = " + factorial(5));
+}
+
+teste();
+```
+
+📚 EXEMPLOS:
+
+Vários exemplos estão disponíveis na pasta examples do NajaScript.
+
+🔗 LINKS ÚTEIS:
+
+- Documentação: https://najascript.github.io
+- Repositório: https://github.com/NajaScript/Naja
+- Issues: https://github.com/NajaScript/Naja/issues
+
+PRÓXIMOS PASSOS:
+
+1. Teste a instalação: najascript --version
+2. Execute um exemplo: najascript examples\hello_world.naja
+3. Explore a documentação online
+
+Obrigado por usar NajaScript! 🎉

@@ -1,0 +1,51 @@
+// Test comparison operators after fixes
+
+fun main() {
+    println("=== Comparison Operators Test ===");
+    
+    int a = 10;
+    int b = 5;
+    float c = 7.5;
+    
+    println("a = " + a + ", b = " + b + ", c = " + c);
+    
+    // Test <
+    if (b < a) {
+        println("b < a: TRUE (correct)");
+    } else {
+        println("b < a: FALSE (wrong)");
+    }
+    
+    // Test <=
+    if (b <= a) {
+        println("b <= a: TRUE (correct)");
+    } else {
+        println("b <= a: FALSE (wrong)");
+    }
+    
+    // Test >
+    if (a > b) {
+        println("a > b: TRUE (correct)");
+    } else {
+        println("a > b: FALSE (wrong)");
+    }
+    
+    // Test >=
+    if (a >= b) {
+        println("a >= b: TRUE (correct)");
+    } else {
+        println("a >= b: FALSE (wrong)");
+    }
+    
+    // Test loops with comparison
+    println("\n=== Loop Test ===");
+    int i = 0;
+    while (i < 3) {
+        println("i = " + i);
+        i = i + 1;
+    }
+    
+    println("=== End Test ===");
+}
+
+main(); 

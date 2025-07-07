@@ -1,0 +1,30 @@
+// Debug test for comparison issues
+
+fun main() {
+    println("=== Debug Test ===");
+    
+    // Test simple variable declaration
+    int a = 10;
+    int b = 5;
+    
+    println("a = " + a);
+    println("b = " + b);
+    
+    // Test simple equality comparison
+    if (a == 10) {
+        println("a equals 10 - OK");
+    } else {
+        println("a equals 10 - FAILED");
+    }
+    
+    // Test simple comparison that was failing
+    if (a == b) {
+        println("a equals b - FAILED (should be false)");
+    } else {
+        println("a not equals b - OK");
+    }
+    
+    println("=== End Debug Test ===");
+}
+
+main(); 

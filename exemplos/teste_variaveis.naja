@@ -1,0 +1,54 @@
+// Teste de Variáveis e Tipos de Dados
+importar "NajaPt";
+
+funcao principal() {
+    escreverln("=== Teste de Variáveis ===");
+    
+    // Tipos básicos
+    inteiro idade = 25;
+    decimal altura = 1.75;
+    texto nome = "Maria";
+    booleano ativo = verdadeiro;
+    
+    escreverln("Nome: " + nome);
+    escreverln("Idade: " + idade);
+    escreverln("Altura: " + altura);
+    escreverln("Ativo: " + ativo);
+    
+    // Operações aritméticas
+    escreverln("\n=== Operações Aritméticas ===");
+    inteiro a = 10;
+    inteiro b = 3;
+    
+    escreverln("a = " + a);
+    escreverln("b = " + b);
+    escreverln("a + b = " + (a + b));
+    escreverln("a - b = " + (a - b));
+    escreverln("a * b = " + (a * b));
+    escreverln("a / b = " + (a / b));
+    escreverln("a % b = " + (a % b));
+    
+    // Operações lógicas
+    escreverln("\n=== Operações Lógicas ===");
+    booleano cond1 = verdadeiro;
+    booleano cond2 = falso;
+    
+    escreverln("cond1 = " + cond1);
+    escreverln("cond2 = " + cond2);
+    escreverln("cond1 e cond2 = " + (cond1 e cond2));
+    escreverln("cond1 ou cond2 = " + (cond1 ou cond2));
+    escreverln("nao cond1 = " + (nao cond1));
+    
+    // Comparações
+    escreverln("\n=== Comparações ===");
+    escreverln("a > b = " + (a > b));
+    escreverln("a < b = " + (a < b));
+    escreverln("a == b = " + (a == b));
+    escreverln("a != b = " + (a != b));
+    escreverln("a >= b = " + (a >= b));
+    escreverln("a <= b = " + (a <= b));
+    
+    escreverln("\n=== Teste Concluído ===");
+}
+
+principal(); 

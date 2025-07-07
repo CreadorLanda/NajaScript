@@ -1,0 +1,18 @@
+// Pacote exemplo-basico
+// Versão latest
+// Gerado automaticamente pelo NajaScript Package Manager
+
+classe Exemplo_Basico {
+    funcao construtor() {
+        // Inicialização do módulo
+    }
+    
+    funcao info() {
+        return "Módulo exemplo-basico versão latest";
+    }
+    
+    // Adicione suas funcionalidades aqui
+}
+
+// Exportar instância
+var exemplo_basico = Exemplo_Basico();

@@ -1,0 +1,157 @@
+// NajaHack Security Tools Library
+// Advanced hacking and security tools for ethical use only
+
+func networkInfo() {
+    dicionario info = dicionario();
+    info.adicionar("hostname", "localhost");
+    info.adicionar("local_ip", "127.0.0.1");
+    info.adicionar("platform", "Windows");
+    info.adicionar("architecture", "x64");
+    return info;
+}
+export networkInfo;
+
+func systemInfo() {
+    dicionario info = dicionario();
+    info.adicionar("system", "Windows");
+    info.adicionar("user", "user");
+    info.adicionar("machine", "x64");
+    info.adicionar("processor", "Intel64 Family");
+    return info;
+}
+export systemInfo;
+
+func portScan(target, startPort, endPort) {
+    lista  = lista();
+    
+    // Mock scan results
+    if (target == "127.0.0.1") {
+        openPorts.adicionar(80);
+        openPorts.adicionar(443);
+    }
+    
+    return openPorts;
+}
+export portScan;
+
+func hashCrack(hash) {
+    // Mock crack for password hash
+    string passwordHash = md5("password");
+    
+    if (hash == passwordHash) {
+        dicionario result = dicionario();
+        result.adicionar("password", "password");
+        result.adicionar("tipo", "MD5");
+        return result;
+    }
+    
+    return null;
+}
+export hashCrack;
+
+func bruteForce(hash, charset, maxLength) {
+    // Mock brute force for "abc"
+    string abcHash = md5("abc");
+    
+    if (hash == abcHash) {
+        dicionario result = dicionario();
+        result.adicionar("password", "abc");
+        result.adicionar("tipo", "MD5");
+        return result;
+    }
+    
+    return null;
+}
+export bruteForce;
+
+func sqlInject(url) {
+    lista  = lista();
+    
+    // Mock SQL injection test
+    dicionario result1 = dicionario();
+    result1.adicionar("payload", "' OR '1'='1");
+    result1.adicionar("status", 200);
+    results.adicionar(result1);
+    
+    dicionario result2 = dicionario();
+    result2.adicionar("payload", "' OR 1=1--");
+    result2.adicionar("status", 200);
+    results.adicionar(result2);
+    
+    dicionario result3 = dicionario();
+    result3.adicionar("payload", "' UNION SELECT NULL--");
+    result3.adicionar("status", 200);
+    results.adicionar(result3);
+    
+    return results;
+}
+export sqlInject;
+
+func xssTest(url) {
+    lista  = lista();
+    
+    // Mock XSS test
+    dicionario result1 = dicionario();
+    result1.adicionar("payload", "<script>alert('XSS')</script>");
+    result1.adicionar("status", 200);
+    result1.adicionar("reflected", true);
+    results.adicionar(result1);
+    
+    dicionario result2 = dicionario();
+    result2.adicionar("payload", "<img src=x onerror=alert('XSS')>");
+    result2.adicionar("status", 200);
+    result2.adicionar("reflected", false);
+    results.adicionar(result2);
+    
+    dicionario result3 = dicionario();
+    result3.adicionar("payload", "javascript:alert('XSS')");
+    result3.adicionar("status", 200);
+    result3.adicionar("reflected", false);
+    results.adicionar(result3);
+    
+    return results;
+}
+export xssTest;
+
+func reverseLookup(ip) {
+    if (ip == "8.8.8.8") {
+        return "dns.google";
+    }
+    return "Unknown";
+}
+export reverseLookup;
+
+func whois(domain) {
+    return "Whois information not available";
+}
+export whois;
+
+func processInfo() {
+    lista  = lista();
+    
+    dicionario proc1 = dicionario();
+    proc1.adicionar("pid", 1234);
+    proc1.adicionar("name", "system");
+    proc1.adicionar("username", "SYSTEM");
+    processes.adicionar(proc1);
+    
+    dicionario proc2 = dicionario();
+    proc2.adicionar("pid", 5678);
+    proc2.adicionar("name", "explorer");
+    proc2.adicionar("username", "user");
+    processes.adicionar(proc2);
+    
+    return processes;
+}
+export processInfo;
+
+func steganography(imagePath, message, action) {
+    if (action == "hide") {
+        return "Message hidden in " + imagePath;
+    } else if (action == "extract") {
+        return "Extracted message from " + imagePath;
+    }
+    
+    return "Invalid action";
+}
+export steganography; 

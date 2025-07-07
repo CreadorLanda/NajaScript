@@ -1,7 +1,18 @@
 {
+  "registry": {
+    "url": "https://github.com/NajaScript/Naja",
+    "api": "https://api.github.com/repos/NajaScript/Naja",
+    "raw": "https://raw.githubusercontent.com/NajaScript/Naja"
+  },
+  "cache_dir": ".naja_cache",
+  "user": {
+    "name": "",
+    "email": "",
+    "github_token": ""
+  },
   "repositories": {
-    "local": "C:\\Users\\DELL\\Documents\\MyOwnProjects\\NajaScript_interoreter\\NajaScript\\dist\\najascript\\naja_repository",
-    "remote": "https://github.com/CreadorLanda/naja-packages"
+    "local": "naja_repository",
+    "remote": "https://github.com/NajaScript/Naja"
   },
   "use_remote": true
 }

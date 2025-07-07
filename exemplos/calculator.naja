@@ -1,0 +1,203 @@
+// Simple Calculator in NajaScript
+
+// Calculator functions
+fun add(float a, float b) {
+    return a + b;
+}
+
+fun subtract(float a, float b) {
+    return a - b;
+}
+
+fun multiply(float a, float b) {
+    return a * b;
+}
+
+fun divide(float a, float b) {
+    if (b == 0) {
+        println("Error: Division by zero!");
+        return 0;
+    }
+    return a / b;
+}
+
+fun power(float base, int exponent) {
+    if (exponent == 0) {
+        return 1;
+    }
+    
+    float result = 1;
+    for (int i = 0; i < exponent; i = i + 1) {
+        result = result * base;
+    }
+    return result;
+}
+
+fun factorial(int n) {
+    if (n < 0) {
+        println("Error: Factorial of negative number!");
+        return 0;
+    }
+    if (n <= 1) {
+        return 1;
+    }
+    return n * factorial(n - 1);
+}
+
+// Function to check if number is prime
+fun isPrime(int n) {
+    if (n < 2) {
+        return false;
+    }
+    
+    for (int i = 2; i * i <= n; i = i + 1) {
+        if (n % i == 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Function to calculate average of a list
+fun calculateAverage(list numbers) {
+    if (numbers.isEmpty()) {
+        println("Error: Empty list!");
+        return 0;
+    }
+    
+    float sum = 0;
+    for (int i = 0; i < numbers.length(); i = i + 1) {
+        sum = sum + numbers.get(i);
+    }
+    
+    return sum / numbers.length();
+}
+
+// Function to find maximum in a list
+fun findMax(list numbers) {
+    if (numbers.isEmpty()) {
+        println("Error: Empty list!");
+        return 0;
+    }
+    
+    float maxValue = numbers.get(0);
+    for (int i = 1; i < numbers.length(); i = i + 1) {
+        float current = numbers.get(i);
+        if (current > maxValue) {
+            maxValue = current;
+        }
+    }
+    
+    return maxValue;
+}
+
+// Function to find minimum in a list
+fun findMin(list numbers) {
+    if (numbers.isEmpty()) {
+        println("Error: Empty list!");
+        return 0;
+    }
+    
+    float minValue = numbers.get(0);
+    for (int i = 1; i < numbers.length(); i = i + 1) {
+        float current = numbers.get(i);
+        if (current < minValue) {
+            minValue = current;
+        }
+    }
+    
+    return minValue;
+}
+
+// Test all calculator functions
+fun testCalculator() {
+    println("=== Calculator Test ===");
+    
+    // Basic operations
+    println("\n--- Basic Operations ---");
+    println("10 + 5 = " + add(10, 5));
+    println("10 - 5 = " + subtract(10, 5));
+    println("10 * 5 = " + multiply(10, 5));
+    println("10 / 5 = " + divide(10, 5));
+    println("10 / 0 = " + divide(10, 0));
+    
+    // Power operation
+    println("\n--- Power Operation ---");
+    println("2^5 = " + power(2, 5));
+    println("3^4 = " + power(3, 4));
+    println("5^0 = " + power(5, 0));
+    
+    // Factorial
+    println("\n--- Factorial ---");
+    println("5! = " + factorial(5));
+    println("0! = " + factorial(0));
+    println("(-1)! = " + factorial(-1));
+    
+    // Prime check
+    println("\n--- Prime Check ---");
+    list testNumbers = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+    forin (int num in testNumbers) {
+        string primeStr = isPrime(num) ? "prime" : "not prime";
+        println(num + " is " + primeStr);
+    }
+    
+    // List operations
+    println("\n--- List Operations ---");
+    list numbers = [10, 5, 8, 12, 3, 15, 7];
+    println("Numbers: " + numbers);
+    println("Average: " + calculateAverage(numbers));
+    println("Maximum: " + findMax(numbers));
+    println("Minimum: " + findMin(numbers));
+    
+    // Test with empty list
+    list emptyList = [];
+    println("\nEmpty list test:");
+    println("Average: " + calculateAverage(emptyList));
+    println("Maximum: " + findMax(emptyList));
+    println("Minimum: " + findMin(emptyList));
+}
+
+// Interactive calculator simulation
+fun simulateCalculator() {
+    println("\n=== Calculator Simulation ===");
+    
+    // Simulate some calculations
+    dict calculations = {
+        "operation1": "Addition",
+        "operation2": "Multiplication",
+        "operation3": "Division"
+    };
+    
+    println("Performing calculations...");
+    
+    float result1 = add(25.5, 14.3);
+    println("25.5 + 14.3 = " + result1);
+    
+    float result2 = multiply(7.2, 3.5);
+    println("7.2 * 3.5 = " + result2);
+    
+    float result3 = divide(100, 4);
+    println("100 / 4 = " + result3);
+    
+    // Chain operations
+    float chainResult = add(multiply(5, 3), divide(20, 4));
+    println("(5 * 3) + (20 / 4) = " + chainResult);
+    
+    println("\nCalculation summary:");
+    println("Total operations performed: 4");
+    println("All operations completed successfully!");
+}
+
+// Main function
+fun main() {
+    println("=== NajaScript Calculator ===");
+    println("Testing calculator functionality...");
+    
+    testCalculator();
+    simulateCalculator();
+    
+    println("\n=== Calculator Test Complete ===");
+}
+
+// Execute the program
+main(); 

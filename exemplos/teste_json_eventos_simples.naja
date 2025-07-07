@@ -1,0 +1,43 @@
+// Teste simples das funcionalidades padrão
+println("=== TESTE SIMPLES: JSON E EVENTOS ===");
+
+// 1. TESTE JSON
+println("\n1. TESTE JSON:");
+
+dict dados = dict();
+dados.add("nome", "João");
+dados.add("idade", 30);
+
+println("Dados originais:");
+println(dados);
+
+string json_str = JSON.stringify(dados);
+println("JSON string:");
+println(json_str);
+
+dict dados_back = JSON.parse(json_str);
+println("Dados restaurados:");
+println(dados_back);
+
+// 2. TESTE EVENTOS
+println("\n2. TESTE EVENTOS:");
+
+function meuListener(valor) {
+    println("Evento recebido: " + valor);
+}
+
+addEventListener("teste", meuListener);
+dispatchEvent("teste", "Olá mundo!");
+
+// 3. TESTE ONCE
+println("\n3. TESTE ONCE:");
+
+function eventoUnico(msg) {
+    println("Evento único: " + msg);
+}
+
+once("unico", eventoUnico);
+dispatchEvent("unico", "Primeira vez");
+dispatchEvent("unico", "Segunda vez - não deve aparecer");
+
+println("\n=== TESTE FINALIZADO ==="); 

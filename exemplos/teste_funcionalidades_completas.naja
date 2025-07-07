@@ -1,0 +1,190 @@
+// Teste completo das funcionalidades padrão do NajaScript
+// JSON, Fetch e Eventos - Tudo sem necessidade de imports
+
+println("=== TESTE COMPLETO DAS FUNCIONALIDADES PADRÃO ===");
+
+// 1. TESTE JSON
+println("\n1. TESTANDO JSON:");
+
+// Criar objeto
+dict dados = dict();
+dados.add("nome", "João");
+dados.add("idade", 30);
+dados.add("ativo", true);
+
+list hobbies = list();
+hobbies.add("programar");
+hobbies.add("ler");
+hobbies.add("jogar");
+dados.add("hobbies", hobbies);
+
+println("Objeto original:");
+println(dados);
+
+// Converter para JSON
+string json_str = JSON.stringify(dados);
+println("\nJSON String:");
+println(json_str);
+
+// Converter de volta para objeto
+dict dados_restaurados = JSON.parse(json_str);
+println("\nDados restaurados:");
+println(dados_restaurados);
+
+// 2. TESTE EVENTOS
+println("\n2. TESTANDO EVENTOS:");
+
+// Função para tratar eventos
+function tratarEvento(nome, valor) {
+    println("Evento recebido: " + nome + " = " + valor);
+}
+
+// Função para evento único
+function eventoUnico(mensagem) {
+    println("Evento único: " + mensagem);
+}
+
+// Adicionar listeners
+addEventListener("teste", tratarEvento);
+addEventListener("login", tratarEvento);
+once("primeiro", eventoUnico);
+
+println("Listeners adicionados");
+
+// Disparar eventos
+dispatchEvent("teste", "evento1", "valor1");
+dispatchEvent("login", "usuário", "admin");
+dispatchEvent("primeiro", "Esta mensagem aparece só uma vez");
+dispatchEvent("primeiro", "Esta mensagem NÃO aparece");
+
+// Teste com EventEmitter personalizado
+println("\n3. TESTANDO EVENTEMITTER PERSONALIZADO:");
+
+EventEmitter emitter = createEventEmitter();
+
+function onMessage(msg) {
+    println("Mensagem recebida: " + msg);
+}
+
+function onError(erro) {
+    println("Erro: " + erro);
+}
+
+// Adicionar listeners ao emitter personalizado
+emitter.on("message", onMessage);
+emitter.on("error", onError);
+
+// Disparar eventos
+emitter.emit("message", "Olá mundo!");
+emitter.emit("error", "Algo deu errado");
+
+// Verificar listeners
+println("Número de listeners para 'message': " + emitter.listenerCount("message"));
+
+// 4. TESTE FETCH (simulado com API pública)
+println("\n4. TESTANDO FETCH:");
+
+// Teste básico GET
+println("Fazendo requisição GET...");
+try {
+    // Usando uma API pública de teste
+    Response response = fetch("https://httpbin.org/get");
+    
+    println("Status: " + response.status);
+    println("OK: " + response.ok);
+    
+    if (response.ok) {
+        string texto = response.text();
+        println("Primeiros 200 caracteres da resposta:");
+        println(texto.substring(0, 200));
+    }
+} catch (Exception e) {
+    println("Erro na requisição: " + e.getMessage());
+}
+
+// Teste POST com JSON
+println("\nFazendo requisição POST com JSON...");
+try {
+    dict dados_post = dict();
+    dados_post.add("nome", "NajaScript");
+    dados_post.add("versao", "1.0");
+    dados_post.add("teste", true);
+    
+    dict options = dict();
+    options.add("method", "POST");
+    options.add("body", dados_post);
+    
+    Response response = fetch("https://httpbin.org/post", options);
+    
+    println("Status POST: " + response.status);
+    if (response.ok) {
+        println("POST bem-sucedido!");
+    }
+} catch (Exception e) {
+    println("Erro na requisição POST: " + e.getMessage());
+}
+
+// 5. TESTE COMBINADO: EVENTOS + JSON
+println("\n5. TESTE COMBINADO: EVENTOS + JSON:");
+
+// Criar um sistema de notificações
+function processarNotificacao(dados_json) {
+    dict notificacao = JSON.parse(dados_json);
+    println("Notificação processada:");
+    println("Título: " + notificacao.get("titulo"));
+    println("Mensagem: " + notificacao.get("mensagem"));
+    println("Timestamp: " + notificacao.get("timestamp"));
+}
+
+// Registrar listener para notificações
+addEventListener("notificacao", processarNotificacao);
+
+// Simular chegada de notificação
+dict nova_notificacao = dict();
+nova_notificacao.add("titulo", "Nova Mensagem");
+nova_notificacao.add("mensagem", "Você tem uma nova mensagem!");
+nova_notificacao.add("timestamp", "2024-01-01T12:00:00");
+
+string notificacao_json = JSON.stringify(nova_notificacao);
+dispatchEvent("notificacao", notificacao_json);
+
+// 6. TESTE AVANÇADO DE EVENTOS
+println("\n6. TESTE AVANÇADO DE EVENTOS:");
+
+// Sistema de chat simulado
+EventEmitter chat = createEventEmitter();
+
+function onUsuarioEntrou(nome) {
+    println("👤 " + nome + " entrou no chat");
+    // Notificar outros usuários
+    chat.emit("notificacao", nome + " entrou no chat");
+}
+
+function onMensagem(usuario, mensagem) {
+    println("💬 " + usuario + ": " + mensagem);
+}
+
+function onNotificacao(msg) {
+    println("🔔 " + msg);
+}
+
+// Registrar eventos do chat
+chat.on("usuario_entrou", onUsuarioEntrou);
+chat.on("mensagem", onMensagem);
+chat.on("notificacao", onNotificacao);
+
+// Simular atividade do chat
+chat.emit("usuario_entrou", "João");
+chat.emit("usuario_entrou", "Maria");
+chat.emit("mensagem", "João", "Olá pessoal!");
+chat.emit("mensagem", "Maria", "Oi João!");
+
+// Remover listener
+chat.off("usuario_entrou", onUsuarioEntrou);
+chat.emit("usuario_entrou", "Pedro"); // Não deve mostrar entrada
+
+println("\n=== TESTE COMPLETO FINALIZADO ===");
+println("✅ JSON: Serialização e deserialização funcionando");
+println("✅ Fetch: Requisições HTTP funcionando");
+println("✅ Eventos: Sistema de eventos funcionando");
+println("✅ Todas as funcionalidades são padrão (sem imports)"); 

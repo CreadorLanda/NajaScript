@@ -1,0 +1,35 @@
+// Test input in NajaScript
+
+fun testInput() {
+    println("=== Testing input ===");
+    
+    // Test basic input
+    println("Enter your name:");
+    string name = input();
+    println("Hello, " + name + "!");
+    
+    // Test input with prompt
+    string age = input("Enter your age: ");
+    println("You entered: " + age);
+    
+    // Test multiple inputs
+    string city = input("Enter your city: ");
+    println("You live in: " + city);
+    
+    // Summary
+    println("\nSummary:");
+    println("Name: " + name);
+    println("Age: " + age);
+    println("City: " + city);
+}
+
+fun main() {
+    println("=== NajaScript Input Test ===");
+    
+    testInput();
+    
+    println("\n=== Test Complete ===");
+}
+
+// Execute the program
+main(); 

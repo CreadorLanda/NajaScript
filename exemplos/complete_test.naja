@@ -1,0 +1,160 @@
+// Complete NajaScript functionality test
+
+fun testBasicTypes() {
+    println("=== Basic Types Test ===");
+    
+    int age = 25;
+    float height = 1.75;
+    string name = "Maria";
+    bool active = true;
+    
+    println("Name: " + name);
+    println("Age: " + age);
+    println("Height: " + height);
+    println("Active: " + active);
+}
+
+fun testMath() {
+    println("\n=== Math Operations Test ===");
+    
+    int a = 10;
+    int b = 3;
+    
+    println("a = " + a + ", b = " + b);
+    println("a + b = " + (a + b));
+    println("a - b = " + (a - b));
+    println("a * b = " + (a * b));
+    println("a / b = " + (a / b));
+    
+    // Float math
+    float x = 10.5;
+    float y = 2.0;
+    
+    println("x = " + x + ", y = " + y);
+    println("x + y = " + (x + y));
+    println("x - y = " + (x - y));
+    println("x * y = " + (x * y));
+    println("x / y = " + (x / y));
+}
+
+fun testElifStructure() {
+    println("\n=== Elif Structure Test ===");
+    
+    int score = 85;
+    
+    if (score == 100) {
+        println("Perfect score!");
+    } elif (score == 90) {
+        println("Excellent!");
+    } elif (score == 85) {
+        println("Very good!");
+    } elif (score == 75) {
+        println("Good!");
+    } else {
+        println("Keep trying!");
+    }
+    
+    // Test with different value
+    int grade = 90;
+    
+    if (grade == 100) {
+        println("A+");
+    } elif (grade == 90) {
+        println("A");
+    } elif (grade == 80) {
+        println("B");
+    } else {
+        println("C or below");
+    }
+}
+
+fun testFunctions() {
+    println("\n=== Functions Test ===");
+    
+    // Test addition function
+    int sum = add(15, 25);
+    println("15 + 25 = " + sum);
+    
+    // Test multiplication function
+    int product = multiply(6, 7);
+    println("6 * 7 = " + product);
+    
+    // Test string function
+    string greeting = greet("João");
+    println(greeting);
+    
+    // Test float function
+    float area = calculateCircleArea(5.0);
+    println("Area of circle with radius 5.0 = " + area);
+}
+
+fun add(int x, int y) {
+    return x + y;
+}
+
+fun multiply(int x, int y) {
+    return x * y;
+}
+
+fun greet(string name) {
+    return "Hello, " + name + "!";
+}
+
+fun calculateCircleArea(float radius) {
+    float pi = 3.14159;
+    return pi * radius * radius;
+}
+
+fun testLoops() {
+    println("\n=== Loops Test ===");
+    
+    // While loop
+    println("While loop:");
+    int counter = 1;
+    while (counter <= 5) {
+        println("  Count: " + counter);
+        counter = counter + 1;
+    }
+    
+    // For loop
+    println("For loop:");
+    for (int i = 1; i <= 3; i = i + 1) {
+        println("  Iteration: " + i);
+    }
+}
+
+fun testInteractiveInput() {
+    println("\n=== Interactive Input Test ===");
+    
+    string userName = input("Enter your name: ");
+    println("Welcome, " + userName + "!");
+    
+    string userAge = input("Enter your age: ");
+    println("You are " + userAge + " years old.");
+    
+    // Test with if/elif using the input
+    if (userName == "admin") {
+        println("Administrator access granted!");
+    } elif (userName == "user") {
+        println("User access granted!");
+    } else {
+        println("Guest access granted!");
+    }
+}
+
+fun main() {
+    println("=== Complete NajaScript Test ===");
+    
+    testBasicTypes();
+    testMath();
+    testElifStructure();
+    testFunctions();
+    testLoops();
+    testInteractiveInput();
+    
+    println("\n=== All Tests Complete! ===");
+    println("NajaScript is working correctly!");
+}
+
+// Execute the program
+main(); 

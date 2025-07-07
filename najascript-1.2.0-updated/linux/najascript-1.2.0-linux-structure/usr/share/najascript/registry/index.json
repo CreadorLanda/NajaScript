@@ -1,0 +1,36 @@
+{
+  "name": "NajaScript Official Package Registry",
+  "description": "Registry oficial de pacotes para a linguagem NajaScript",
+  "version": "1.0.0",
+  "last_updated": "2025-01-03T12:00:00Z",
+  "packages": {
+    "exemplo-basico": {
+      "name": "exemplo-basico",
+      "description": "Pacote de exemplo básico para NajaScript",
+      "author": "NajaScript Team",
+      "license": "MIT",
+      "repository": "https://github.com/NajaScript/Naja",
+      "keywords": ["exemplo", "basico", "tutorial"],
+      "versions": ["1.0.0"],
+      "latest": "1.0.0"
+    },
+    "math-utils": {
+      "name": "math-utils",
+      "description": "Comprehensive mathematical utilities library for NajaScript",
+      "author": "NajaScript Community",
+      "license": "MIT",
+      "repository": "https://github.com/NajaScript/Naja",
+      "keywords": ["math", "mathematics", "utilities", "trigonometry", "statistics", "calculator"],
+      "versions": ["1.0.0"],
+      "latest": "1.0.0"
+    }
+  },
+  "total_packages": 2,
+  "categories": {
+    "utilities": ["exemplo-basico", "math-utils"],
+    "games": [],
+    "web": [],
+    "math": ["math-utils"],
+    "ai": []
+  }
+}

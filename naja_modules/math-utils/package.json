@@ -1,0 +1,8 @@
+{
+  "name": "math-utils",
+  "version": "latest",
+  "description": "Módulo math-utils para NajaScript",
+  "main": "index.naja",
+  "author": "NajaScript Community",
+  "license": "MIT"
+}

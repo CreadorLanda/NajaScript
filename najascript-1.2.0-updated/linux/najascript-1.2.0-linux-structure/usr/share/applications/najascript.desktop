@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=NajaScript
+Comment=NajaScript Programming Language IDE
+Comment[pt]=Linguagem de Programação NajaScript
+Exec=najascript
+Icon=najascript
+Terminal=true
+Type=Application
+Categories=Development;IDE;Programming;
+MimeType=text/x-najascript;
+Keywords=programming;development;najascript;naja;
+StartupNotify=true

@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+NajaScript Package Manager - Wrapper Script
+Script principal para gerenciamento de pacotes NajaScript
+"""
+
+import sys
+import os
+from pathlib import Path
+
+# Adicionar o diretório atual ao path para importar o módulo
+current_dir = Path(__file__).parent
+sys.path.insert(0, str(current_dir))
+
+try:
+    from naja_github_package_manager import main
+    
+    if __name__ == "__main__":
+        main()
+        
+except ImportError as e:
+    print(f"❌ Erro ao importar o package manager: {e}")
+    print("Certifique-se de que todos os arquivos estão no local correto")
+    sys.exit(1)
+except Exception as e:
+    print(f"❌ Erro inesperado: {e}")
+    sys.exit(1) 

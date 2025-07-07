@@ -1,0 +1,31 @@
+println("=== TESTE FETCH CORRIGIDO ===");
+
+println("1. Testando fetch básico:");
+
+any response = fetch("https://httpbin.org/get");
+
+if (response != null) {
+    println("✅ Response recebida com sucesso!");
+    println("Status: " + response.status);
+    println("OK: " + response.ok);
+    
+    if (response.ok) {
+        any texto = response.text();
+        println("✅ Método text() funcionou!");
+        println("Tamanho da resposta: " + texto.length());
+    }
+} else {
+    println("❌ Response é null - fetch falhou");
+}
+
+println("\n2. Testando função get:");
+
+any response2 = get("https://httpbin.org/status/200");
+
+if (response2 != null) {
+    println("✅ GET funcionou! Status: " + response2.status);
+} else {
+    println("❌ GET falhou");
+}
+
+println("\n=== TESTE FINALIZADO ==="); 

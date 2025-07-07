@@ -1,0 +1,72 @@
+// Test Variables and Basic Types
+
+// Basic variable declarations
+int age = 25;
+float height = 1.75;
+string name = "Maria";
+bool active = true;
+
+// Test function
+fun displayInfo() {
+    println("=== Variable Test ===");
+    println("Name: " + name);
+    println("Age: " + age);
+    println("Height: " + height);
+    println("Active: " + active);
+}
+
+// Arithmetic operations
+fun testMath() {
+    println("\n=== Math Operations ===");
+    int a = 10;
+    int b = 3;
+    
+    println("a = " + a);
+    println("b = " + b);
+    println("a + b = " + (a + b));
+    println("a - b = " + (a - b));
+    println("a * b = " + (a * b));
+    println("a / b = " + (a / b));
+    // println("a % b = " + (a % b)); // Modulo operation not supported
+}
+
+// Comparison operations
+fun testComparisons() {
+    println("\n=== Comparison Operations ===");
+    int x = 5;
+    int y = 8;
+    
+    println("x = " + x + ", y = " + y);
+    println("x > y = " + (x > y));
+    println("x < y = " + (x < y));
+    println("x == y = " + (x == y));
+    println("x != y = " + (x != y));
+    println("x >= y = " + (x >= y));
+    println("x <= y = " + (x <= y));
+}
+
+// Logical operations
+fun testLogic() {
+    println("\n=== Logical Operations ===");
+    bool cond1 = true;
+    bool cond2 = false;
+    
+    println("cond1 = " + cond1);
+    println("cond2 = " + cond2);
+    println("cond1 && cond2 = " + (cond1 && cond2));
+    println("cond1 || cond2 = " + (cond1 || cond2));
+    println("Negation test: " + (cond1 == false));
+}
+
+// Main function
+fun main() {
+    displayInfo();
+    testMath();
+    testComparisons();
+    testLogic();
+    
+    println("\n=== Test Complete ===");
+}
+
+// Execute the program
+main(); 

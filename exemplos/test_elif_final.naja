@@ -1,0 +1,84 @@
+// Final test for elif and float in NajaScript
+
+fun testElif() {
+    println("=== Testing elif ===");
+    
+    int number = 2;
+    
+    if (number == 1) {
+        println("Number is ONE");
+    } elif (number == 2) {
+        println("Number is TWO");
+    } elif (number == 3) {
+        println("Number is THREE");
+    } else {
+        println("Number is OTHER");
+    }
+    
+    // Test with different values
+    int grade = 85;
+    
+    if (grade == 100) {
+        println("Perfect!");
+    } elif (grade == 90) {
+        println("Excellent!");
+    } elif (grade == 85) {
+        println("Very Good!");
+    } elif (grade == 75) {
+        println("Good!");
+    } else {
+        println("Keep trying!");
+    }
+}
+
+fun testFloat() {
+    println("\n=== Testing float ===");
+    
+    float pi = 3.14159;
+    float radius = 5.0;
+    
+    println("Pi: " + pi);
+    println("Radius: " + radius);
+    
+    // Simple float operations
+    float a = 10.5;
+    float b = 2.0;
+    
+    println("a: " + a);
+    println("b: " + b);
+    println("a + b: " + (a + b));
+    println("a - b: " + (a - b));
+    
+    // Test float multiplication carefully
+    float c = 3.0;
+    float d = 4.0;
+    float product = c * d;
+    println("3.0 * 4.0 = " + product);
+}
+
+fun testFloatComparison() {
+    println("\n=== Testing float comparison ===");
+    
+    float temp = 25.0;
+    
+    if (temp == 25.0) {
+        println("Temperature is exactly 25.0");
+    } elif (temp == 20.0) {
+        println("Temperature is 20.0");
+    } else {
+        println("Temperature is something else");
+    }
+}
+
+fun main() {
+    println("=== NajaScript elif and float Test ===");
+    
+    testElif();
+    testFloat();
+    testFloatComparison();
+    
+    println("\n=== Test Complete ===");
+}
+
+// Execute the program
+main(); 

@@ -1,0 +1,152 @@
+// Test Functions and Data Structures
+
+// Simple function
+fun add(int a, int b) {
+    return a + b;
+}
+
+// Function with multiple parameters
+fun calculateAverage(int a, int b, int c) {
+    return (a + b + c) / 3;
+}
+
+// Function that returns boolean
+fun isEven(int number) {
+    if (number % 2 == 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+// Recursive function
+fun factorial(int n) {
+    if (n <= 1) {
+        return 1;
+    } else {
+        return n * factorial(n - 1);
+    }
+}
+
+// Function to process a list
+fun processList(list numbers) {
+    println("Processing list:");
+    for (int i = 0; i < numbers.length(); i = i + 1) {
+        int num = numbers.get(i);
+        println("  Position " + i + ": " + num);
+    }
+}
+
+// Test basic functions
+fun testFunctions() {
+    println("=== Function Test ===");
+    
+    int result = add(5, 3);
+    println("5 + 3 = " + result);
+    
+    float average = calculateAverage(8, 6, 10);
+    println("Average of 8, 6, 10 = " + average);
+    
+    int number = 8;
+    if (isEven(number)) {
+        println(number + " is even");
+    } else {
+        println(number + " is odd");
+    }
+    
+    int n = 5;
+    int fact = factorial(n);
+    println("Factorial of " + n + " = " + fact);
+}
+
+// Test lists
+fun testLists() {
+    println("\n=== List Test ===");
+    
+    list numbers = [1, 2, 3, 4, 5];
+    println("Created list: " + numbers);
+    println("List length: " + numbers.length());
+    
+    // Add elements
+    numbers.add(6);
+    numbers.add(7);
+    println("After adding 6 and 7: " + numbers);
+    
+    // Remove last element
+    numbers.removeLast();
+    println("After removing last: " + numbers);
+    
+    // Access elements
+    println("First element: " + numbers.get(0));
+    println("Last element: " + numbers.get(numbers.length() - 1));
+    
+    // Process list with function
+    processList(numbers);
+}
+
+// Test dictionaries
+fun testDictionaries() {
+    println("\n=== Dictionary Test ===");
+    
+    dict person = {"name": "João", "age": 30, "city": "São Paulo"};
+    println("Person: " + person);
+    println("Name: " + person.get("name"));
+    println("Age: " + person.get("age"));
+    
+    // Add new key
+    person.add("profession", "Engineer");
+    println("After adding profession: " + person);
+    
+    // Remove key
+    person.remove("city");
+    println("After removing city: " + person);
+    
+    println("Dictionary size: " + person.length());
+}
+
+// Test forin loop
+fun testForIn() {
+    println("\n=== For-In Loop Test ===");
+    
+    list colors = ["red", "blue", "green", "yellow"];
+    
+    forin (string color in colors) {
+        println("Color: " + color);
+    }
+    
+    // Test with numbers
+    list nums = [10, 20, 30, 40];
+    forin (int num in nums) {
+        println("Number: " + num);
+    }
+}
+
+// Test string manipulation
+fun testStrings() {
+    println("\n=== String Test ===");
+    
+    string firstName = "João";
+    string lastName = "Silva";
+    string fullName = firstName + " " + lastName;
+    
+    println("First name: " + firstName);
+    println("Last name: " + lastName);
+    println("Full name: " + fullName);
+    
+    // Test string methods (if available)
+    println("Full name length: " + fullName.length());
+}
+
+// Main function
+fun main() {
+    testFunctions();
+    testLists();
+    testDictionaries();
+    testForIn();
+    testStrings();
+    
+    println("\n=== All Tests Complete ===");
+}
+
+// Execute the program
+main(); 

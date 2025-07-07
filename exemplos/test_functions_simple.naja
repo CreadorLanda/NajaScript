@@ -1,0 +1,51 @@
+// Simple Function Test in NajaScript
+
+// Simple function that adds two numbers
+fun add(int a, int b) {
+    return a + b;
+}
+
+// Function that multiplies two numbers
+fun multiply(int a, int b) {
+    return a * b;
+}
+
+// Function that calculates area of rectangle
+fun calculateArea(int width, int height) {
+    return width * height;
+}
+
+// Function that returns a greeting
+fun greet(string name) {
+    return "Hello, " + name + "!";
+}
+
+// Main function
+fun main() {
+    println("=== Simple Function Test ===");
+    
+    // Test addition
+    int sum = add(5, 3);
+    println("5 + 3 = " + sum);
+    
+    // Test multiplication
+    int product = multiply(4, 6);
+    println("4 * 6 = " + product);
+    
+    // Test area calculation
+    int area = calculateArea(10, 20);
+    println("Area of 10x20 rectangle = " + area);
+    
+    // Test string function
+    string greeting = greet("Maria");
+    println(greeting);
+    
+    // Test chaining functions
+    int result = add(multiply(2, 3), 4);
+    println("(2 * 3) + 4 = " + result);
+    
+    println("=== All functions working! ===");
+}
+
+// Execute the program
+main(); 

@@ -1,0 +1,114 @@
+// Test Control Flow Structures
+
+// Test if/else statements
+fun testIfElse() {
+    println("=== If/Else Test ===");
+    
+    int age = 20;
+    
+    if (age >= 18) {
+        println("Adult");
+    } else {
+        println("Minor");
+    }
+    
+    // Multiple conditions
+    int score = 85;
+    
+    if (score >= 90) {
+        println("Excellent!");
+    } else {
+        if (score >= 70) {
+            println("Good!");
+        } else {
+            if (score >= 50) {
+                println("Pass");
+            } else {
+                println("Fail");
+            }
+        }
+    }
+        println("Fail");
+    }
+}
+
+// Test while loop
+fun testWhile() {
+    println("\n=== While Loop Test ===");
+    
+    int counter = 1;
+    while (counter <= 5) {
+        println("Counter: " + counter);
+        counter = counter + 1;
+    }
+}
+
+// Test for loop
+fun testFor() {
+    println("\n=== For Loop Test ===");
+    
+    for (int i = 1; i <= 3; i = i + 1) {
+        println("FOR loop: " + i);
+    }
+    
+    // Countdown
+    println("\nCountdown:");
+    for (int j = 5; j >= 1; j = j - 1) {
+        println("  " + j);
+    }
+}
+
+// Test nested loops
+fun testNested() {
+    println("\n=== Nested Loops Test ===");
+    
+    for (int x = 1; x <= 3; x = x + 1) {
+        println("Outer: " + x);
+        for (int y = 1; y <= 2; y = y + 1) {
+            println("  Inner: " + y);
+        }
+    }
+}
+
+// Test ternary operator
+fun testTernary() {
+    println("\n=== Ternary Operator Test ===");
+    
+    int number = 15;
+    string result = number % 2 == 0 ? "Even" : "Odd";
+    println("The number " + number + " is " + result);
+}
+
+// Test break and continue
+fun testBreakContinue() {
+    println("\n=== Break and Continue Test ===");
+    
+    for (int i = 1; i <= 10; i = i + 1) {
+        if (i == 5) {
+            println("Skipping 5");
+            continue;
+        }
+        
+        if (i == 8) {
+            println("Breaking at 8");
+            break;
+        }
+        
+        println("Number: " + i);
+    }
+}
+
+// Main function
+fun main() {
+    testIfElse();
+    testWhile();
+    testFor();
+    testNested();
+    testTernary();
+    testBreakContinue();
+    
+    println("\n=== Control Flow Test Complete ===");
+}
+
+// Execute the program
+main(); 

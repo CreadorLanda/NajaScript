@@ -1,0 +1,55 @@
+// Final complete test with all fixed operators
+
+fun main() {
+    println("=== Final Complete Test ===");
+    
+    // Test all operators
+    int a = 15;
+    int b = 4;
+    float x = 12.5;
+    float y = 2.5;
+    
+    println("Integer operations:");
+    println("a = " + a + ", b = " + b);
+    println("a + b = " + (a + b));
+    println("a - b = " + (a - b));
+    println("a * b = " + (a * b));
+    println("a / b = " + (a / b));
+    println("a % b = " + (a % b));  // Modulo operator
+    
+    println("\nFloat operations:");
+    println("x = " + x + ", y = " + y);
+    println("x + y = " + (x + y));
+    println("x - y = " + (x - y));
+    println("x * y = " + (x * y));
+    println("x / y = " + (x / y));
+    
+    println("\nComparison operators:");
+    println("a < b: " + (a < b));
+    println("a <= b: " + (a <= b));
+    println("a > b: " + (a > b));
+    println("a >= b: " + (a >= b));
+    println("a == b: " + (a == b));
+    println("a != b: " + (a != b));
+    
+    println("\nUnary operators:");
+    println("-a = " + (-a));
+    println("!true = " + (!true));
+    println("!false = " + (!false));
+    
+    println("\nLoop with comparison:");
+    int i = 0;
+    while (i < 3) {
+        println("Loop iteration " + i);
+        i = i + 1;
+    }
+    
+    println("\nFor loop:");
+    for (int j = 0; j < 3; j = j + 1) {
+        println("For loop iteration " + j);
+    }
+    
+    println("\n=== All Operators Working! ===");
+}
+
+main(); 

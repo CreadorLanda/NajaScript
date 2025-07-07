@@ -1,0 +1,21 @@
+Package: najascript
+Version: 1.2.0
+Section: devel
+Priority: optional
+Architecture: all
+Depends: python3 (>= 3.6), python3-pip
+Maintainer: NajaScript Team <team@najascript.dev>
+Description: NajaScript Programming Language
+ NajaScript é uma linguagem de programação moderna e intuitiva
+ com suporte a programação orientada a objetos, módulos,
+ sistema de pacotes, e biblioteca matemática completa.
+ .
+ Funcionalidades incluem:
+ - Sintaxe intuitiva e fácil de aprender
+ - Sistema de módulos e pacotes
+ - Biblioteca math-utils com 24 funções matemáticas
+ - Suporte a POO com classes e herança
+ - Sistema de eventos e programação reativa
+ - Desenvolvimento de jogos com NajaGame2D
+ - Ferramentas de segurança com NajaHack
+ - Package manager integrado

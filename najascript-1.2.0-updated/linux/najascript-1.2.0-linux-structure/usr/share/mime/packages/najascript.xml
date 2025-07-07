@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+    <mime-type type="text/x-najascript">
+        <comment>NajaScript source code</comment>
+        <comment xml:lang="pt">Código fonte NajaScript</comment>
+        <icon name="text-x-script"/>
+        <glob pattern="*.naja"/>
+        <glob pattern="*.ns"/>
+    </mime-type>
+</mime-info>

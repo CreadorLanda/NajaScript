@@ -1,0 +1,134 @@
+println("=== REACTIVE FLUX SYSTEM DEMONSTRATION ===");
+
+// Basic reactive flux example
+println("1. Basic Flux Example:");
+int a = 10;
+int b = 20;
+
+flux soma = a + b;
+println("Initial values: a=" + a + ", b=" + b);
+println("Initial flux soma: " + soma);
+println("");
+
+// Change variable and see flux update
+println("2. Updating Variables:");
+println("Setting a = 50...");
+a = 50;
+println("New values: a=" + a + ", b=" + b);
+println("Updated flux soma: " + soma);
+println("");
+
+// Change another variable
+println("Setting b = 30...");
+b = 30;
+println("New values: a=" + a + ", b=" + b);
+println("Updated flux soma: " + soma);
+println("");
+
+// More complex flux example
+println("3. Complex Flux Example:");
+float x = 5.0;
+float y = 3.0;
+float z = 2.0;
+
+flux area = x * y;
+flux volume = x * y * z;
+flux perimeter = 2 * (x + y);
+
+println("Initial values: x=" + x + ", y=" + y + ", z=" + z);
+println("Initial flux area: " + area);
+println("Initial flux volume: " + volume);
+println("Initial flux perimeter: " + perimeter);
+println("");
+
+// Update x and see all flux update
+println("4. Updating x to 10.0:");
+x = 10.0;
+println("New values: x=" + x + ", y=" + y + ", z=" + z);
+println("Updated flux area: " + area);
+println("Updated flux volume: " + volume);
+println("Updated flux perimeter: " + perimeter);
+println("");
+
+// String flux example
+println("5. String Flux Example:");
+string firstName = "John";
+string lastName = "Doe";
+
+flux fullName = firstName + " " + lastName;
+println("Initial names: firstName='" + firstName + "', lastName='" + lastName + "'");
+println("Initial flux fullName: " + fullName);
+println("");
+
+println("Setting firstName = 'Jane'...");
+firstName = "Jane";
+println("New names: firstName='" + firstName + "', lastName='" + lastName + "'");
+println("Updated flux fullName: " + fullName);
+println("");
+
+// Boolean flux example
+println("6. Boolean Flux Example:");
+int score = 85;
+int minScore = 60;
+
+flux passed = score >= minScore;
+println("Initial values: score=" + score + ", minScore=" + minScore);
+println("Initial flux passed: " + passed);
+println("");
+
+println("Setting score = 45...");
+score = 45;
+println("New values: score=" + score + ", minScore=" + minScore);
+println("Updated flux passed: " + passed);
+println("");
+
+println("Setting minScore = 40...");
+minScore = 40;
+println("New values: score=" + score + ", minScore=" + minScore);
+println("Updated flux passed: " + passed);
+println("");
+
+// List flux example
+println("7. List Flux Example:");
+lista numbers = [1, 2, 3, 4, 5];
+int multiplier = 2;
+
+flux total = numbers.length() * multiplier;
+println("Initial values: numbers.length()=" + numbers.length() + ", multiplier=" + multiplier);
+println("Initial flux total: " + total);
+println("");
+
+println("Adding element to list...");
+numbers.add(6);
+println("New values: numbers.length()=" + numbers.length() + ", multiplier=" + multiplier);
+println("Updated flux total: " + total);
+println("");
+
+println("Setting multiplier = 3...");
+multiplier = 3;
+println("New values: numbers.length()=" + numbers.length() + ", multiplier=" + multiplier);
+println("Updated flux total: " + total);
+println("");
+
+// Nested flux example
+println("8. Nested Flux Example:");
+int base = 5;
+int height = 8;
+
+flux triangleArea = (base * height) / 2;
+flux triangleAreaText = "Triangle area: " + triangleArea;
+
+println("Initial values: base=" + base + ", height=" + height);
+println("Initial flux triangleArea: " + triangleArea);
+println("Initial flux triangleAreaText: " + triangleAreaText);
+println("");
+
+println("Setting base = 10...");
+base = 10;
+println("New values: base=" + base + ", height=" + height);
+println("Updated flux triangleArea: " + triangleArea);
+println("Updated flux triangleAreaText: " + triangleAreaText);
+println("");
+
+println("=== REACTIVE FLUX SYSTEM DEMONSTRATION COMPLETE ===");
+println("Flux values automatically update when their dependencies change!"); 

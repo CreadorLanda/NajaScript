@@ -1,0 +1,53 @@
+// Final POO test that should work
+
+class Calculator {
+    constructor() {
+        println("Calculator created");
+    }
+    
+    public fun add(int a, int b) {
+        int result = a + b;
+        println("Adding " + a + " + " + b + " = " + result);
+        return result;
+    }
+    
+    public fun multiply(int a, int b) {
+        int result = a * b;
+        println("Multiplying " + a + " * " + b + " = " + result);
+        return result;
+    }
+}
+
+class Greeter {
+    constructor() {
+        println("Greeter created");
+    }
+    
+    public fun sayHello() {
+        println("Hello from Greeter class!");
+    }
+    
+    public fun sayGoodbye() {
+        println("Goodbye from Greeter class!");
+    }
+}
+
+fun main() {
+    println("=== POO Test Final ===");
+    
+    // Test Calculator
+    println("\n--- Testing Calculator ---");
+    var calc = new Calculator();
+    calc.add(10, 5);
+    calc.multiply(3, 4);
+    
+    // Test Greeter
+    println("\n--- Testing Greeter ---");
+    var greeter = new Greeter();
+    greeter.sayHello();
+    greeter.sayGoodbye();
+    
+    println("\n=== POO is working! ===");
+}
+
+main(); 

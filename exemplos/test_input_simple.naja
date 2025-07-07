@@ -1,0 +1,29 @@
+// Simple input test in NajaScript
+
+fun main() {
+    println("=== NajaScript Input Test ===");
+    
+    // Test basic input
+    println("Please enter your name:");
+    string name = input();
+    println("Hello, " + name + "!");
+    
+    // Test input with prompt
+    string color = input("What is your favorite color? ");
+    println("Your favorite color is: " + color);
+    
+    // Another input test
+    string animal = input("What is your favorite animal? ");
+    println("Your favorite animal is: " + animal);
+    
+    // Final summary
+    println("\n=== Summary ===");
+    println("Name: " + name);
+    println("Color: " + color);
+    println("Animal: " + animal);
+    
+    println("\n=== Input Test Complete ===");
+}
+
+// Execute the program
+main(); 

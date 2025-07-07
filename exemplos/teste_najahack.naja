@@ -1,0 +1,77 @@
+import "NajaHack";
+
+println("=== NAJAHACK LIBRARY DEMONSTRATION ===");
+
+// Network Information
+println("1. Network Information:");
+dicionario networkInfo = NajaHack.networkInfo();
+println("Hostname: " + networkInfo.obter("hostname"));
+println("Local IP: " + networkInfo.obter("local_ip"));
+println("Platform: " + networkInfo.obter("platform"));
+println("Architecture: " + networkInfo.obter("architecture"));
+println("");
+
+// System Information
+println("2. System Information:");
+dicionario systemInfo = NajaHack.systemInfo();
+println("System: " + systemInfo.obter("system"));
+println("User: " + systemInfo.obter("user"));
+println("Machine: " + systemInfo.obter("machine"));
+println("Processor: " + systemInfo.obter("processor"));
+println("");
+
+// Port Scanning (Test on localhost)
+println("3. Port Scanning (localhost, ports 80-90):");
+lista openPorts = NajaHack.portScan("127.0.0.1", 80, 90);
+println("Open ports found: " + openPorts.length());
+println("");
+
+// Hash Cracking with common passwords
+println("4. Hash Cracking Test:");
+string passwordHash = md5("password");
+println("MD5 hash to crack: " + passwordHash);
+
+any crackedResult = NajaHack.hashCrack(passwordHash);
+if (crackedResult != null) {
+    println("Hash cracked! Password: " + crackedResult.password);
+    println("Hash type: " + crackedResult.tipo);
+} else {
+    println("Hash not cracked with common passwords");
+}
+println("");
+
+// Brute Force Test (simple example)
+println("5. Brute Force Test (MD5 of 'abc'):");
+string simpleHash = md5("abc");
+println("Target hash: " + simpleHash);
+
+any bruteResult = NajaHack.bruteForce(simpleHash, "abcdefghijklmnopqrstuvwxyz", 3);
+if (bruteResult != null) {
+    println("Brute force success! Password: " + bruteResult.password);
+    println("Hash type: " + bruteResult.tipo);
+} else {
+    println("Brute force failed");
+}
+println("");
+
+// Reverse DNS Lookup
+println("6. Reverse DNS Lookup:");
+string reverseResult = NajaHack.reverseLookup("8.8.8.8");
+println("Reverse lookup of 8.8.8.8: " + reverseResult);
+println("");
+
+// SQL Injection Test (example - don't use on real systems)
+println("7. SQL Injection Test (Example):");
+lista sqlResults = NajaHack.sqlInject("https://httpbin.org/get");
+println("SQL injection test results: " + sqlResults.length() + " payloads tested");
+println("");
+
+// XSS Test (example - don't use on real systems)
+println("8. XSS Test (Example):");
+lista xssResults = NajaHack.xssTest("https://httpbin.org/get");
+println("XSS test results: " + xssResults.length() + " payloads tested");
+println("");
+
+println("=== NAJAHACK LIBRARY DEMONSTRATION COMPLETE ===");
+println("WARNING: Use these tools responsibly and only on systems you own!");
+println("Unauthorized access to computer systems is illegal!"); 

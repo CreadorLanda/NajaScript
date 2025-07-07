@@ -1,0 +1,34 @@
+// Test unary operators
+
+fun main() {
+    println("=== Unary Operators Test ===");
+    
+    // Test negation
+    int a = 5;
+    int b = -a;
+    println("a = " + a);
+    println("b = -a = " + b);
+    
+    // Test modulo
+    int c = 10;
+    int d = 3;
+    int mod = c % d;
+    println("c % d = " + c + " % " + d + " = " + mod);
+    
+    // Test logical negation
+    bool test = true;
+    bool not_test = !test;
+    println("test = " + test);
+    println("!test = " + not_test);
+    
+    // Test in conditional
+    if (!test) {
+        println("!test is true (wrong)");
+    } else {
+        println("!test is false (correct)");
+    }
+    
+    println("=== End Test ===");
+}
+
+main(); 

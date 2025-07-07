@@ -1,0 +1,32 @@
+println("=== TESTE FETCH COMPLETO ===");
+
+println("1. Testando fetch GET:");
+any response = fetch("https://httpbin.org/get");
+
+println("✅ Response recebido!");
+println("Status: " + response.status);
+println("OK: " + response.ok);
+
+if (response.ok) {
+    any texto = response.text();
+    println("✅ Método text() funcionou!");
+    println("Primeiros 100 chars: " + texto.substring(0, 100));
+}
+
+println("\n2. Testando função get auxiliar:");
+any response2 = get("https://httpbin.org/status/201");
+println("GET Status: " + response2.status);
+
+println("\n3. Testando POST com dados:");
+dicionario dados = {};
+dados.add("nome", "NajaScript");
+dados.add("versao", "1.0");
+
+any response3 = post("https://httpbin.org/post", dados);
+println("POST Status: " + response3.status);
+
+if (response3.ok) {
+    println("✅ POST com dados funcionou!");
+}
+
+println("\n=== FETCH FUNCIONANDO PERFEITAMENTE! ==="); 

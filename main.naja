@@ -1,0 +1,9 @@
+// demo-project
+// Projeto NajaScript gerado automaticamente
+
+fun main() {
+    println("Olá do demo-project!");
+    println("Projeto criado com NajaScript Package Manager");
+}
+
+main();

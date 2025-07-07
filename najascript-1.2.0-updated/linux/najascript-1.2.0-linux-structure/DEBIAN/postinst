@@ -1,0 +1,31 @@
+#!/bin/bash
+# Post-installation script for NajaScript
+
+echo "🚀 Configurando NajaScript..."
+
+# Tornar executáveis acessíveis
+chmod +x /usr/bin/najascript
+chmod +x /usr/bin/naja
+chmod +x /usr/bin/naja_pkg
+
+# Atualizar banco de dados MIME
+if command -v update-mime-database >/dev/null 2>&1; then
+    update-mime-database /usr/share/mime
+fi
+
+# Atualizar cache de aplicações
+if command -v update-desktop-database >/dev/null 2>&1; then
+    update-desktop-database /usr/share/applications
+fi
+
+echo "✅ NajaScript v1.2.0 instalado com sucesso!"
+echo "📦 Package manager disponível: naja_pkg"
+echo "📚 Biblioteca math-utils incluída"
+echo ""
+echo "Para começar:"
+echo "  najascript --help"
+echo "  naja_pkg list"
+echo ""
+echo "Documentação: https://najascript.github.io"
+
+exit 0

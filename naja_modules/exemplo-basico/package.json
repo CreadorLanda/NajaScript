@@ -1,0 +1,8 @@
+{
+  "name": "exemplo-basico",
+  "version": "latest",
+  "description": "Módulo exemplo-basico para NajaScript",
+  "main": "index.naja",
+  "author": "NajaScript Community",
+  "license": "MIT"
+}

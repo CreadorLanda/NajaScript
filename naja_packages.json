@@ -1,8 +1,19 @@
 {
+  "name": "demo-project",
+  "version": "1.0.0",
+  "description": "Projeto NajaScript: demo-project",
+  "main": "main.naja",
+  "scripts": {
+    "start": "najascript main.naja"
+  },
+  "keywords": [
+    "najascript"
+  ],
+  "author": "",
+  "license": "MIT",
   "dependencies": {
-    "MathUtils": "1.0.0",
-    "TestRegistry": "latest",
-    "test_package": "latest"
+    "exemplo-basico": "latest",
+    "math-utils": "latest"
   },
   "devDependencies": {}
 }

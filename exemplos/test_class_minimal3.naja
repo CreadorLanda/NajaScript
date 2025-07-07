@@ -1,0 +1,21 @@
+// Minimal class test with public method
+
+class Test {
+    constructor() {
+        println("Constructor called");
+    }
+    
+    public fun greet() {
+        println("Hello from Test class!");
+    }
+}
+
+fun main() {
+    println("Creating test object");
+    var t = new Test();
+    println("Calling method");
+    t.greet();
+    println("Test complete");
+}
+
+main(); 

@@ -1,0 +1,25 @@
+// Hello World in NajaScript
+
+fun main() {
+    println("Hello, World!");
+    println("Welcome to NajaScript!");
+    
+    // Test basic variables
+    string name = "NajaScript";
+    int version = 1;
+    
+    println("Language: " + name);
+    println("Version: " + version);
+    
+    // Test basic math
+    int a = 10;
+    int b = 5;
+    int sum = a + b;
+    
+    println("Sum: " + sum);
+    
+    println("Test complete!");
+}
+
+// Execute the program
+main(); 

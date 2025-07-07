@@ -1,0 +1,324 @@
+// Math Utils Library for NajaScript
+// Version 1.0.0
+// Provides advanced mathematical functions and utilities
+
+class MathUtils {
+    constructor() {
+        println("MathUtils v1.0.0 loaded!");
+    }
+    
+    // Mathematical constants
+    public float pi() {
+        return 3.141592653589793;
+    }
+    
+    public float e() {
+        return 2.718281828459045;
+    }
+    
+    public float phi() {
+        return 1.618033988749895; // Golden ratio
+    }
+    
+    // Basic functions
+    public float abs(float num) {
+        if (num < 0) {
+            return -num;
+        }
+        return num;
+    }
+    
+    public float max(float a, float b) {
+        if (a > b) {
+            return a;
+        }
+        return b;
+    }
+    
+    public float min(float a, float b) {
+        if (a < b) {
+            return a;
+        }
+        return b;
+    }
+    
+    public float pow(float base, int exp) {
+        if (exp == 0) {
+            return 1.0;
+        }
+        
+        float result = 1.0;
+        int i = 0;
+        while (i < exp) {
+            result = result * base;
+            i = i + 1;
+        }
+        return result;
+    }
+    
+    fun sqrt(float num) {
+        if (num < 0) {
+            return 0.0; // Does not support complex numbers
+        }
+        
+        if (num == 0.0) {
+            return 0.0;
+        }
+        
+        // Newton's method for square root
+        float x = num;
+        int iterations = 0;
+        while (iterations < 10) {
+            x = (x + num / x) / 2.0;
+            iterations = iterations + 1;
+        }
+        return x;
+    }
+    
+    // Trigonometric functions (approximations)
+    fun sin(float angle) {
+        float x = angle;
+        
+        // Taylor series for sin(x) - approximation
+        float result = x;
+        float term = x;
+        int i = 1;
+        
+        while (i < 8) {
+            term = term * (-1.0) * x * x / ((2.0 * i) * (2.0 * i + 1.0));
+            result = result + term;
+            i = i + 1;
+        }
+        
+        return result;
+    }
+    
+    fun cos(float angle) {
+        // cos(x) = sin(π/2 - x)
+        return this.sin(1.5707963267948966 - angle);
+    }
+    
+    fun tan(float angle) {
+        float cosValue = this.cos(angle);
+        if (this.abs(cosValue) < 0.0001) {
+            return 999999.0; // Approximate infinity
+        }
+        return this.sin(angle) / cosValue;
+    }
+    
+    // Statistical functions
+    fun mean(lista numbers) {
+        if (numbers.length() == 0) {
+            return 0.0;
+        }
+        
+        float sum = 0.0;
+        int i = 0;
+        while (i < numbers.length()) {
+            sum = sum + numbers.obter(i);
+            i = i + 1;
+        }
+        
+        return sum / numbers.length();
+    }
+    
+    fun median(lista numbers) {
+        if (numbers.length() == 0) {
+            return 0.0;
+        }
+        
+        // Simple sorting (bubble sort)
+        lista sorted = numbers.copia();
+        int n = sorted.length();
+        
+        int i = 0;
+        while (i < n - 1) {
+            int j = 0;
+            while (j < n - i - 1) {
+                if (sorted.obter(j) > sorted.obter(j + 1)) {
+                    float temp = sorted.obter(j);
+                    sorted.definir(j, sorted.obter(j + 1));
+                    sorted.definir(j + 1, temp);
+                }
+                j = j + 1;
+            }
+            i = i + 1;
+        }
+        
+        if (n % 2 == 0) {
+            return (sorted.obter(n / 2 - 1) + sorted.obter(n / 2)) / 2.0;
+        } else {
+            return sorted.obter(n / 2);
+        }
+    }
+    
+    fun sum(lista numbers) {
+        float total = 0.0;
+        int i = 0;
+        while (i < numbers.length()) {
+            total = total + numbers.obter(i);
+            i = i + 1;
+        }
+        return total;
+    }
+    
+    fun product(lista numbers) {
+        float total = 1.0;
+        int i = 0;
+        while (i < numbers.length()) {
+            total = total * numbers.obter(i);
+            i = i + 1;
+        }
+        return total;
+    }
+    
+    // Conversion functions
+    fun deg2rad(float degrees) {
+        return degrees * this.pi() / 180.0;
+    }
+    
+    fun rad2deg(float radians) {
+        return radians * 180.0 / this.pi();
+    }
+    
+    // Rounding functions
+    fun round(float num, int places) {
+        float multiplier = this.pow(10.0, places);
+        return this.floor(num * multiplier + 0.5) / multiplier;
+    }
+    
+    fun floor(float num) {
+        if (num >= 0.0) {
+            return num - (num % 1.0);
+        } else {
+            float result = num - (num % 1.0);
+            if (num % 1.0 != 0.0) {
+                result = result - 1.0;
+            }
+            return result;
+        }
+    }
+    
+    fun ceil(float num) {
+        if (num % 1.0 == 0.0) {
+            return num;
+        }
+        if (num > 0.0) {
+            return this.floor(num) + 1.0;
+        } else {
+            return this.floor(num);
+        }
+    }
+    
+    // Special functions
+    fun factorial(int n) {
+        if (n <= 1) {
+            return 1;
+        }
+        
+        int result = 1;
+        int i = 2;
+        while (i <= n) {
+            result = result * i;
+            i = i + 1;
+        }
+        return result;
+    }
+    
+    fun fibonacci(int n) {
+        if (n <= 1) {
+            return n;
+        }
+        
+        int a = 0;
+        int b = 1;
+        int i = 2;
+        
+        while (i <= n) {
+            int temp = a + b;
+            a = b;
+            b = temp;
+            i = i + 1;
+        }
+        
+        return b;
+    }
+    
+    fun gcd(int a, int b) {
+        a = this.abs(a);
+        b = this.abs(b);
+        
+        while (b != 0) {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        
+        return a;
+    }
+    
+    fun lcm(int a, int b) {
+        return (a * b) / this.gcd(a, b);
+    }
+    
+    fun isPrime(int num) {
+        if (num <= 1) {
+            return false;
+        }
+        if (num <= 3) {
+            return true;
+        }
+        if (num % 2 == 0 || num % 3 == 0) {
+            return false;
+        }
+        
+        int i = 5;
+        while (i * i <= num) {
+            if (num % i == 0 || num % (i + 2) == 0) {
+                return false;
+            }
+            i = i + 6;
+        }
+        
+        return true;
+    }
+    
+    // Random number generation (simple linear congruential generator)
+    fun random(int seed) {
+        // Simple LCG: (a * seed + c) % m
+        int a = 1664525;
+        int c = 1013904223;
+        int m = 2147483647; // 2^31 - 1
+        
+        int result = (a * seed + c) % m;
+        return result / m; // Return value between 0 and 1
+    }
+    
+    fun randomInt(int min, int max, int seed) {
+        float rand = this.random(seed);
+        return min + (rand * (max - min));
+    }
+    
+    // Info function
+    fun info() {
+        dicionario info = {};
+        info.add("name", "math-utils");
+        info.add("version", "1.0.0");
+        info.add("author", "NajaScript Community");
+        info.add("description", "Mathematical utilities library for NajaScript");
+        info.add("functions", [
+            "Constants: pi(), e(), phi()",
+            "Basic: abs(), max(), min(), pow(), sqrt()",
+            "Trigonometric: sin(), cos(), tan()",
+            "Statistics: mean(), median(), sum(), product()",
+            "Conversions: deg2rad(), rad2deg()",
+            "Rounding: round(), floor(), ceil()",
+            "Special: factorial(), fibonacci(), gcd(), lcm(), isPrime()",
+            "Random: random(), randomInt()"
+        ]);
+        return info;
+    }
+}
+
+// Export global instance
+var mathUtils = MathUtils(); 

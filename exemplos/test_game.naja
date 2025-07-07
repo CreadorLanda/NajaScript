@@ -1,0 +1,118 @@
+// Test Simple Game with NajaGame
+import "NajaGame";
+
+// Game variables
+int playerX = 400;
+int playerY = 300;
+int score = 0;
+bool gameRunning = true;
+
+// Initialize game
+fun initGame() {
+    println("Initializing game...");
+    initGame(800, 600, "NajaScript Test Game");
+    println("Game initialized!");
+}
+
+// Update game logic
+fun updateGame(dict game, float deltaTime) {
+    // Check for exit
+    if (isKeyPressed("ESCAPE")) {
+        gameRunning = false;
+        return;
+    }
+    
+    // Player movement
+    if (isKeyPressed("LEFT")) {
+        playerX = playerX - 5;
+    }
+    if (isKeyPressed("RIGHT")) {
+        playerX = playerX + 5;
+    }
+    if (isKeyPressed("UP")) {
+        playerY = playerY - 5;
+    }
+    if (isKeyPressed("DOWN")) {
+        playerY = playerY + 5;
+    }
+    
+    // Keep player on screen
+    if (playerX < 0) {
+        playerX = 0;
+    }
+    if (playerX > 750) {
+        playerX = 750;
+    }
+    if (playerY < 0) {
+        playerY = 0;
+    }
+    if (playerY > 550) {
+        playerY = 550;
+    }
+    
+    // Increment score
+    score = score + 1;
+}
+
+// Render game
+fun renderGame(dict game) {
+    // Clear screen with blue background
+    clearScreen([135, 206, 235]);
+    
+    // Draw player as green rectangle
+    drawRect(playerX, playerY, 50, 50, [0, 255, 0]);
+    
+    // Draw score
+    drawText("Score: " + score, 10, 10, [255, 255, 255]);
+    
+    // Draw instructions
+    drawText("Use arrow keys to move", 10, 30, [255, 255, 255]);
+    drawText("Press ESC to exit", 10, 50, [255, 255, 255]);
+    
+    // Update screen
+    updateScreen();
+}
+
+// Main game loop
+fun gameLoop() {
+    initGame();
+    
+    while (gameRunning) {
+        updateGame({}, 0.016);
+        renderGame({});
+    }
+    
+    println("Game ended. Final score: " + score);
+}
+
+// Simple test without graphics
+fun testWithoutGraphics() {
+    println("=== Simple Game Test (No Graphics) ===");
+    
+    // Test basic game variables
+    println("Initial player position: (" + playerX + ", " + playerY + ")");
+    println("Initial score: " + score);
+    
+    // Simulate some movement
+    println("\nSimulating movement...");
+    playerX = playerX + 10;
+    playerY = playerY - 5;
+    score = score + 100;
+    
+    println("New player position: (" + playerX + ", " + playerY + ")");
+    println("New score: " + score);
+    
+    println("\n=== Game Test Complete ===");
+}
+
+// Main function
+fun main() {
+    // For testing without graphics, use this:
+    testWithoutGraphics();
+    
+    // For testing with graphics, uncomment this:
+    // gameLoop();
+}
+
+// Execute the program
+main(); 

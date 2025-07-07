@@ -1,0 +1,41 @@
+// Simple POO test in NajaScript
+
+class Person {
+    public string name
+    public int age
+    
+    constructor(string nome, int idade) {
+        this.name = nome;
+        this.age = idade;
+        println("Pessoa criada: " + this.name);
+    }
+    
+    public fun greet() {
+        println("Olá, eu sou " + this.name + " e tenho " + this.age + " anos");
+    }
+    
+    public fun birthday() {
+        this.age = this.age + 1;
+        println(this.name + " agora tem " + this.age + " anos!");
+    }
+}
+
+fun main() {
+    println("=== Test POO Simples ===");
+    
+    // Create a person
+    Person p1 = new Person("Ana", 25);
+    
+    // Test methods
+    p1.greet();
+    p1.birthday();
+    p1.greet();
+    
+    // Create another person
+    Person p2 = new Person("João", 30);
+    p2.greet();
+    
+    println("=== Test completo! ===");
+}
+
+main(); 

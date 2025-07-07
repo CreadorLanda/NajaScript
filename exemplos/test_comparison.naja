@@ -1,0 +1,78 @@
+// Test for comparison operators
+
+fun main() {
+    println("=== Comparison Tests ===");
+    
+    int a = 10;
+    int b = 5;
+    int c = 10;
+    float d = 7.5;
+    
+    // Test all comparison operators
+    println("a = " + a + ", b = " + b + ", c = " + c + ", d = " + d);
+    
+    // Test equal
+    if (a == c) {
+        println("a == c: TRUE (correct)");
+    } else {
+        println("a == c: FALSE (wrong)");
+    }
+    
+    // Test not equal
+    if (a != b) {
+        println("a != b: TRUE (correct)");
+    } else {
+        println("a != b: FALSE (wrong)");
+    }
+    
+    // Test less than
+    if (b < a) {
+        println("b < a: TRUE (correct)");
+    } else {
+        println("b < a: FALSE (wrong)");
+    }
+    
+    // Test less than or equal
+    if (b <= a) {
+        println("b <= a: TRUE (correct)");
+    } else {
+        println("b <= a: FALSE (wrong)");
+    }
+    
+    // Test greater than
+    if (a > b) {
+        println("a > b: TRUE (correct)");
+    } else {
+        println("a > b: FALSE (wrong)");
+    }
+    
+    // Test greater than or equal
+    if (a >= b) {
+        println("a >= b: TRUE (correct)");
+    } else {
+        println("a >= b: FALSE (wrong)");
+    }
+    
+    // Test modulo operator
+    int mod_result = a % 3;
+    println("a % 3 = " + mod_result);
+    
+    // Test negation operator
+    bool test_bool = true;
+    if (!test_bool) {
+        println("!true = FALSE (wrong)");
+    } else {
+        println("!true = TRUE (wrong - should be false)");
+    }
+    
+    bool test_bool2 = false;
+    if (!test_bool2) {
+        println("!false = TRUE (correct)");
+    } else {
+        println("!false = FALSE (wrong)");
+    }
+    
+    println("=== End Comparison Tests ===");
+}
+
+main(); 

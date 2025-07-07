@@ -1,0 +1,22 @@
+{
+  "name": "exemplo-basico",
+  "version": "1.0.0",
+  "description": "Pacote de exemplo básico para NajaScript",
+  "main": "index.naja",
+  "keywords": [
+    "exemplo",
+    "basico",
+    "tutorial"
+  ],
+  "author": "NajaScript Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NajaScript/Naja"
+  },
+  "homepage": "https://najascript.github.io",
+  "dependencies": {},
+  "najascript": {
+    "min_version": "1.0.0"
+  }
+}

@@ -1,0 +1,27 @@
+// Pacote Exemplo Básico
+// Demonstra a estrutura básica de um pacote NajaScript
+
+classe ExemploBasico {
+    funcao construtor() {
+        println("ExemploBasico carregado!");
+    }
+    
+    funcao saudar(string nome) {
+        return "Olá " + nome + " do pacote ExemploBasico!";
+    }
+    
+    funcao calcular(int a, int b) {
+        return a + b;
+    }
+    
+    funcao info() {
+        dicionario info = {};
+        info.add("nome", "exemplo-basico");
+        info.add("versao", "1.0.0");
+        info.add("autor", "NajaScript Team");
+        return info;
+    }
+}
+
+// Exportar instância
+var exemploBasico = ExemploBasico();

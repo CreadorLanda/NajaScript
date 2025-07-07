@@ -1,32 +1,111 @@
-// Teste de funções no NajaScript
+// Teste de Funções e Manipulação de Dados
+importar "NajaPt";
 
-// Função simples que retorna a soma de dois números
-fun somar(int a, int b) {
-    return a + b;
+// Função simples
+funcao somar(inteiro a, inteiro b) {
+    retornar a + b;
 }
 
-// Função que retorna o maior de dois números
-fun maior(int a, int b) {
-    if (a > b) {
-        return a;
-    } else {
-        return b;
+// Função com múltiplos parâmetros
+funcao calcularMedia(inteiro a, inteiro b, inteiro c) {
+    retornar (a + b + c) / 3;
+}
+
+// Função para verificar se um número é par
+funcao ehPar(inteiro numero) {
+    se (numero % 2 == 0) {
+        retornar verdadeiro;
+    } senao {
+        retornar falso;
     }
 }
 
-// Função que calcula o fatorial de um número
-fun fatorial(int n) {
-    if (n <= 1) {
-        return 1;
-    } else {
-        return n * fatorial(n - 1);
+// Função para fatorial
+funcao fatorial(inteiro n) {
+    se (n <= 1) {
+        retornar 1;
+    } senao {
+        retornar n * fatorial(n - 1);
     }
 }
 
-// Testando as funções
-println("=== Teste de Funções ===");
-println("Soma de 3 e 4:", somar(3, 4));
-println("Maior entre 5 e 8:", maior(5, 8));
-println("Fatorial de 5:", fatorial(5));
+// Função para processar lista
+funcao processarLista(lista numeros) {
+    escreverln("Processando lista:");
+    para (inteiro i = 0; i < numeros.length(); i = i + 1) {
+        inteiro num = numeros.get(i);
+        escreverln("  Posição " + i + ": " + num);
+    }
+}
 
-println("\nTeste concluído com sucesso!"); 
+// Função principal
+funcao principal() {
+    escreverln("=== Teste de Funções ===");
+    
+    // Teste de funções simples
+    escreverln("\n=== Operações Básicas ===");
+    inteiro resultado = somar(5, 3);
+    escreverln("5 + 3 = " + resultado);
+    
+    decimal media = calcularMedia(8, 6, 10);
+    escreverln("Média de 8, 6, 10 = " + media);
+    
+    // Teste de função booleana
+    escreverln("\n=== Verificação de Paridade ===");
+    inteiro numero = 8;
+    se (ehPar(numero)) {
+        escreverln(numero + " é par");
+    } senao {
+        escreverln(numero + " é ímpar");
+    }
+    
+    // Teste de função recursiva
+    escreverln("\n=== Função Recursiva ===");
+    inteiro n = 5;
+    inteiro fat = fatorial(n);
+    escreverln("Fatorial de " + n + " = " + fat);
+    
+    // Teste de listas
+    escreverln("\n=== Manipulação de Listas ===");
+    lista numeros = [1, 2, 3, 4, 5];
+    escreverln("Lista criada: " + numeros);
+    escreverln("Tamanho da lista: " + numeros.length());
+    
+    // Adicionar elementos
+    numeros.add(6);
+    numeros.add(7);
+    escreverln("Após adicionar 6 e 7: " + numeros);
+    
+    // Remover último elemento
+    numeros.removeLast();
+    escreverln("Após remover último: " + numeros);
+    
+    // Acessar elementos
+    escreverln("Primeiro elemento: " + numeros.get(0));
+    escreverln("Último elemento: " + numeros.get(numeros.length() - 1));
+    
+    // Processar lista com função
+    processarLista(numeros);
+    
+    // Teste de iteração com foreach
+    escreverln("\n=== Iteração com FOR-IN ===");
+    lista cores = ["vermelho", "azul", "verde", "amarelo"];
+    paracada (texto cor em cores) {
+        escreverln("Cor: " + cor);
+    }
+    
+    // Teste de dicionário
+    escreverln("\n=== Dicionários ===");
+    dicionario pessoa = {"nome": "João", "idade": 30, "cidade": "São Paulo"};
+    escreverln("Pessoa: " + pessoa);
+    escreverln("Nome: " + pessoa.get("nome"));
+    escreverln("Idade: " + pessoa.get("idade"));
+    
+    // Adicionar nova chave
+    pessoa.add("profissao", "Engenheiro");
+    escreverln("Após adicionar profissão: " + pessoa);
+    
+    escreverln("\n=== Teste Concluído ===");
+}
+
+principal(); 

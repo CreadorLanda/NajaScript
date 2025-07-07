@@ -1,0 +1,37 @@
+{
+  "name": "math-utils",
+  "version": "1.0.0",
+  "description": "Biblioteca completa de utilitários matemáticos para NajaScript com funções avançadas",
+  "main": "index.naja",
+  "keywords": [
+    "najascript",
+    "math",
+    "matematica",
+    "utilities",
+    "trigonometry",
+    "statistics",
+    "calculadora"
+  ],
+  "author": "NajaScript Community",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NajaScript/Naja"
+  },
+  "homepage": "https://najascript.github.io",
+  "dependencies": {},
+  "najascript": {
+    "min_version": "1.0.0"
+  },
+  "categories": [
+    "utilities",
+    "math"
+  ],
+  "tags": [
+    "matematica",
+    "calculo",
+    "trigonometria",
+    "estatistica",
+    "algebra"
+  ]
+} 
